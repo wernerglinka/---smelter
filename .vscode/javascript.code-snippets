@@ -1,0 +1,48 @@
+{
+  "React Component with JSDoc": {
+    "prefix": "rjc",
+    "body": [
+      "import { useState } from 'react'",
+      "import PropTypes from 'prop-types'",
+      "",
+      "/**",
+      " * @typedef {Object} ${1:ComponentName}Props",
+      " * @property {string} [propName] - Description of the prop",
+      " */",
+      "",
+      "/**",
+      " * ${2:Component description}",
+      " * @param {${1:ComponentName}Props} props - Component props",
+      " * @returns {JSX.Element} Rendered component",
+      " */",
+      "function ${1:ComponentName}({ propName }) {",
+      "  return (",
+      "    <div>",
+      "      $0",
+      "    </div>",
+      "  )",
+      "}",
+      "",
+      "${1:ComponentName}.propTypes = {",
+      "  propName: PropTypes.string",
+      "}",
+      "",
+      "export default ${1:ComponentName}"
+    ],
+    "description": "Creates a React component with JSDoc documentation"
+  },
+  "JSDoc Function": {
+    "prefix": "jfn",
+    "body": [
+      "/**",
+      " * ${1:Function description}",
+      " * @param {${2:type}} ${3:paramName} - ${4:Parameter description}",
+      " * @returns {${5:type}} ${6:Return description}",
+      " */",
+      "function ${7:functionName}(${3:paramName}) {",
+      "  $0",
+      "}"
+    ],
+    "description": "Creates a function with JSDoc documentation"
+  }
+}

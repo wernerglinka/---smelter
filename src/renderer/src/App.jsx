@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import Versions from './components/Versions';
-import icons from './assets/icons.svg'
+import icons from './assets/icons.svg';
 
+/**
+ *
+ */
 function App() {
   return (
     <div className="container">
@@ -11,7 +14,9 @@ function App() {
       <svg className="hero-logo" viewBox="0 0 900 300">
         <use xlinkHref={`${icons}#electron`} />
       </svg>
-      <h2 className="hero-text">You{"'"}ve successfully created an Electron project with React YAY</h2>
+      <h2 className="hero-text">
+        You{"'"}ve successfully created an Electron project with React YAY
+      </h2>
       <p className="hero-tagline">
         Please try pressing <code>F12</code> to open the devTool
       </p>
@@ -143,7 +148,7 @@ function App() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

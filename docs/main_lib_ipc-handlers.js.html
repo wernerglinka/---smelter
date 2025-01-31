@@ -1,4 +1,32 @@
-import { ipcMain } from 'electron';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: main/lib/ipc-handlers.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: main/lib/ipc-handlers.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { ipcMain } from 'electron';
 import path from 'node:path';
 import matter from 'gray-matter';
 import yaml from 'yaml';
@@ -78,7 +106,7 @@ const createIPCHandlers = (window) => {
      *
      * @param {Event} event - IPC event object
      * @param {string} message - Message to display in prompt
-     * @returns {Promise<string|null>} User's input or null if cancelled
+     * @returns {Promise&lt;string|null>} User's input or null if cancelled
      */
     handlePromptDialog: async (event, message) => {
       const result = await prompt({
@@ -95,7 +123,7 @@ const createIPCHandlers = (window) => {
      * @param {Event} event - IPC event object
      * @param {string} method - Dialog method to use (e.g., 'showOpenDialog')
      * @param {object} params - Dialog parameters
-     * @returns {Promise<object>} Dialog result
+     * @returns {Promise&lt;object>} Dialog result
      * @example
      * handleDialog(event, 'showOpenDialog', {
      *   properties: ['openDirectory']
@@ -108,7 +136,7 @@ const createIPCHandlers = (window) => {
      *
      * @param {Event} event - IPC event object
      * @param {string} message - Message to display
-     * @returns {Promise<boolean>} User's confirmation result
+     * @returns {Promise&lt;boolean>} User's confirmation result
      * @example
      * handleConfirmationDialog(event, 'Delete this project?')
      */
@@ -122,7 +150,7 @@ const createIPCHandlers = (window) => {
      * @param {string} options.type - Dialog type ('info', 'error', etc.)
      * @param {string} options.message - Message to display
      * @param {string[]} options.buttons - Array of button labels
-     * @returns {Promise<object>} Dialog result
+     * @returns {Promise&lt;object>} Dialog result
      */
     handleMessageDialog: async (event, options) => dialogOps.showDialog('showMessageBox', options),
 
@@ -195,7 +223,7 @@ const createIPCHandlers = (window) => {
      * @param {object} data - Data to write
      * @param {object} data.obj - Object to convert to YAML
      * @param {string} data.path - File path
-     * @returns {Promise<object>} Operation result
+     * @returns {Promise&lt;object>} Operation result
      * @throws {Error} If path missing or write fails
      */
     handleWriteYAML: async (event, { obj, path: filePath }) => {
@@ -421,3 +449,26 @@ const setupIPC = (window) => {
 };
 
 export { createIPCHandlers, setupIPC };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#DEFAULT_VERSIONS">DEFAULT_VERSIONS</a></li><li><a href="global.html#click">click</a></li><li><a href="global.html#closeProgress">closeProgress</a></li><li><a href="global.html#createApplicationMenu">createApplicationMenu</a></li><li><a href="global.html#createConfirmationOptions">createConfirmationOptions</a></li><li><a href="global.html#createCustomDialog">createCustomDialog</a></li><li><a href="global.html#createCustomDialogHTML">createCustomDialogHTML</a></li><li><a href="global.html#createDialogOperations">createDialogOperations</a></li><li><a href="global.html#createDialogWindow">createDialogWindow</a></li><li><a href="global.html#createFileOperations">createFileOperations</a></li><li><a href="global.html#createGitHandlers">createGitHandlers</a></li><li><a href="global.html#createIPCHandlers">createIPCHandlers</a></li><li><a href="global.html#createNPMHandlers">createNPMHandlers</a></li><li><a href="global.html#createWindow">createWindow</a></li><li><a href="global.html#deleteFile">deleteFile</a></li><li><a href="global.html#electronAPI">electronAPI</a></li><li><a href="global.html#ensureDirectoryExists">ensureDirectoryExists</a></li><li><a href="global.html#executeGitOperations">executeGitOperations</a></li><li><a href="global.html#fileExists">fileExists</a></li><li><a href="global.html#getWindow">getWindow</a></li><li><a href="global.html#handleGitClone">handleGitClone</a></li><li><a href="global.html#handleGitCommit">handleGitCommit</a></li><li><a href="global.html#handleGitStatus">handleGitStatus</a></li><li><a href="global.html#readAllFiles">readAllFiles</a></li><li><a href="global.html#readDirectoryStructure">readDirectoryStructure</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#setupIPC">setupIPC</a></li><li><a href="global.html#showConfirmation">showConfirmation</a></li><li><a href="global.html#showDialog">showDialog</a></li><li><a href="global.html#showMessage">showMessage</a></li><li><a href="global.html#waitForDialog">waitForDialog</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jan 31 2025 14:10:32 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

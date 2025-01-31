@@ -1,27 +1,33 @@
 // menu-handler.js
 import { Menu, app, ipcMain } from 'electron';
 
-const createApplicationMenu = ( window ) => {
+/**
+ *
+ * @param window
+ */
+const createApplicationMenu = (window) => {
   const template = [
-    ...( process.platform === 'darwin' ? [ {
-      label: app.name,
-      submenu: [
-        { role: 'about' },
-        { type: 'separator' },
-        { role: 'services' },
-        { type: 'separator' },
-        { role: 'hide' },
-        { role: 'hideOthers' },
-        { role: 'unhide' },
-        { type: 'separator' },
-        { role: 'quit' }
-      ]
-    } ] : [] ),
+    ...(process.platform === 'darwin'
+      ? [
+          {
+            label: app.name,
+            submenu: [
+              { role: 'about' },
+              { type: 'separator' },
+              { role: 'services' },
+              { type: 'separator' },
+              { role: 'hide' },
+              { role: 'hideOthers' },
+              { role: 'unhide' },
+              { type: 'separator' },
+              { role: 'quit' }
+            ]
+          }
+        ]
+      : []),
     {
       label: 'File',
-      submenu: [
-        process.platform === 'darwin' ? { role: 'close' } : { role: 'quit' }
-      ]
+      submenu: [process.platform === 'darwin' ? { role: 'close' } : { role: 'quit' }]
     },
     {
       label: 'Edit',
@@ -53,19 +59,28 @@ const createApplicationMenu = ( window ) => {
       submenu: [
         {
           label: 'Install Dependencies',
-          click: () => window.webContents.send( 'npm-install-trigger' ),
+          /**
+           *
+           */
+          click: () => window.webContents.send('npm-install-trigger'),
           id: 'npm-install',
           enabled: false
         },
         {
           label: 'Start Project',
-          click: () => window.webContents.send( 'npm-start-trigger' ),
+          /**
+           *
+           */
+          click: () => window.webContents.send('npm-start-trigger'),
           id: 'npm-start',
           enabled: false
         },
         {
           label: 'Stop Project',
-          click: () => window.webContents.send( 'npm-stop-trigger' ),
+          /**
+           *
+           */
+          click: () => window.webContents.send('npm-stop-trigger'),
           id: 'npm-stop',
           enabled: false
         }
@@ -76,34 +91,40 @@ const createApplicationMenu = ( window ) => {
       submenu: [
         {
           label: 'Clone Repository',
-          click: () => window.webContents.send( 'git-clone-trigger' ),
+          /**
+           *
+           */
+          click: () => window.webContents.send('git-clone-trigger'),
           id: 'git-clone',
-          enabled: true  // Clone can always be available as it's a way to open a project
+          enabled: true // Clone can always be available as it's a way to open a project
         },
         {
           label: 'Commit Changes',
-          click: () => window.webContents.send( 'git-commit-trigger' ),
+          /**
+           *
+           */
+          click: () => window.webContents.send('git-commit-trigger'),
           id: 'git-commit',
-          enabled: false  // Initially disabled
+          enabled: false // Initially disabled
         }
       ]
     }
   ];
 
-  const menu = Menu.buildFromTemplate( template );
-  Menu.setApplicationMenu( menu );
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 
   // Expose methods to enable/disable items
-  ipcMain.on( 'npm-state-change', ( event, { running, hasNodeModules, hasProject } ) => {
-    menu.getMenuItemById( 'npm-start' ).enabled = hasProject && !running && hasNodeModules;
-    menu.getMenuItemById( 'npm-stop' ).enabled = hasProject && running;
-    menu.getMenuItemById( 'npm-install' ).enabled = hasProject && !hasNodeModules;
-  } );
+  ipcMain.on('npm-state-change', (event, { running, hasNodeModules, hasProject }) => {
+    menu.getMenuItemById('npm-start').enabled = hasProject && !running && hasNodeModules;
+    menu.getMenuItemById('npm-stop').enabled = hasProject && running;
+    menu.getMenuItemById('npm-install').enabled = hasProject && !hasNodeModules;
+  });
 
   // Expose methods to enable/disable git commit menu option
-  ipcMain.on( 'git-state-change', ( event, { hasChanges, hasProject } ) => {
-    menu.getMenuItemById( 'git-commit' ).enabled = hasProject && hasChanges;
-  } );
+  ipcMain.on('git-state-change', (event, { hasChanges, hasProject }) => {
+    menu.getMenuItemById('git-commit').enabled = hasProject && hasChanges;
+  });
 
   return menu;
 };

@@ -14,4 +14,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       </Routes>
     </HashRouter>
   </React.StrictMode>
-)
+);

@@ -1,5 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
+/**
+ *
+ */
 export default function EditPage() {
   return (
     <div>
@@ -7,5 +10,5 @@ export default function EditPage() {
       <p>Welcome!</p>
       <Link to="/">Go back to the home page</Link>
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-# my-app
+# Smelter
 
 An Electron application with React
 
@@ -32,3 +32,44 @@ $ npm run build:mac
 # For Linux
 $ npm run build:linux
 ```
+
+## Documentation Standards
+
+This project uses JSDoc for documentation. All code should be documented following these guidelines:
+
+### Components
+- Must have a component description
+- Must document all props using TypeDefs
+- Must specify return type
+- Must document any significant state or effects
+
+### Functions
+- Must have a description
+- Must document all parameters
+- Must document return type
+- Must document thrown errors if any
+
+### Example
+```javascript
+/**
+ * @typedef {Object} UserProps
+ * @property {string} name - The user's name
+ * @property {number} age - The user's age
+ */
+
+/**
+ * Displays user information
+ * @param {UserProps} props - Component props
+ * @returns {JSX.Element} Rendered component
+ */
+function User({ name, age }) {
+  return (
+    <div>
+      {name} ({age})
+    </div>
+  )
+}
+```
+
+### Generating Documentation
+Run `npm run docs` to generate documentation in the `docs` directory.
