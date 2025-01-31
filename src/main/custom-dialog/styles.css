@@ -1,0 +1,99 @@
+:root {
+  --default-padding: 2rem;
+  --default-margin: 2rem;
+  --default-gap: 2rem;
+  --dialog-background-fallback: rgb(27,45,72);
+  --dialog-background: linear-gradient(0deg, rgba(27,45,72,1) 0%, rgba(57,93,145,1) 100%);
+  --text-color: #fff;
+  --message-font-size: 2rem;
+  --code-background: #1e1e1e;
+  --code-color: #fff;
+  --code-font-size: 1.2rem;
+  --code-window-height: 70%;
+  --default-border: 1px solid #ccc; 
+  --default-border-radius: 0.4rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: system-ui;
+  font-size: 62.5%;
+}
+body {
+  margin: 0;
+  padding: var(--default-padding);
+  background: var(--dialog-background);
+  height: 100vh;
+}
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--default-gap);
+  height: 100%;
+}
+
+.message {
+  margin: var(--default-margin) 0;
+  text-align: center;
+  font-size: var(--message-font-size);
+  color: var(--text-color);
+}
+
+.log-output {
+  margin: var(--default-margin) 0;
+  padding: var(--default-padding);
+  background: var(--code-background);
+  color: var(--code-color);
+  font-family: monospace;
+  font-size: var(--code-font-size);
+  white-space: pre-wrap;
+  max-height: var(--code-window-height);
+  width: 100%;
+  overflow-y: auto;
+  border-radius: var(--default-border-radius );
+}
+
+.input {
+  margin: 1rem 0;
+  width: 100%;
+}
+
+input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: calc(var(--default-padding) / 2);
+  border: var(--default-border);
+  border-radius: var(--default-border-radius );
+  max-width: 100%;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap:  var(--default-gap);
+  margin-top: calc(var(--default-margin) * 2);
+}
+
+button {
+  padding: 1rem 2rem;
+  border: none;
+  border: var(--default-border);
+  border-radius: var(--default-border-radius );
+  background: none;
+  font-size: calc(var(--message-font-size)*0.8);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+
+  &:hover {
+    background: rgba(255,255,255,0.2);
+  }
+}
