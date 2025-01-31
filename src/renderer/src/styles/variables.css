@@ -1,0 +1,112 @@
+:root {
+  /* Colors */
+  --header-color: #071013;
+  --text-color: #000000;
+  --link-color: #800020;
+  --link-color-hover: #f68d36;
+  --attention-color: #800020;
+  --secondary-color: #aaaaaa;
+  --message-color: #800020;
+
+  --border-color: #cccccc;
+  --dropzone-background-highlight-color: rgba(253, 250, 114, 0.1);
+
+  /**
+    * Typography
+    * Fonts are loaded from Google Fonts
+    * Common Typographic Scale Ratios:
+    *  1.200 — Minor Third
+    *  1.067 — Minor Second
+    *  1.125 — Major Second
+    *  1.200 — Minor Third
+    *  1.250 — Major Third
+    *  1.333 — Perfect Fourth
+    *  1.414 — Augmented Fourth
+    *  1.500 — Perfect Fifth
+    *  1.618 — The Golden Ratio
+    *
+    *  Rem value: 1rem = 10px
+    *
+    *  Min screen width: 400px;
+    *  Maxscreen width: 1200px;
+    *
+    * Calculated with: https://www.fluid-type-scale.com/
+    *
+    * Sources:
+    *   - https://www.type-scale.com/
+    *   - https://css-clamp-calculator.netlify.app/
+    *   - https://blog.logrocket.com/fluid-vs-responsive-typography-css-clamp/
+    */
+  --font-family: "Open Sans", sans-serif;
+  --color-body: var(--text-color);
+  --color-header: var(--header-color);
+  --font-size-sm: clamp(1.28rem, 0.18vw + 1.21rem, 1.43rem);
+  --font-size-base: clamp(1.6rem, 0.38vw + 1.45rem, 1.9rem);
+  --font-size-md: clamp(2rem, 0.67vw + 1.73rem, 2.53rem);
+  --font-size-lg: clamp(2.5rem, 1.1vw + 2.06rem, 3.38rem);
+  --font-size-xl: clamp(3.13rem, 1.72vw + 2.44rem, 4.5rem);
+  --font-size-xxl: clamp(3.91rem, 2.62vw + 2.86rem, 6rem);
+  --font-size-xxxl: clamp(4.88rem, 3.89vw + 3.33rem, 8rem);
+
+  /* Layout */
+  --titlebar-height: 2rem;
+  --body-padding: 3rem 2rem 2rem;
+  --element-padding: 0.5rem 2rem;
+  --page-background: linear-gradient(
+      112.5deg,
+      rgb(214, 214, 214) 0%,
+      rgb(214, 214, 214) 10%,
+      rgb(195, 195, 195) 10%,
+      rgb(195, 195, 195) 53%,
+      rgb(176, 176, 176) 53%,
+      rgb(176, 176, 176) 55%,
+      rgb(157, 157, 157) 55%,
+      rgb(157, 157, 157) 60%,
+      rgb(137, 137, 137) 60%,
+      rgb(137, 137, 137) 88%,
+      rgb(118, 118, 118) 88%,
+      rgb(118, 118, 118) 91%,
+      rgb(99, 99, 99) 91%,
+      rgb(99, 99, 99) 100%
+    ),
+    linear-gradient(
+      157.5deg,
+      rgb(214, 214, 214) 0%,
+      rgb(214, 214, 214) 10%,
+      rgb(195, 195, 195) 10%,
+      rgb(195, 195, 195) 53%,
+      rgb(176, 176, 176) 53%,
+      rgb(176, 176, 176) 55%,
+      rgb(157, 157, 157) 55%,
+      rgb(157, 157, 157) 60%,
+      rgb(137, 137, 137) 60%,
+      rgb(137, 137, 137) 88%,
+      rgb(118, 118, 118) 88%,
+      rgb(118, 118, 118) 91%,
+      rgb(99, 99, 99) 91%,
+      rgb(99, 99, 99) 100%
+    ),
+    linear-gradient(
+      135deg,
+      rgb(214, 214, 214) 0%,
+      rgb(214, 214, 214) 10%,
+      rgb(195, 195, 195) 10%,
+      rgb(195, 195, 195) 53%,
+      rgb(176, 176, 176) 53%,
+      rgb(176, 176, 176) 55%,
+      rgb(157, 157, 157) 55%,
+      rgb(157, 157, 157) 60%,
+      rgb(137, 137, 137) 60%,
+      rgb(137, 137, 137) 88%,
+      rgb(118, 118, 118) 88%,
+      rgb(118, 118, 118) 91%,
+      rgb(99, 99, 99) 91%,
+      rgb(99, 99, 99) 100%
+    ),
+    linear-gradient(90deg, rgb(195, 195, 195), rgb(228, 228, 228));
+
+  --info-background: #ffffff;
+  --btn-hover: #f0f0f0;
+  --drop-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  --default-radius: 0.5rem;
+}

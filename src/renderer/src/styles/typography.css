@@ -1,0 +1,40 @@
+@import "./fonts.css";
+
+html {
+  /**
+   * Set font size to 10px all font sizing  willm be done in rem units
+   * this makes it easier to convert from px to rem
+   */
+  font-size: 62.5%;
+}
+body {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  font-size: var(--font-size-base);
+  color: var(--color-body);
+  line-height: 1.5;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-header);
+  margin: 0 0.6rem 0 0;
+}
+
+h1 {
+  font-size: var(--font-size-lg);
+}
+h2 {
+  font-size: var(--font-size-md);
+}
+h3 {
+  font-size: var(--font-size-base);
+}

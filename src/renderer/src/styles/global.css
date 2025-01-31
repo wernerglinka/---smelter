@@ -1,0 +1,293 @@
+@import './variables.css';
+@import './typography.css';
+
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%; /* Makes 1rem = 10px */
+}
+
+
+/**
+ * Since we use a frameless window, we need to
+ * add a titlebar to the top of the window so we maintain
+ * the ability to drag the window around.
+ */
+.titlebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  height: var(--titlebar-height);
+  width: 100%;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+  cursor: move;
+}
+
+.titlebar-button {
+  -webkit-app-region: no-drag;
+}
+
+/**
+ * Common button styles
+ */
+.btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  margin: 0 0.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: var(--info-background);
+  box-shadow: var(--drop-shadow);
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+    background-color: var(--btn-hover);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.primary {
+    background-color: var(--attention-color);
+    color: #ffffff;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+}
+
+/**
+ * Main window styles
+ */
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-width: 900px;
+  padding: var(--body-padding);
+  background-image: var(--page-background);
+  background-blend-mode: overlay, overlay, overlay, normal;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/**
+ * Screen Transitions
+ */
+.fade-enter {
+  opacity: 0;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-enter-active {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0;
+}
+.fade-enter-active,
+.fade-exit-active {
+  transition: opacity 500ms;
+}
+
+/**
+ * Welcome page styles
+ */
+.welcome {
+  max-width: 80rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: 100vh;
+
+  & img {
+    max-width: 15rem;
+    margin-bottom: 5rem;
+  }
+
+  & ul {
+    list-style: none;
+    padding: 0;
+    margin: 5rem 0 0;
+
+    & li {
+      margin-bottom: 1rem;
+
+      & a,
+      &.listHeader,
+      &.recent {
+        color: var(--attention-color);
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+      }
+      &.listHeader,
+      &.recent {
+        font-weight: 600;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border-color);
+      }
+      &.recent {
+        margin-top: 3rem;
+      }
+
+      & a strong {
+        padding: 0 0.5rem;
+      }
+
+      &.recent a {
+        padding-left: 2rem;
+      }
+
+      & svg {
+        width: 2rem;
+        height: 2rem;
+        margin-right: 1rem;
+
+        & g {
+          stroke: var(--attention-color);
+        }
+      }
+
+      &.preview a {
+        opacity: 0.5;
+        pointer-events: none;
+        cursor: default;
+      }
+    }
+  }
+}
+
+/**
+ * New Project page styles
+ */
+.new-project {
+  max-width: 80rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: 100vh;
+
+  & img {
+    max-width: 15rem;
+    margin-bottom: 5rem;
+  }
+
+  & ul {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 0;
+
+    & li {
+      height: 5rem;
+      display: flex;
+      align-items: center;
+      font-size: 1.6rem;
+
+      & strong {
+        display: inline-block;
+        width: 15rem;
+        font-size: 0.8em;
+      }
+
+      &.get-path {
+        position: relative;
+        padding: 0;
+
+        & > div {
+          display: flex;
+          align-items: center;
+          height: 100%;
+        }
+
+        & .path-display {
+          opacity: 0;
+          transition: opacity 0.3s ease-in-out;
+
+          &.show {
+            opacity: 1;
+          }
+        }
+
+        & .button-display {
+          position: absolute;
+          top: 0;
+          left: 0;
+          opacity: 1;
+          transition: opacity 0.3s ease-in-out;
+
+          &.show {
+            opacity: 0;
+          }
+
+          & a {
+            margin-left: 1rem;
+          }
+        }
+
+        &.ready {
+          & .path-display {
+            opacity: 1;
+          }
+
+          & .button-display {
+            opacity: 0;
+          }
+        }
+      }
+
+      &.decision-buttons {
+        display: flex;
+        margin-top: 3rem;
+
+        & .btn {
+          margin: 0 2rem 0 0;
+
+          &.start {
+            display: none;
+          }
+        }
+
+        &.ready {
+          & .start {
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+
+  & .start-with-config {
+    display: none;
+
+    & strong {
+      font-size: 1.2rem;
+      white-space: nowrap;
+    }
+  }
+}

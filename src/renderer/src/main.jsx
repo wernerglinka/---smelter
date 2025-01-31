@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import './assets/index.css';
-import App from './App';
-import EditPage from './screens/EditPage';
+import './styles/global.css';
+//import './assets/index.css';
+import App from './screens/home/index.jsx';
+import EditPage from './screens/edit/index.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
