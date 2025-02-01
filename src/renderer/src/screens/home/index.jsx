@@ -1,14 +1,24 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FolderPlusIcon, FolderOpenIcon } from '../../components/icons';
 import { StorageOperations } from '../lib/storage-operations';
 import { selectProject } from '../lib/select-project';
+import { TitleBar } from '../../styles/common';
+import {
+  WelcomeContainer,
+  ProjectList,
+  ProjectItem,
+  ProjectLink,
+  ListHeader,
+  RecentProjectItem,
+  RecentProjectLink
+} from './styles';
 
 /**
  * Home component - main landing page for the Metallurgy application
  * @returns {JSX.Element} The rendered component
  */
-function Home() {
+const App = () => {
   const [recentProjects, setRecentProjects] = useState([]);
   const navigate = useNavigate();
 
@@ -19,7 +29,7 @@ function Home() {
         if (projectData) {
           setRecentProjects([{
             path: projectData.projectPath,
-            name: StorageOperations.getProjectName(projectData.projectPath)
+            name: projectData.name || projectData.projectPath.split('/').pop()
           }]);
         } else {
           setRecentProjects([]);
@@ -39,12 +49,10 @@ function Home() {
   const handleNewProject = async (e) => {
     e.preventDefault();
     try {
-      // Use existing selectProject function
       const projectFolder = await selectProject();
 
       if (projectFolder === "abort") return;
 
-      // Use existing storage operations
       StorageOperations.saveProjectPath(projectFolder);
       StorageOperations.clearProjectData();
 
@@ -60,42 +68,41 @@ function Home() {
   };
 
   return (
-    <div className="welcome">
-      <div className="titlebar" />
+    <WelcomeContainer>
+      <TitleBar />
       <h1>Smelter</h1>
       <p>Content Management for Metalsmith refined</p>
 
-      <ul className="projects">
-        <li className="listHeader">Start</li>
-        <li>
-          <a href="#" onClick={handleNewProject} className="project-action">
+      <ProjectList>
+        <ListHeader>Start</ListHeader>
+        <ProjectItem>
+          <ProjectLink href="#" onClick={handleNewProject}>
             <FolderPlusIcon className="icon" />
             Initialize a Project from existing folder
-          </a>
-        </li>
-        <li>
-          <Link to="/edit" className="project-action">
+          </ProjectLink>
+        </ProjectItem>
+        <ProjectItem>
+          <ProjectLink to="/edit">
             <FolderOpenIcon className="icon" />
             Edit Project
-          </Link>
-        </li>
+          </ProjectLink>
+        </ProjectItem>
 
-        {/* Recent Projects Section */}
         {recentProjects.length > 0 && (
           <>
-            <li className="listHeader">Recent Projects</li>
+            <RecentProjectItem>Recent Projects</RecentProjectItem>
             {recentProjects.map((project, index) => (
-              <li key={index}>
-                <Link to={`/edit/${encodeURIComponent(project.path)}`} className="recent-project">
-                  {project.name || project.path}
-                </Link>
-              </li>
+              <ProjectItem key={index}>
+                <RecentProjectLink to={`/edit/${encodeURIComponent(project.path)}`}>
+                  {project.name}
+                </RecentProjectLink>
+              </ProjectItem>
             ))}
           </>
         )}
-      </ul>
-    </div>
+      </ProjectList>
+    </WelcomeContainer>
   );
-}
+};
 
-export default Home;
+export default App;

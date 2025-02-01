@@ -1,0 +1,1094 @@
+/**
+ * Edit project screen styles
+ */
+:root {
+  --component-border: 1px solid #000000;
+  --white-transparent: rgba(255, 255, 255, 0.2);
+  --input-border: 1px solid rgba(255, 255, 255, 0.3);
+  --input-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  --element-padding: 0.5rem 2rem;
+  --error-background-color: rgba(255, 0, 0, 0.1);
+}
+
+h1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+
+  .button-wrapper {
+    display: inline-flex;
+    gap: 8rem;
+
+    & #npm-output {
+      display: none;
+    }
+
+    & svg {
+      display: inline-block;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+
+  .start-stop-container {
+    position: relative;
+    align-self: flex-start;
+
+    & svg {
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4rem;
+      height: 4rem;
+
+      &#npm-stop,
+      &#npm-start {
+        display: none;
+      }
+    }
+  }
+
+  #npm-install {
+    position: relative;
+    top: -0.5rem;
+    height: 5rem;
+
+    &.installing {
+      opacity: 0.7;
+      pointer-events: none;
+      cursor: wait;
+    }
+
+    &.disabled {
+      opacity: 0.3;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+  }
+
+  & a {
+    text-decoration: none;
+    font-size: 1rem;
+  }
+}
+
+h2 {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  & .btn {
+    margin-left: 2rem;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & svg {
+      width: 1.6rem;
+      height: 1.6rem;
+
+      & * {
+        stroke: var(--text-color);
+      }
+    }
+  }
+}
+
+@keyframes normalWidth {
+  0% {
+    flex: 0 0 0;
+    padding: 0;
+    opacity: 0;
+  }
+  100% {
+    flex: 0 0 30rem;
+    opacity: 1;
+  }
+}
+
+@keyframes noWidth {
+  0% {
+    flex: 0 0 30rem;
+    opacity: 1;
+  }
+  100% {
+    flex: 0 0 0;
+    padding: 0;
+    opacity: 0;
+  }
+}
+
+.edit-pane {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.edit-container {
+  flex: 0 0 120rem;
+  will-change: transform;
+  transition: transform 0.8s ease-in-out;
+}
+
+.sidebar-toggle {
+  svg {
+    width: 2rem;
+    height: 2rem;
+    fill: none;
+    stroke: #000;
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+
+.sidebar {
+  flex: 0 0 30rem;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  font-size: 1.6rem;
+  overflow-x: hidden;
+  animation: normalWidth 0.8s ease-in-out forwards;
+
+  &.hidden {
+    animation: noWidth 0.8s ease-in-out forwards;
+  }
+
+  & > * {
+    width: 26rem;
+  }
+}
+
+.right-sidebar {
+  padding: 0;
+  flex: 0 0 0;
+  overflow: hidden;
+  transition: all 0.5s ease-in-out;
+
+  & .preview-pane {
+    height: 100%;
+    font-size: 1.2rem;
+    font-family: monospace;
+  }
+}
+
+.active .right-sidebar {
+  padding-left: 1.5rem;
+  flex: 0 0 20%;
+  min-width: 30rem;;
+}
+
+.container-background {
+  padding: 1rem 2rem 2rem;
+  background: var(--white-transparent);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+
+  & #init-new-page {
+    margin-bottom: 2rem;
+  }
+
+  h3 {
+    padding-bottom: 2rem;
+  }
+}
+
+/**
+ * DOM Tree
+ * The DOM Tree is the list of all the files in the project and is displayed in the sidebar
+ */
+.dom-tree,
+.dom-tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  & ul {
+    margin-left: 2rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+
+    & > li,
+    & > li:first-child {
+      font-weight: normal;
+      text-transform: none;
+    }
+  }
+
+  & li {
+    padding: 0.5rem 0;
+    font-size: 1.6rem;
+    color: var(--text-color);
+
+    & a {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        color: var(--link-color-hover);
+      }
+
+      &.active {
+        opacity: 0.3;
+        pointer-events: none;
+        cursor: default;
+      }
+    }
+
+    &.open > ul {
+      max-height: 100rem;
+    }
+  }
+}
+
+.folder span {
+  display: block;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.file a:before, .folder span:before {
+  content: "";
+  display: inline-block;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-right: 1.6rem;
+  position: relative;
+  top: 0.6rem;
+}
+
+.file.md a:before {
+  content: url(../icons/file-md.svg);
+}
+.file.json a:before {
+  content: url(../icons/file-json.svg);
+}
+.file.js a:before {
+  content: url(../icons/file-js.svg);
+}
+.folder span:before {
+  content: url(../icons/folder.svg);
+}
+.folder.open > span:before {
+  content: url(../icons/folder-open.svg);
+}
+
+.templates-wrapper {
+  & .section-header {
+    padding: 2rem 0 ;
+  }
+
+  & .template-selection,
+  & .template-block {
+  padding: 0.5rem;
+  border: var(--component-border);
+  border-radius: var(--default-radius);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  /* cursor for drag and drop */
+  cursor: move;
+}
+}
+
+/**
+ * Edit Container
+ * The Edit Container is the main part of the editing screen to the right of the sidebar
+ */
+.edit-container {
+  min-height: 80vh;
+}
+
+/**
+ * Sidebar panes
+ * The sidebar panes are the different panels that are displayed in the sidebar
+ * E.g. DOM Tree and the component selections
+ */
+.sidebar-panes {
+  position: relative;
+}
+.sidebar-pane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+  pointer-events: none;
+
+  &.active {
+    opacity: 1;
+    pointer-events: all;
+    margin-bottom: 5rem;
+  }
+}
+
+.sidebar-pane-selection {
+  list-style: none;
+  padding: 2rem 0 0;
+  margin: 0;
+
+  & .btn {
+    display: block;
+    margin-bottom: 2rem;
+    opacity: 1;
+    pointer-events: all;
+    cursor: pointer;
+    transition: opacity 0.3s ease-in-out;
+
+    &.active {
+      opacity: 0.5;
+      pointer-events: none;
+      cursor: default;
+    }
+  }
+}
+
+.component-selection {
+  padding: 0.5rem;
+  border: var(--component-border);
+  border-radius: var(--default-radius);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  /* cursor for drag and drop */
+  cursor: move;
+}
+
+/**
+ * Main form styles
+ */
+#main-form {
+  position: relative;
+  width: 100%;
+  padding-bottom: 3rem;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+
+  &.fade-out {
+    opacity: 0;
+  }
+}
+
+#undo-redo-wrapper {
+  position: absolute;
+  top: -3rem;
+  right: 0.4rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1000;
+
+  & .btn {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  & svg {
+    width: 1.6rem;
+
+    & * {
+      stroke: var(--text-color);
+    }
+  }
+
+  & .undo[disabled] {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  & .redo[disabled] {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  & .snapshot[disabled] {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  & .undo-redo-message, & .undo-redo-count {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--message-color);
+  }
+}
+
+#button-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/**
+ * Dropzone holds all the form elements that are added
+ * to the form from the component selection panel (left panel)
+ */
+#dropzone {
+  min-height: 10rem;
+  padding: 1rem 1rem 3rem;
+  margin-bottom: 2rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--default-radius);
+
+  &.dropzone-highlight {
+    background-color: var(--dropzone-background-highlight-color);
+
+    & .form-element {
+      margin: 2rem 0;
+    }
+  }
+}
+
+/*
+ * Fieldsets and form elements
+ */
+fieldset {
+  position: relative;
+  margin: 2rem 0;
+  padding: 1.4rem 0.5rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--default-radius);
+}
+
+.form-element {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px dotted var(--border-color);
+  border-radius: var(--default-radius);
+  padding: 0.5rem 6rem 0.5rem 2rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  transition: all 0.2s ease-in-out;
+
+  .sort-handle {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 2rem;
+    height: 2rem;
+    transform: translateY(-50%);
+    cursor: move;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+
+    & svg {
+      flex: 1;
+      height: 1.6rem;
+      width: 1.6rem;
+
+      & * {
+        stroke: #000;
+      }
+    }
+  }
+
+  .button-wrapper {
+    position: absolute;
+    right: 1rem;
+    top: calc(50% - 0.5rem);
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+    flex: 0 0 6rem;
+    padding-left: 1rem;
+    height: 1.6rem;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  .delete-button, .add-button {
+    background: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 2rem;
+    font-size: 1.6rem;
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    color: var(--text-color);
+    cursor: pointer;
+    margin-left: auto;
+
+    & svg g {
+      stroke: var(--text-color) ;
+    }
+
+    &:hover svg g {
+        stroke: var(--link-color-hover);
+        transition: stroke 0.3s;
+      }
+  }
+
+  &:hover {
+    > .sort-handle,
+    > .button-wrapper {
+      opacity: 1;
+    }
+  }
+
+  &.is-last {
+    border: none;
+    border-top: 1px double var(--highlight-color);
+    padding: 0;
+    overflow: hidden;
+    height: 0;
+  }
+
+  & label {
+    flex: 0 0 30%;
+
+    &:last-of-type {
+      flex: 1 1 auto;
+    }
+
+    & span {
+      display: inline-block !important;
+      margin-right: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    & .help {
+      position: relative;
+      display: inline-flex !important;
+      justify-content: center;
+      align-items: center;
+      width: 1.2rem;
+      height: 1.2rem;
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      margin: 0 0 0 0.5rem;
+
+      &:hover {
+        cursor: help;
+
+        & .help-text {
+          opacity: 1;
+        }
+      }
+    }
+
+    & .help-text {
+      position: absolute;
+      top: 1rem;
+      right: -12rem;
+      width: 10rem;
+      padding: 0.5rem;
+      background-color: var(--help-background-color);
+      border-radius: var(--default-radius);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.5s ease-in-out;
+    }
+
+    & .error-message {
+      position: absolute;
+      top: -2rem;
+      left: 1rem;
+      font-size: 0.75rem;
+      padding: 0.5rem;
+      color: var(--text-color);
+      background-color: var(--error-color);
+      margin: 0.25rem 0 0;
+    }
+
+    & div {
+      position: relative;
+      flex: 1 1 auto;
+      display: flex;
+      justify-content: flex-start;
+      margin-right: 2rem;
+
+      & *:not([type="checkbox"][role="switch"]) {
+        width: 100%;
+      }
+    }
+
+    & input.is-error {
+    background-color: var(--error-background-color);
+  }
+
+    & [type="text"], & textarea, & [type="number"], & [type="date"], & [type="url"], & select {
+      font-family: "Open Sans", sans-serif;
+      border: none;
+      background: var(--white-transparent);
+      border-radius: 0.5rem;
+      box-shadow: var(--input-box-shadow);
+      backdrop-filter: blur(5px);
+      border: var(--input-border);
+      color: var(--text-color);
+      padding: var(--element-padding);
+
+      &.invalid {
+        border-bottom-color: var(--error-color);
+      }
+
+      &[readonly] {
+        background: none !important;
+        box-shadow: none;
+        backdrop-filter: none;
+        border: none;
+      }
+    }
+
+    &.object-name > input {
+      font-size: 1.5rem;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    & textarea {
+      height: 29px;
+      max-height: 10rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & [type="date"]::webkit-calendar-picker-indicator {
+      color: #fff;
+    }
+  }
+
+  &.label-exists {
+    & > .label-wrapper span:first-child {
+      display: none !important;
+    }
+    & > .content-wrapper .hint {
+      display: none !important;
+    }
+    & > .label-wrapper .hint {
+      display: none !important;
+    }
+  }
+
+  &.is-list {
+    display: block;
+
+    & ul {
+      padding: 0;
+      margin: 0;
+    }
+
+    & li {
+      position: relative;
+      display: flex;
+      font-family: "Open Sans", sans-serif;
+      border: none;
+      background: none;
+      color: var(--text-color);
+      padding: var(--element-padding);
+
+      & .button-wrapper {
+        position: static;
+        margin-top: 0.5rem;
+      }
+
+      &:hover .button-wrapper{
+        opacity: 1;
+      }
+    }
+
+    & input {
+      border: none;
+      background: var(--white-transparent);
+      border-radius: 0.5rem;
+      box-shadow: var(--input-box-shadow);
+      backdrop-filter: blur(5px);
+      color: var(--text-color);
+      padding: var(--element-padding);
+      flex: 0 0 80%;
+    }
+
+    & .button-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      flex: 0 0 5rem;
+      height: 1.6rem;
+
+      & .button {
+        position: static;
+      }
+    }
+  }
+
+  &.is-array,
+  &.is-object,
+  &.is-list,
+  &.is-block {
+    display: block;
+
+    & label {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+
+      &.object-name {
+        min-height: 3rem;
+
+        & .section-description {
+          font-size: 1.5rem;
+          font-weight: 600;
+          font-style: italic;
+
+          & + .element-label {
+            display: none;
+          }
+        }
+      }
+
+      & .collapse-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: -0.1rem;
+        right: 2rem;
+        margin: 0;
+        cursor: pointer;
+        transition: all 0.5s ease-in-out;
+
+        & svg {
+          position: absolute;
+          left: 0;
+          width: 2rem;
+          height: 2.6rem;
+
+          & * {
+            stroke: #000;
+          }
+        }
+
+        & .open {
+          display: block;
+        }
+        & .collapsed {
+          display: none;
+        }
+
+        &.is-collapsed {
+
+          & .open {
+            display: none;
+          }
+          & .collapsed {
+            display: block;
+          }
+        }
+      }
+    }
+
+    /* Special label for the object in an array */
+    /* We need to hide the regular input as it results from a valid JSON to schema conversion
+    & .array-dropzone > .form-element > .object-name {
+      & span:first-child, & input {
+        display: none;
+      }
+      & .hint {
+        display: inline-block !important;
+        font-size: 1.4rem;
+        font-style: italic;
+        opacity: 0.3;
+        position: relative;
+        top: 0.7rem;
+      }
+    }
+    */
+  }
+
+  & .object-dropzone,
+  & .array-dropzone,
+  & .block-fields-container {
+    min-height: 5rem;
+    border: 1px dotted var(--border-color);
+    border-radius: var(--default-radius);
+    padding: 0.5rem;
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+
+    &.is-collapsed {
+      max-height: 0 !important;
+      min-height: 0;
+      padding: 0 !important;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+}
+
+.dropzone-highlight {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
+  font-style: italic;
+}
+
+.dropzone {
+  position: relative;
+  min-height: 2rem; /* Ensure dropzone always has height */
+  padding: 0.5rem;
+  /* Add a small buffer zone */
+  margin: 0.25rem 0;
+}
+
+
+.form-element.draggable-transition {
+  transition: transform 0.2s ease-out;
+}
+
+
+/*
+.form-element.no-drop {
+  pointer-events: none;
+}
+
+.form-element.no-drop .dropzone,
+.form-element.no-drop .sort-handle,
+.form-element.no-drop .button-wrapper {
+  pointer-events: all;
+}
+
+.drop-ghost {
+  height: 4rem;
+  position: relative;
+  z-index: 1;
+  margin: 0.5rem 0;
+  border: 2px dashed #666;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+*/
+
+/**
+ * EasyMD Editor styles
+ */
+#editorOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  padding: 5rem 2rem 2rem;
+  background-image: var(--page-background);
+  background-blend-mode: overlay, overlay, overlay, normal;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  color: var(--text-color);
+  font-family: "Open Sans", sans-serif;
+  justify-content: center;
+  display: none;
+
+  &.show {
+    display: flex;
+  }
+
+  #closeEditor {
+    position: absolute;
+    top: 2rem;
+    right: 1rem;
+    z-index: 10001;
+    width: 4rem;
+    height: 4rem;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+
+    & svg {
+      margin: 0.25rem;
+
+      & * {
+        stroke: #000;
+      }
+    }
+  }
+
+  & .EasyMDEContainer {
+    width: 90%;
+    color: inherit;
+
+    & .editor-toolbar {
+      background-image: var(--editor-background);
+
+      & button {
+        color: var(--text-color);
+        transition: all 0.5s ease-in-out;
+
+        &:hover {
+          color: var(--button-hover-color);
+        }
+      }
+
+      & i.separator {
+        border-right: none;
+      }
+    }
+
+    & .CodeMirror {
+      background-image: var(--editor-background);
+      height: 90%;
+      overflow-y: auto;
+
+      &.disable-markdown-styles {
+        & .cm-header {
+          font-size: 1rem !important;
+          font-weight: normal !important;
+        }
+      }
+    }
+
+    & .editor-preview {
+      background-image: var(--editor-background);
+    }
+  }
+
+  #disableMarkdownStyles.disabled {
+    text-decoration: line-through !important;
+  }
+}
+
+/**
+ * A nicer looking Select Element
+ */
+label > div:has(select) {
+  position: relative;
+  color: #fff;
+
+  &:after {
+    position: absolute;
+    top: 0.5rem;
+    right: 2rem;
+    z-index: 1;
+    content: "";
+    width: 1rem;
+    height: 1rem;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+    transform: rotate(45deg);
+  }
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  color: black;
+  cursor: pointer;
+  padding: var(--element-padding);
+  font-family: "Open Sans", sans-serif;
+}
+
+/**
+ * Checkbox as Toggle Switch
+ */
+
+input:where([type="checkbox"][role="switch"]) {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  position: relative;
+  color: inherit;
+  font-size: inherit;
+  width: 3em;
+  height: 1.5em;
+  box-sizing: content-box;
+  border: 1px solid;
+  border-radius: 0.75em;
+  vertical-align: text-bottom;
+  margin: 0.9rem auto 0.9rem 2rem;
+  box-shadow: var(--input-box-shadow);
+}
+
+input:where([type="checkbox"][role="switch"])::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50%);
+  box-sizing: border-box;
+  width: 1em;
+  height: 1em;
+  margin: 0 0.15em;
+  border: 1px solid;
+  border-radius: 50%;
+  background: currentcolor;
+  opacity: 50%;
+}
+
+input:where([type="checkbox"][role="switch"]):checked::before {
+  opacity: 100%;
+  left: 1.5em;
+}
+
+input:where([type="checkbox"][role="switch"]):disabled {
+  opacity: 0.4;
+}
+
+/**
+ * About window styles
+ */
+.about-window {
+  min-height: 100vh;
+  padding: 0;
+
+  & .about-wrapper {
+    padding: 2rem;
+  }
+
+  & svg {
+    width: 6.75rem;
+    height: 6.75rem;
+    fill: none;
+    stroke: var(--text-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}

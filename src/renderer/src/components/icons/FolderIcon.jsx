@@ -4,14 +4,15 @@
  * @param {string} [props.className] - Optional class name
  * @returns {JSX.Element} Rendered component
  */
-function FolderIcon({ className }) {
+function FolderIcon(
+
+) {
   return (
-    <svg 
-      width="22" 
-      height="19" 
-      viewBox="0 0 22 19" 
+    <svg
+      width="22"
+      height="19"
+      viewBox="0 0 22 19"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
     >
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" strokeLinecap="round" strokeLinejoin="round">
         <g transform="translate(1, 1)" stroke="currentColor">
