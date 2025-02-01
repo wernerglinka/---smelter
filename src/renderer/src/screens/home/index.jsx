@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FolderPlusIcon, FolderOpenIcon } from '../../components/icons';
-import { StorageOperations } from '../lib/storage-operations';
-import { selectProject } from '../lib/select-project';
+import { FolderPlusIcon, FolderOpenIcon, FolderMinusIcon, GithubIcon } from '../../components/icons';
+import { StorageOperations } from '../../services/storage';
+import { selectProject } from './utils/select-project';
+import { handleDeleteProject } from './handlers/delete-project';
+import { handleCloneGithub } from './handlers/clone-github';
 import { TitleBar } from '../../styles/common';
 import {
   WelcomeContainer,
@@ -85,6 +87,18 @@ const App = () => {
           <ProjectLink to="/edit">
             <FolderOpenIcon className="icon" />
             Edit Project
+          </ProjectLink>
+        </ProjectItem>
+        <ProjectItem>
+          <ProjectLink href="#" onClick={handleDeleteProject}>
+            <FolderMinusIcon className="icon" />
+            Delete a Project
+          </ProjectLink>
+        </ProjectItem>
+        <ProjectItem>
+          <ProjectLink href="#" onClick={handleCloneGithub}>
+            <GithubIcon className="icon" />
+            Clone a Project from Github
           </ProjectLink>
         </ProjectItem>
 

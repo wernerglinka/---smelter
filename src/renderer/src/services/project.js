@@ -1,5 +1,5 @@
-// Migrated from project-operations.js
-export const ProjectService = {
+// services/project.js
+export const ProjectOperations = {
   validateProject: async (projectFolder) => {
     const metallurgyPath = `${projectFolder}/.metallurgy`;
     return await window.electronAPI.directories.exists(metallurgyPath);
@@ -16,11 +16,25 @@ export const ProjectService = {
 
   deleteProject: async (projectFolder) => {
     const metallurgyPath = `${projectFolder}/.metallurgy`;
+    // Verify .metallurgy folder exists before deletion
     const folderExists = await window.electronAPI.directories.exists(metallurgyPath);
-    
     if (!folderExists) {
       throw new Error('Project configuration folder .metallurgy not found');
     }
-    // Add deletion logic here
+
+    const result = await window.electronAPI.directories.delete(metallurgyPath);
+    if (result.status === 'failure') {
+      throw new Error(`Failed to delete .metallurgy folder: ${result.error}`);
+    }
+    return true;
+  },
+
+  confirmDeletion: async (projectName) => {
+    const result = await window.electronAPI.dialog.showCustomMessage({
+      type: 'warning',
+      message: `Are you sure you want to remove the ${projectName} project?`,
+      buttons: ['Yes', 'No']
+    });
+    return result?.response?.index === 0;
   }
 };

@@ -12,7 +12,7 @@
 const DIALOG_CONFIG = {
   title: 'Select Project Folder',
   message: 'Choose a folder for your project',
-  properties: [ 'openDirectory' ],
+  properties: ['openDirectory'],
   buttonLabel: 'Select Project Folder'
 };
 
@@ -21,16 +21,16 @@ const DIALOG_CONFIG = {
  * @param {DialogResult} result - Dialog response
  * @returns {string|null} Selected path or null if canceled
  */
-const validateDialogResult = ( result ) => {
+const validateDialogResult = (result) => {
   if (
     result?.status !== 'success' ||
     result.data?.canceled ||
-    !Array.isArray( result.data?.filePaths ) ||
+    !Array.isArray(result.data?.filePaths) ||
     result.data.filePaths.length === 0
   ) {
     return null;
   }
-  return result.data.filePaths[ 0 ];
+  return result.data.filePaths[0];
 };
 
 /**
@@ -38,10 +38,10 @@ const validateDialogResult = ( result ) => {
  * @param {string} path - Path to validate
  * @throws {Error} If path doesn't exist
  */
-const validatePath = async ( path ) => {
-  const exists = await window.electronAPI.files.exists( path );
-  if ( !exists ) {
-    throw new Error( 'Selected folder does not exist' );
+const validatePath = async (path) => {
+  const exists = await window.electronAPI.files.exists(path);
+  if (!exists) {
+    throw new Error('Selected folder does not exist');
   }
 };
 
@@ -52,21 +52,17 @@ const validatePath = async ( path ) => {
  */
 export const selectProject = async () => {
   try {
-    const result = await window.electronAPI.dialog.open(
-      'showOpenDialog',
-      DIALOG_CONFIG
-    );
+    const result = await window.electronAPI.dialog.open('showOpenDialog', DIALOG_CONFIG);
 
-    const selectedPath = validateDialogResult( result );
-    if ( !selectedPath ) {
+    const selectedPath = validateDialogResult(result);
+    if (!selectedPath) {
       return 'abort';
     }
 
-    await validatePath( selectedPath );
+    await validatePath(selectedPath);
     return selectedPath;
-
-  } catch ( error ) {
-    console.error( 'Error in selectProject:', error );
-    throw new Error( `Failed to select project folder: ${ error.message }` );
+  } catch (error) {
+    console.error('Error in selectProject:', error);
+    throw new Error(`Failed to select project folder: ${error.message}`);
   }
 };

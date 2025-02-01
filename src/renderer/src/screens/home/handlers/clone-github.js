@@ -1,33 +1,25 @@
-// screens/home/handlers/open-project.js
-import { navigate } from '../navigation/utils.js';
-import { StorageOperations } from '../../lib/storage-operations.js';
+import { StorageOperations } from '../../../services/storage';
 
-const cloneGitHubRepo = async () => {
-  try {
-    return await window.electronAPI.git.clone();
-  } catch ( error ) {
-    console.error( 'Clone: Failed -', error );
-    throw error;
-  }
-};
-
-export const handleCloneGithub = async ( e ) => {
-  console.log( 'handleCloneGithub called', e ? 'from button' : 'from menu' );
-  if ( e?.preventDefault ) {
+export const handleCloneGithub = async (e) => {
+  if (e?.preventDefault) {
     e.preventDefault();
   }
 
   try {
-    const result = await cloneGitHubRepo();
-    console.log( 'Clone result:', result ); // Add this log
+    const result = await window.electronAPI.git.clone();
 
-    // Changed from checking result?.proceed?.status === 'success'
-    if ( result?.status === 'success' && result?.proceed.data === true ) {
-      await StorageOperations.saveProjectPath( result.path );
-      navigate( '../new-project/index.html' );
+    if (result?.status === 'success' && result?.proceed?.data === true) {
+      StorageOperations.saveProjectPath(result.path);
+      StorageOperations.clearProjectData();
+      return result.path;
     }
-  } catch ( error ) {
-    console.error( 'Clone handler error:', error );
-    return false;
+  } catch (error) {
+    console.error('Clone handler error:', error);
+    await window.electronAPI.dialog.showCustomMessage({
+      type: 'error',
+      message: `Failed to clone repository: ${error.message}`,
+      buttons: ['OK']
+    });
   }
+  return false;
 };
