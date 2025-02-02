@@ -1,0 +1,202 @@
+[
+  {
+    "name": "bodyClasses",
+    "type": "text",
+    "label": "Body Classes",
+    "default": "",
+    "placeholder": "Optional Body Classes",
+    "noDeletion": false,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "canonicalUrl",
+    "type": "url",
+    "label": "Canonical URL",
+    "default": "",
+    "placeholder": "Add a canonical URL",
+    "noDeletion": true,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "container",
+    "type": "select",
+    "label": "Container",
+    "default": "section",
+    "options": [
+      {
+        "label": "Article",
+        "value": "article"
+      },
+      {
+        "label": "Aside",
+        "value": "aside"
+      },
+      {
+        "label": "Div",
+        "value": "div"
+      },
+      {
+        "label": "Section",
+        "value": "section"
+      }
+    ],
+    "noDeletion": true,
+    "isRequired": true,
+    "noDuplication": true
+  },
+  {
+    "name": "containerId",
+    "type": "text",
+    "label": "Container ID",
+    "default": "",
+    "placeholder": "Add a container ID",
+    "noDeletion": false,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "description",
+    "type": "textarea",
+    "label": "Description",
+    "default": "",
+    "placeholder": "Add a description",
+    "noDeletion": true,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "draft",
+    "type": "checkbox",
+    "label": "Draft",
+    "default": false,
+    "noDeletion": true,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "isAnimated",
+    "type": "checkbox",
+    "label": "Animated",
+    "default": false,
+    "noDeletion": false,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "isDisabled",
+    "type": "checkbox",
+    "label": "Disabled",
+    "default": false,
+    "noDeletion": true,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "layout",
+    "type": "select",
+    "label": "Layout",
+    "default": "sections.njk",
+    "options": [
+      {
+        "label": "Default",
+        "value": "default.njk"
+      },
+      {
+        "label": "Sections",
+        "value": "sections.njk"
+      },
+      {
+        "label": "Blocks",
+        "value": "blocks.njk"
+      }
+    ],
+    "noDeletion": true,
+    "isRequired": true,
+    "noDuplication": true
+  },
+  {
+    "name": "mySimpleList",
+    "type": "listField",
+    "label": "My Simple List",
+    "default": [],
+    "noDeletion": false,
+    "isRequired": false,
+    "noDuplication": false
+  },
+  {
+    "name": "name",
+    "type": "text",
+    "label": "Name",
+    "default": "",
+    "placeholder": "Add a name",
+    "noDeletion": true,
+    "isRequired": true,
+    "noDuplication": true
+  },
+  {
+    "name": "navLabel",
+    "type": "text",
+    "label": "Navigation Label",
+    "default": "",
+    "placeholder": "Add a navigation label",
+    "noDeletion": false,
+    "isRequired": false,
+    "noDuplication": false
+  },
+  {
+    "name": "published",
+    "type": "date",
+    "label": "Published",
+    "default": "",
+    "placeholder": "01-01-2020",
+    "noDeletion": false,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "quantity",
+    "type": "number",
+    "label": "Quantity",
+    "default": 0,
+    "placeholder": "Add a quantity",
+    "noDeletion": false,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "socialImage",
+    "type": "image",
+    "label": "Social Image",
+    "default": "",
+    "placeholder": "Add path to social image",
+    "noDeletion": true,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "title",
+    "type": "text",
+    "label": "Title",
+    "default": "",
+    "placeholder": "Add a title",
+    "noDeletion": true,
+    "isRequired": true,
+    "noDuplication": true
+  },
+  {
+    "name": "seo",
+    "type": "object",
+    "noDeletion": false,
+    "isRequired": false,
+    "noDuplication": true
+  },
+  {
+    "name": "containerFields",
+    "type": "object",
+    "noDeletion": false,
+    "isRequired": false,
+    "noDuplication": true
+  }
+]
