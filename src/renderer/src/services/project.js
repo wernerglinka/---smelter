@@ -2,9 +2,13 @@
 export const ProjectOperations = {
   validateProject: async (projectFolder) => {
     try {
+      console.log('Validating project folder:', projectFolder);
+
       // Check if .metallurgy directory exists
       const metallurgyPath = `${projectFolder}/.metallurgy`;
       const { status: dirStatus } = await window.electronAPI.directories.exists(metallurgyPath);
+      console.log('Metallurgy directory check:', metallurgyPath, dirStatus);
+
       if (dirStatus !== 'success') {
         console.log('Metallurgy directory not found');
         return false;
@@ -13,6 +17,8 @@ export const ProjectOperations = {
       // Check if projectData.json exists
       const configPath = `${projectFolder}/.metallurgy/projectData.json`;
       const { status: fileStatus } = await window.electronAPI.files.exists(configPath);
+      console.log('Config file check:', configPath, fileStatus);
+
       if (fileStatus !== 'success') {
         console.log('projectData.json not found');
         return false;
@@ -20,16 +26,26 @@ export const ProjectOperations = {
 
       // Try to read and parse the config file to ensure it's valid
       const { status: readStatus, data } = await window.electronAPI.files.read(configPath);
+      console.log('Read config status:', readStatus, 'Raw data:', data);
+
       if (readStatus !== 'success' || !data) {
         console.log('Failed to read projectData.json');
         return false;
       }
 
       try {
+        // Check if data is already an object
+        if (typeof data === 'object' && data !== null) {
+          console.log('Data is already parsed:', data);
+          return true;
+        }
+
+        // Otherwise parse it as JSON
         JSON.parse(data);
+        console.log('Successfully validated project');
         return true;
-      } catch {
-        console.log('Invalid JSON in projectData.json');
+      } catch (error) {
+        console.log('Invalid JSON in projectData.json:', error);
         return false;
       }
     } catch (error) {
@@ -46,6 +62,12 @@ export const ProjectOperations = {
       throw new Error(error || 'Failed to read project configuration');
     }
 
+    // Return the data directly if it's already an object
+    if (typeof data === 'object' && data !== null) {
+      return data;
+    }
+
+    // Otherwise parse it as JSON
     return JSON.parse(data);
   },
 

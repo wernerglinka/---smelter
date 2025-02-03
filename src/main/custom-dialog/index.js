@@ -59,16 +59,11 @@ const dialogStyles = `
 `;
 
 const dialogScript = `
-  console.log('Dialog script loaded');
-
   // Wait for DOMContentLoaded to ensure electronAPI is available
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, electronAPI available:', !!window.electronAPI);
 
     document.querySelectorAll('button').forEach((btn, index) => {
-      console.log('Adding click listener to button:', btn.textContent);
       btn.addEventListener('click', () => {
-        console.log('Button clicked:', index);
         const value = document.getElementById('inputValue')?.value;
 
         try {
@@ -78,8 +73,6 @@ const dialogScript = `
           if (!window.electronAPI.customResponse) {
             throw new Error('customResponse not found');
           }
-
-          console.log('Sending response:', { index, value });
           window.electronAPI.customResponse({ index, value });
         } catch (error) {
           console.error('Error sending response:', error);
@@ -100,8 +93,6 @@ const createDialogWindow = (parentWindow, options) => {
   const preloadPath = app.isPackaged
     ? path.join(process.resourcesPath, 'app.asar', 'out', 'preload', 'customDialog.js')
     : path.join(__dirname, '..', '..', 'out', 'preload', 'customDialog.js');
-
-  console.log('Creating dialog window with preload path:', preloadPath); // Debug log
 
   const win = new BrowserWindow({
     parent: parentWindow,
@@ -180,7 +171,6 @@ export const createCustomDialog = (window) => {
         const win = createDialogWindow(window, options);
 
         const responseHandler = (event, response) => {
-          console.log('Main: Received response', response); // Debug log
           win.close();
           resolve({ response });
         };
@@ -190,7 +180,6 @@ export const createCustomDialog = (window) => {
         ipcMain.once('custom-dialog-response', responseHandler);
 
         win.on('closed', () => {
-          console.log('Window closed'); // Debug log
           ipcMain.removeListener('custom-dialog-response', responseHandler);
         });
 

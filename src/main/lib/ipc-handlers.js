@@ -388,12 +388,10 @@ const setupIPC = (window) => {
 
   // custom dialog handlers
   ipcMain.handle('custom-dialog-message', async (event, options) => {
-    console.log('Main: Handling custom-dialog-message', options); // Debug log
     return customDialog.showMessage(options);
   });
 
   ipcMain.on('custom-dialog-response', (event, response) => {
-    console.log('Main: Received custom-dialog-response', response); // Debug log
     event.sender.send('custom-dialog-response', response);
   });
 
