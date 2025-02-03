@@ -57,32 +57,31 @@ const App = () => {
 
       if (projectFolder === "abort") return;
 
-      // First validate the project
+      // Check if this is already a Metallurgy project
       const isValid = await ProjectOperations.validateProject(projectFolder);
-      if (!isValid) {
-        await window.electronAPI.dialog.showCustomMessage({
-          type: 'error',
-          message: 'This folder is not a valid project - .metallurgy folder not found!',
-          buttons: ['OK']
-        });
-        return;
-      }
 
-      // Save project data to localStorage
+      // Save project path without clearing other data
       StorageOperations.saveProjectPath(projectFolder);
-      const config = await ProjectOperations.loadProjectConfig(projectFolder);
-      StorageOperations.saveProjectData({
-        projectPath: projectFolder,
-        contentPath: config.contentPath,
-        dataPath: config.dataPath
-      });
 
-      navigate('/edit');
+      if (isValid) {
+        // If it's a valid project, load config and go to edit screen
+        const config = await ProjectOperations.loadProjectConfig(projectFolder);
+        StorageOperations.saveProjectData({
+          projectPath: projectFolder,
+          contentPath: config.contentPath,
+          dataPath: config.dataPath
+        });
+        navigate('/edit');
+      } else {
+        // If it's not a valid project, just navigate to new project screen
+        // without clearing project data
+        navigate('/new');
+      }
     } catch (error) {
-      console.error('Error creating new project:', error);
+      console.error('Error initializing project:', error);
       await window.electronAPI.dialog.showCustomMessage({
         type: 'error',
-        message: `Failed to create project: ${error.message}`,
+        message: `Failed to initialize project: ${error.message}`,
         buttons: ['OK']
       });
     }
