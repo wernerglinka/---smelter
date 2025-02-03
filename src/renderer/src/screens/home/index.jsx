@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FolderPlusIcon, FolderOpenIcon, FolderMinusIcon, GithubIcon } from '../../components/icons';
 import { StorageOperations } from '../../services/storage';
+import { ProjectOperations } from '../../services/project';
 import { selectProject } from './utils/select-project';
 import { handleDeleteProject } from './handlers/delete-project';
+import { handleEditProject } from './handlers/edit-project';
 import { handleCloneGithub } from './handlers/clone-github';
 import { TitleBar } from '../../styles/common';
 import {
@@ -31,7 +33,7 @@ const App = () => {
         if (projectData) {
           setRecentProjects([{
             path: projectData.projectPath,
-            name: projectData.name || projectData.projectPath.split('/').pop()
+            name: projectData.projectPath.split('/').pop()
           }]);
         } else {
           setRecentProjects([]);
@@ -55,8 +57,25 @@ const App = () => {
 
       if (projectFolder === "abort") return;
 
+      // First validate the project
+      const isValid = await ProjectOperations.validateProject(projectFolder);
+      if (!isValid) {
+        await window.electronAPI.dialog.showCustomMessage({
+          type: 'error',
+          message: 'This folder is not a valid project - .metallurgy folder not found!',
+          buttons: ['OK']
+        });
+        return;
+      }
+
+      // Save project data to localStorage
       StorageOperations.saveProjectPath(projectFolder);
-      StorageOperations.clearProjectData();
+      const config = await ProjectOperations.loadProjectConfig(projectFolder);
+      StorageOperations.saveProjectData({
+        projectPath: projectFolder,
+        contentPath: config.contentPath,
+        dataPath: config.dataPath
+      });
 
       navigate('/edit');
     } catch (error) {
@@ -70,33 +89,33 @@ const App = () => {
   };
 
   return (
-    <WelcomeContainer>
-      <TitleBar />
+    <WelcomeContainer className="welcome">
+      <TitleBar className="titlebar" />
       <h1>Smelter</h1>
       <p>Content Management for Metalsmith refined</p>
 
-      <ProjectList>
-        <ListHeader>Start</ListHeader>
+      <ProjectList className="projects">
+        <ListHeader className="listHeader">Start</ListHeader>
         <ProjectItem>
-          <ProjectLink href="#" onClick={handleNewProject}>
+          <ProjectLink className="js-get-project-folder" href="#" onClick={handleNewProject}>
             <FolderPlusIcon className="icon" />
             Initialize a Project from existing folder
           </ProjectLink>
         </ProjectItem>
         <ProjectItem>
-          <ProjectLink to="/edit">
+          <ProjectLink className="js-edit-project" href="#" onClick={handleEditProject}>
             <FolderOpenIcon className="icon" />
             Edit Project
           </ProjectLink>
         </ProjectItem>
         <ProjectItem>
-          <ProjectLink href="#" onClick={handleDeleteProject}>
+          <ProjectLink className="js-delete-project-folder" href="#" onClick={handleDeleteProject}>
             <FolderMinusIcon className="icon" />
             Delete a Project
           </ProjectLink>
         </ProjectItem>
         <ProjectItem>
-          <ProjectLink href="#" onClick={handleCloneGithub}>
+          <ProjectLink className="js-clone-from-github" href="#" onClick={handleCloneGithub}>
             <GithubIcon className="icon" />
             Clone a Project from Github
           </ProjectLink>
@@ -104,10 +123,13 @@ const App = () => {
 
         {recentProjects.length > 0 && (
           <>
-            <RecentProjectItem>Recent Projects</RecentProjectItem>
+            <ListHeader className="listHeader recent">Recent</ListHeader>
             {recentProjects.map((project, index) => (
               <ProjectItem key={index}>
-                <RecentProjectLink to={`/edit/${encodeURIComponent(project.path)}`}>
+                <RecentProjectLink
+                  className="js-recent-project"
+                  to={`/edit/${encodeURIComponent(project.path)}`}
+                >
                   {project.name}
                 </RecentProjectLink>
               </ProjectItem>

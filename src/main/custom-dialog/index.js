@@ -1,6 +1,7 @@
 import { ipcMain, BrowserWindow } from 'electron';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
+const { app } = require('electron');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,31 +59,32 @@ const dialogStyles = `
 `;
 
 const dialogScript = `
-  window.electronAPI.onUpdateDialogContent((event, { message, logOutput }) => {
-    const messageEl = document.querySelector('.message');
-    const logEl = document.querySelector('.log-output');
+  console.log('Dialog script loaded');
 
-    if (messageEl && message) {
-      messageEl.textContent = message;
-    }
-    if (logEl && logOutput) {
-      logEl.textContent = logOutput;
-      logEl.scrollTop = logEl.scrollHeight;
-    }
-  });
+  // Wait for DOMContentLoaded to ensure electronAPI is available
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, electronAPI available:', !!window.electronAPI);
 
-  const logDiv = document.querySelector('.log-output');
-  if (logDiv) {
-    const observer = new MutationObserver(() => {
-      logDiv.scrollTop = logDiv.scrollHeight;
-    });
-    observer.observe(logDiv, { childList: true, characterData: true, subtree: true });
-  }
+    document.querySelectorAll('button').forEach((btn, index) => {
+      console.log('Adding click listener to button:', btn.textContent);
+      btn.addEventListener('click', () => {
+        console.log('Button clicked:', index);
+        const value = document.getElementById('inputValue')?.value;
 
-  document.querySelectorAll('button').forEach((btn, index) => {
-    btn.addEventListener('click', () => {
-      const value = document.getElementById('inputValue')?.value;
-      window.electronAPI.customResponse({ index, value });
+        try {
+          if (!window.electronAPI) {
+            throw new Error('electronAPI not found');
+          }
+          if (!window.electronAPI.customResponse) {
+            throw new Error('customResponse not found');
+          }
+
+          console.log('Sending response:', { index, value });
+          window.electronAPI.customResponse({ index, value });
+        } catch (error) {
+          console.error('Error sending response:', error);
+        }
+      });
     });
   });
 `;
@@ -94,6 +96,13 @@ const dialogScript = `
  * @param options
  */
 const createDialogWindow = (parentWindow, options) => {
+  // Get the correct path whether in development or production
+  const preloadPath = app.isPackaged
+    ? path.join(process.resourcesPath, 'app.asar', 'out', 'preload', 'customDialog.js')
+    : path.join(__dirname, '..', '..', 'out', 'preload', 'customDialog.js');
+
+  console.log('Creating dialog window with preload path:', preloadPath); // Debug log
+
   const win = new BrowserWindow({
     parent: parentWindow,
     modal: true,
@@ -104,7 +113,8 @@ const createDialogWindow = (parentWindow, options) => {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.cjs')
+      preload: preloadPath,
+      sandbox: false
     },
     ...options
   });
@@ -123,9 +133,11 @@ const createDialogWindow = (parentWindow, options) => {
  * @param root0.input
  */
 const createCustomDialogHTML = ({ type, message, logOutput = '', buttons, input }) => `
- <!DOCTYPE html>
- <html>
+<!DOCTYPE html>
+<html>
   <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
     <style>${dialogStyles}</style>
   </head>
   <body>
@@ -134,12 +146,12 @@ const createCustomDialogHTML = ({ type, message, logOutput = '', buttons, input 
       ${type === 'progress' ? `<div class="log-output">${logOutput}</div>` : ''}
       ${input ? '<div class="input"><input type="text" id="inputValue" /></div>' : ''}
       <div class="buttons">
-      ${buttons ? buttons.map((btn) => `<button>${btn}</button>`).join('') : ''}
+        ${buttons ? buttons.map((btn) => `<button>${btn}</button>`).join('') : ''}
       </div>
     </div>
     <script>${dialogScript}</script>
   </body>
- </html>
+</html>
 `;
 
 /**
@@ -165,38 +177,33 @@ export const createCustomDialog = (window) => {
      */
     showMessage: async (options) => {
       return new Promise((resolve) => {
-        // Create a new dialog window
         const win = createDialogWindow(window, options);
 
-        // Function to handle dialog response
-        /**
-         *
-         * @param event
-         * @param response
-         */
         const responseHandler = (event, response) => {
+          console.log('Main: Received response', response); // Debug log
           win.close();
-          // Don't pass the window reference in the response
           resolve({ response });
         };
 
-        // Listen for dialog response
+        // Clean up existing listeners before adding new one
         ipcMain.removeAllListeners('custom-dialog-response');
         ipcMain.once('custom-dialog-response', responseHandler);
 
-        // Close the dialog when the window is closed
         win.on('closed', () => {
+          console.log('Window closed'); // Debug log
           ipcMain.removeListener('custom-dialog-response', responseHandler);
         });
 
-        // Load the dialog content
         const html = createCustomDialogHTML(options);
         win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
 
-        // Resolve immediately if no buttons are provided
+        // For debugging, open DevTools in the dialog window
+        if (process.env.NODE_ENV === 'development') {
+          win.webContents.openDevTools();
+        }
+
         if (!options.buttons || options.buttons.length === 0) {
           progressWindow = win;
-          // Don't pass the window reference
           resolve({ type: 'progress' });
         }
       });

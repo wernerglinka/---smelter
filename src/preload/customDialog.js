@@ -1,7 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-console.log('Preload script starting...'); // Debug log
-
 contextBridge.exposeInMainWorld('electronAPI', {
   customResponse: (data) => {
     console.log('Preload: Sending custom-dialog-response', data);
@@ -10,4 +8,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onUpdateDialogContent: (callback) => ipcRenderer.on('update-dialog-content', callback)
 });
 
-console.log('Preload script completed setup'); // Debug log
+console.log('Custom dialog preload script loaded');

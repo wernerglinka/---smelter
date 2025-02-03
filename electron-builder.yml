@@ -3,13 +3,18 @@ productName: my-app
 directories:
   buildResources: build
 files:
-  - '!**/.vscode/*'
-  - '!src/*'
-  - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
-  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - "out/**/*"
+  - "src/main/custom-dialog/preload.cjs"
+  - "!**/*.ts"
+  - "!*.map"
+  - "!package.json"
+  - "!package-lock.json"
+extraResources:
+  - from: "src/main/custom-dialog"
+    to: "."
+    filter: ["preload.cjs"]
 asarUnpack:
-  - resources/**
+  - "src/main/custom-dialog/preload.cjs"
 win:
   executableName: my-app
 nsis:

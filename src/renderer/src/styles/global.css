@@ -29,6 +29,16 @@ body {
   line-height: 1.5;
 }
 
+svg {
+  width: 2rem;
+  height: 2rem;
+  margin-right: 1rem;
+
+  g {
+    stroke: 1px;
+  }
+}
+
 /* Screen Transitions */
 .fade-enter { opacity: 0; }
 .fade-exit { opacity: 1; }

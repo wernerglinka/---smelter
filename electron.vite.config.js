@@ -11,7 +11,8 @@ export default defineConfig({
     build: {
       rollupOptions: {
         input: {
-          index: resolve(__dirname, 'src/preload/index.js')
+          index: resolve(__dirname, 'src/preload/index.js'),
+          customDialog: resolve(__dirname, 'src/main/custom-dialog/preload.cjs')
         }
       }
     }

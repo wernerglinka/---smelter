@@ -1,11 +1,11 @@
-// screens/home/handlers/open-project.js
-import { navigate } from '../navigation/utils.js';
-import { StorageOperations } from '../../lib/storage-operations.js';
-import { ProjectOperations } from '../../lib/project-operations.js';
-import { selectProject } from '../../lib/select-project.js';
+// screens/home/handlers/edit-project.js
+import { StorageOperations } from '../../../services/storage';
+import { ProjectOperations } from '../../../services/project';
+import { selectProject } from '../utils/select-project';
 
 const ERRORS = {
-  INVALID_PROJECT: 'This folder is not a valid project - .metallurgy folder not found!',
+  INVALID_PROJECT:
+    'This folder is not a valid Metallurgy project. It must contain a .metallurgy folder with a valid projectData.json file.',
   OPEN_FAILED: 'Failed to open project'
 };
 
@@ -16,17 +16,17 @@ const ERRORS = {
 const getProjectFromDialog = async () => {
   const projectFolder = await selectProject();
 
-  if ( projectFolder === "abort" ) {
+  if (projectFolder === 'abort') {
     return null;
   }
 
-  const isValid = await ProjectOperations.validateProject( projectFolder );
-  if ( !isValid ) {
-    await window.electronAPI.dialog.showCustomMessage( {
+  const isValid = await ProjectOperations.validateProject(projectFolder);
+  if (!isValid) {
+    await window.electronAPI.dialog.showCustomMessage({
       type: 'error',
       message: ERRORS.INVALID_PROJECT,
-      buttons: [ 'OK' ]
-    } );
+      buttons: ['OK']
+    });
     return null;
   }
 
@@ -37,43 +37,42 @@ const getProjectFromDialog = async () => {
  * Loads and saves project configuration
  * @param {string} projectFolder - Selected project path
  */
-const setupProjectConfig = async ( projectFolder ) => {
-  StorageOperations.saveProjectPath( projectFolder );
-  const config = await ProjectOperations.loadProjectConfig( projectFolder );
+const setupProjectConfig = async (projectFolder) => {
+  try {
+    StorageOperations.saveProjectPath(projectFolder);
+    const config = await ProjectOperations.loadProjectConfig(projectFolder);
 
-  StorageOperations.saveProjectData( {
-    projectPath: projectFolder,
-    contentPath: config.contentPath,
-    dataPath: config.dataPath
-  } );
+    StorageOperations.saveProjectData({
+      projectPath: projectFolder,
+      contentPath: config.contentPath,
+      dataPath: config.dataPath
+    });
+  } catch (error) {
+    throw new Error(`Failed to load project configuration: ${error.message}`);
+  }
 };
 
 /**
  * Handles opening existing project
  * @param {Event} e - Click event
  */
-export const handleEditProject = async ( e ) => {
+export const handleEditProject = async (e) => {
   e.preventDefault();
 
   try {
-    const targetScreen = e.target.href;
     const projectFolder = await getProjectFromDialog();
-
-    if ( !projectFolder ) {
+    if (!projectFolder) {
       return;
     }
 
-    await setupProjectConfig( projectFolder );
-
-    navigate( targetScreen );
-
-  } catch ( error ) {
-    console.error( "Error opening project:", error );
-    await window.electronAPI.dialog.showCustomMessage( {
+    await setupProjectConfig(projectFolder);
+    window.location.hash = '/edit';
+  } catch (error) {
+    console.error('Error opening project:', error);
+    await window.electronAPI.dialog.showCustomMessage({
       type: 'error',
-      message: `${ ERRORS.OPEN_FAILED }: ${ error.message }`,
-      buttons: [ 'OK' ]
-    } );
+      message: `${ERRORS.OPEN_FAILED}: ${error.message}`,
+      buttons: ['OK']
+    });
   }
-
 };

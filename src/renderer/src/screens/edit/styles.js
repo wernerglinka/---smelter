@@ -1,52 +1,6 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-export const PageTitle = styled.h1`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: ${({ theme }) => theme.typography.sizes.lg};
-  color: ${({ theme }) => theme.colors.header};
-  margin-bottom: 2rem;
-`;
-
-export const StyledButton = styled.button`
-  display: inline-block;
-  padding: 1rem 2rem;
-  margin: 0 0.5rem;
-  border-radius: 0.5rem;
-  border: none;
-  background-color: ${(props) =>
-    props.primary ? props.theme.colors.attention : 'var(--info-background)'};
-  color: ${(props) => (props.primary ? '#ffffff' : props.theme.colors.text)};
-  box-shadow: var(--drop-shadow);
-  font-size: ${({ theme }) => theme.typography.sizes.sm};
-  font-weight: bold;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    transform: scale(1.05);
-    background-color: var(--btn-hover);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    pointer-events: none;
-    cursor: not-allowed;
-  }
-`;
-
-export const StyledLink = styled(Link)`
-  ${StyledButton}
-  text-decoration: none;
-`;
-
 export const EditContainer = styled.div`
   display: flex;
   width: 100%;
@@ -70,7 +24,17 @@ export const Sidebar = styled.div`
 export const SidebarContainer = styled.div`
   background: var(--container-background);
   border-radius: 0.5rem;
-  padding: 2rem;
+  padding: 2rem 0;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: 2rem;
+    }
+  }
 `;
 
 export const MainContent = styled.main`

@@ -1,82 +1,53 @@
-import { useState } from 'react';
-import { useProject } from './hooks/useProject';
-import { useSidebar } from './hooks/useSidebar';
-import { SidebarHideIcon } from '../../components/icons';
-import { Button, StyledLink, Title } from '../../styles/common';
+import { Link } from 'react-router-dom';
+import { SidebarHideIcon, PreviewShowIcon } from '../../components/icons';
+import { Button, PageTitle } from '../../styles/common';
 import { TitleBar } from '../../styles/common';
+import { useProject } from '../../hooks/useProject';
 import {
   EditContainer,
-  Sidebar,
-  SidebarContainer,
-  MainContent,
-  PreviewPane
+  MainContent
 } from './styles';
 
 export default function EditPage() {
-  const { projectName, projectPath } = useProject();
-  const { isVisible, activePane, toggleSidebar, switchPane } = useSidebar();
-  const [selectedFile, setSelectedFile] = useState('');
+  const { projectName } = useProject();
 
   return (
     <>
       <TitleBar />
-      <Title>
+      <h1 id="project-name">
         {projectName}
-        <StyledLink to="/">Start Over</StyledLink>
-      </Title>
+        <Link className="btn" to="/">Start Over</Link>
+      </h1>
 
-      <EditContainer>
-        <Button onClick={toggleSidebar}>
+      <div className="js-view-sidebar">
+        <a className="js-sidebar-toggle sidebar-toggle">
           <SidebarHideIcon />
-        </Button>
+        </a>
+      </div>
 
-        <Sidebar hidden={!isVisible}>
-          <SidebarContainer>
-            <ul>
-              <li>
-                <Button
-                  onClick={() => switchPane('js-select-file')}
-                  primary={activePane === 'js-select-file'}
-                >
-                  Select File
-                </Button>
+      <div className="edit-pane js-edit-pane">
+        <div className="js-sidebar sidebar">
+          <div className="sidebar-container container-background">
+            <ul className="sidebar-pane-selection js-sidebar-pane-selection">
+              <li className="select-file">
+                <a className="active btn" data-pane="js-select-file">Select File</a>
               </li>
-              <li>
-                <Button
-                  id="init-new-page"
-                  onClick={() => {/* TODO: Handle new page */}}
-                  primary
-                >
-                  Build New Page
-                </Button>
+              <li className="select-file">
+                <a id="init-new-page" className="btn">Build New Page</a>
               </li>
-              <li>
-                <Button
-                  onClick={() => switchPane('js-add-field')}
-                  primary={activePane === 'js-add-field'}
-                >
-                  Add Field
-                </Button>
+              <li className="add-field">
+                <a className="btn" data-pane="js-add-field">Add Field</a>
               </li>
-              <li>
-                <Button
-                  onClick={() => switchPane('js-add-template')}
-                  primary={activePane === 'js-add-template'}
-                >
-                  Add Template
-                </Button>
+              <li className="add-component">
+                <a className="btn" data-pane="js-add-template">Add Template</a>
               </li>
             </ul>
-          </SidebarContainer>
+          </div>
 
           <div className="sidebar-panes">
             <div id="js-add-field" className="sidebar-pane js-sidebar-pane">
               <div className="sidebar-hint container-background">
                 <p>Drag a field into the editor...</p>
-              </div>
-              <div className="container-background">
-                <h3>Empty Fields</h3>
-                {/* Add field components here */}
               </div>
             </div>
 
@@ -98,15 +69,22 @@ export default function EditPage() {
               </div>
             </div>
           </div>
-        </Sidebar>
+        </div>
 
-        <MainContent>
-          <h2>{selectedFile}</h2>
-          <div id="content-container" />
-        </MainContent>
+        <main className="js-edit-container edit-container container-background">
+          <h2 id="file-name">
+            <span></span>
+            <button id="preview-button" className="btn" title="Open preview pane">
+              <PreviewShowIcon />
+            </button>
+          </h2>
+          <div id="content-container"></div>
+        </main>
 
-        <PreviewPane />
-      </EditContainer>
+        <div className="js-right-sidebar right-sidebar">
+          <div className="preview-pane container-background js-preview-pane"></div>
+        </div>
+      </div>
     </>
   );
 }
