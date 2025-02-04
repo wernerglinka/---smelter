@@ -38,17 +38,31 @@ export const handleDeleteProject = async (e) => {
       return;
     }
 
-    const { status: deleteStatus } = await window.electronAPI.directories.delete(projectFolder);
+    // Delete the entire project folder
+    console.log('Attempting to delete folder:', projectFolder);
+    const deleteResult = await window.electronAPI.directories.delete(projectFolder);
+    console.log('Delete result:', deleteResult);
 
-    if (deleteStatus === 'success') {
-      StorageOperations.clearProjectData();
-
-      await window.electronAPI.dialog.showCustomMessage({
-        type: 'info',
-        message: `Project ${projectName} deleted successfully`,
-        buttons: ['OK']
-      });
+    if (deleteResult.status !== 'success') {
+      throw new Error(`Failed to delete directory: ${deleteResult.error || 'Unknown error'}`);
     }
+
+    // Remove from recent projects
+    console.log('Before removal - Recent projects:', StorageOperations.getRecentProjects());
+    StorageOperations.removeFromRecentProjects(projectFolder);
+    console.log('After removal - Recent projects:', StorageOperations.getRecentProjects());
+
+    // Clear current project data
+    StorageOperations.clearProjectData();
+
+    await window.electronAPI.dialog.showCustomMessage({
+      type: 'info',
+      message: `Project ${projectName} deleted successfully`,
+      buttons: ['OK']
+    });
+
+    // Force refresh the page to update the UI
+    window.location.reload();
   } catch (error) {
     console.error('Error in delete process:', error);
     await window.electronAPI.dialog.showCustomMessage({
