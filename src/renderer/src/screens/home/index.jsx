@@ -29,15 +29,12 @@ const App = () => {
   useEffect(() => {
     const loadRecentProjects = async () => {
       try {
-        const projectData = StorageOperations.getProjectData();
-        if (projectData) {
-          setRecentProjects([{
-            path: projectData.projectPath,
-            name: projectData.projectPath.split('/').pop()
-          }]);
-        } else {
-          setRecentProjects([]);
-        }
+        const projects = StorageOperations.getRecentProjects();
+        const projectsWithNames = projects.map(project => ({
+          ...project,
+          name: StorageOperations.getProjectName(project.projectPath)
+        }));
+        setRecentProjects(projectsWithNames);
       } catch (error) {
         console.error('Failed to load recent projects:', error);
       }
@@ -45,6 +42,37 @@ const App = () => {
 
     loadRecentProjects();
   }, []);
+
+  const handleRecentProjectClick = async (projectData) => {
+    try {
+      // First verify the project still exists
+      const exists = await window.electronAPI.directories.exists(projectData.projectPath);
+      if (!exists.data) {
+        await window.electronAPI.dialog.showCustomMessage({
+          type: 'error',
+          message: 'Project folder no longer exists',
+          buttons: ['OK']
+        });
+        // Remove from recent projects
+        StorageOperations.removeFromRecentProjects(projectData.projectPath);
+        // Refresh the list
+        setRecentProjects(StorageOperations.getRecentProjects());
+        return;
+      }
+
+      // Project exists, set it as current and navigate
+      StorageOperations.setCurrentProject(projectData);
+      console.log('Navigating to edit screen...');
+      navigate('/edit');
+    } catch (error) {
+      console.error('Error opening recent project:', error);
+      await window.electronAPI.dialog.showCustomMessage({
+        type: 'error',
+        message: `Failed to open project: ${error.message}`,
+        buttons: ['OK']
+      });
+    }
+  };
 
   /**
    * Handles initializing a new project
@@ -66,15 +94,15 @@ const App = () => {
       if (isValid) {
         // If it's a valid project, load config and go to edit screen
         const config = await ProjectOperations.loadProjectConfig(projectFolder);
-        StorageOperations.saveProjectData({
+        const projectData = {
           projectPath: projectFolder,
           contentPath: config.contentPath,
           dataPath: config.dataPath
-        });
+        };
+        StorageOperations.setCurrentProject(projectData); // This will also add to recent projects
         navigate('/edit');
       } else {
         // If it's not a valid project, just navigate to new project screen
-        // without clearing project data
         navigate('/new');
       }
     } catch (error) {
@@ -85,6 +113,10 @@ const App = () => {
         buttons: ['OK']
       });
     }
+  };
+
+  const handleCloneClick = (e) => {
+    handleCloneGithub(e, navigate);
   };
 
   return (
@@ -102,21 +134,21 @@ const App = () => {
           </ProjectLink>
         </ProjectItem>
         <ProjectItem>
+          <ProjectLink href="#" onClick={handleCloneClick}>
+            <GithubIcon className="icon" />
+            Clone a Project from Github
+          </ProjectLink>
+        </ProjectItem>
+        <ProjectItem>
           <ProjectLink className="js-edit-project" href="#" onClick={handleEditProject}>
             <FolderOpenIcon className="icon" />
-            Edit Project
+            Edit a Project
           </ProjectLink>
         </ProjectItem>
         <ProjectItem>
           <ProjectLink className="js-delete-project-folder" href="#" onClick={handleDeleteProject}>
             <FolderMinusIcon className="icon" />
             Delete a Project
-          </ProjectLink>
-        </ProjectItem>
-        <ProjectItem>
-          <ProjectLink className="js-clone-from-github" href="#" onClick={handleCloneGithub}>
-            <GithubIcon className="icon" />
-            Clone a Project from Github
           </ProjectLink>
         </ProjectItem>
 
@@ -127,7 +159,11 @@ const App = () => {
               <ProjectItem key={index}>
                 <RecentProjectLink
                   className="js-recent-project"
-                  to={`/edit/${encodeURIComponent(project.path)}`}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleRecentProjectClick(project);
+                  }}
                 >
                   {project.name}
                 </RecentProjectLink>

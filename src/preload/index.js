@@ -174,7 +174,12 @@ const electronAPI = {
      *
      * @param params
      */
-    clone: (params) => ipcRenderer.invoke('git-clone', params),
+    clone: async (params) => {
+      console.log('Preload: Invoking git-clone');
+      const result = await ipcRenderer.invoke('git-clone', params);
+      console.log('Preload: git-clone result:', result);
+      return result;
+    },
     /**
      *
      * @param params

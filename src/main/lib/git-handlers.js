@@ -121,9 +121,10 @@ const waitForDialog = () => new Promise((resolve) => setTimeout(resolve, 500));
  * @param dialogOps
  */
 const handleGitClone = async (event, { repoUrl }, dialogOps) => {
+  console.log('handleGitClone started', { repoUrl });
   try {
     if (!repoUrl) {
-      // Show custom input dialog for URL
+      console.log('Showing URL input dialog');
       const urlResult = await dialogOps.showCustomMessage({
         type: 'custom',
         message: 'Enter Git Repository URL:',
@@ -131,62 +132,62 @@ const handleGitClone = async (event, { repoUrl }, dialogOps) => {
         buttons: ['Clone', 'Cancel']
       });
 
-      // Make sure we got a valid result
-      if (!urlResult?.response?.value || urlResult.response.index !== 0) {
+      console.log('URL dialog result:', urlResult);
+
+      if (!urlResult?.response || urlResult.response.index !== 0) {
+        console.log('User cancelled URL input');
         return { status: 'cancelled' };
       }
 
       repoUrl = urlResult.response.value;
+      console.log('Got repo URL:', repoUrl);
 
-      // Wait for window to close before proceeding
-      await waitForDialog();
+      // Add small delay after URL dialog closes
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
-    // Show dialog to select directory to clone into
+    console.log('Showing directory selection dialog');
     const dialogResult = await dialogOps.showDialog('showOpenDialog', {
       title: 'Select the folder to clone into',
       message: 'Select the folder to clone into',
       properties: ['openDirectory', 'createDirectory']
     });
-    const localPath = dialogResult.data.filePaths?.[0];
 
-    if (!localPath) {
-      throw new Error('No directory selected');
+    console.log('Directory selection result:', dialogResult);
+
+    if (!dialogResult?.data?.filePaths?.[0]) {
+      console.log('No directory selected');
+      return { status: 'cancelled' };
     }
 
-    // check if the directory is empty
+    const localPath = dialogResult.data.filePaths[0];
+    console.log('Selected directory:', localPath);
+
+    // Check if directory is empty
     const dirContents = readdirSync(localPath);
     if (dirContents.length > 0) {
-      // Show custom dialog for non-empty directory
+      console.log('Directory not empty, showing warning');
       const emptyResult = await dialogOps.showCustomMessage({
         type: 'warning',
         message: 'Selected directory is not empty. Would you like to select a different directory?',
         buttons: ['Yes', 'No']
       });
 
-      // Wait for dialog to close
-      await waitForDialog();
-
-      // Check if user wants to try another directory
       if (emptyResult?.response?.index === 0) {
-        const recursiveResult = await handleGitClone(event, { repoUrl }, dialogOps);
-        return recursiveResult;
+        return handleGitClone(event, { repoUrl }, dialogOps);
       }
-      return { status: 'failure', error: 'Operation cancelled - Directory not empty' };
+      return { status: 'cancelled' };
     }
 
-    // Clone repository to selected directory
+    console.log('Starting git clone operation');
     await simpleGit().clone(repoUrl, localPath);
+    console.log('Git clone completed');
 
-    // Show custom success dialog and ask to proceed
     const successResult = await dialogOps.showCustomMessage({
       type: 'success',
       message: `Repository successfully cloned to:\n${localPath}\n\nWould you like to work with this project?`,
       buttons: ['Yes', 'No']
     });
-
-    // Wait for success dialog to close
-    await waitForDialog();
 
     return {
       status: 'success',
@@ -198,6 +199,11 @@ const handleGitClone = async (event, { repoUrl }, dialogOps) => {
     };
   } catch (error) {
     console.error('Clone Repository Error:', error);
+    await dialogOps.showCustomMessage({
+      type: 'error',
+      message: `Failed to clone repository: ${error.message}`,
+      buttons: ['OK']
+    });
     return { status: 'failure', error: error.message };
   }
 };

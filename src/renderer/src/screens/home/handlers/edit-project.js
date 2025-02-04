@@ -71,6 +71,11 @@ export const handleEditProject = async (e) => {
 
     await setupProjectConfig(projectFolder);
     console.log('Project config setup complete');
+
+    // Add this: Get the project data and add to recent projects
+    const projectData = StorageOperations.getProjectData();
+    StorageOperations.setCurrentProject(projectData);
+
     window.location.hash = '/edit';
   } catch (error) {
     console.error('Error opening project:', error);

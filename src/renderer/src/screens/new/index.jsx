@@ -20,10 +20,21 @@ export default function NewProject() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Get and set project folder on component mount
     const folder = StorageOperations.getProjectPath();
+
     if (folder) {
       const folderName = `/${folder.split('/').pop()}/`;
       setProjectFolder(folderName);
+
+      // Clear content and data paths only
+      setContentPath('');
+      setDataPath('');
+
+      // Clear project data while preserving project path
+      const projectPath = StorageOperations.getProjectPath();
+      StorageOperations.clearProjectData();
+      StorageOperations.saveProjectPath(projectPath);
     }
   }, []);
 
@@ -32,22 +43,16 @@ export default function NewProject() {
     const projectPath = StorageOperations.getProjectPath();
     if (!projectPath) return '';
 
-    // Get just the project folder name
-    const projectName = projectPath.split('/').pop();
-
-    // Log for debugging
-    console.log({
-      projectPath,
-      projectName,
-      path,
-      result: getFolderName(projectName, path)
-    });
-
-    return getFolderName(projectName, path);
+    return getFolderName(projectPath.split('/').pop(), path);
   };
 
   const handleSelectFolder = async (type) => {
     try {
+      const projectPath = StorageOperations.getProjectPath();
+      if (!projectPath) {
+        throw new Error('Project folder not found in storage');
+      }
+
       const userSelection = await selectFolder(type);
       if (!userSelection.length) return;
 
@@ -63,7 +68,7 @@ export default function NewProject() {
       console.error(`Error selecting ${type} folder:`, error);
       await window.electronAPI.dialog.showCustomMessage({
         type: 'error',
-        message: `Error selecting ${type} folder`,
+        message: `Error selecting ${type} folder: ${error.message}`,
         buttons: ['OK']
       });
     }
