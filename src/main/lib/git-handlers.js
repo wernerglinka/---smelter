@@ -190,8 +190,22 @@ const handleGitClone = async (event, { repoUrl }, dialogOps) => {
 
       repoUrl = urlResult.response.value;
       console.log('Got repo URL:', repoUrl);
-      await waitForDialog();
     }
+
+    // Validate URL before proceeding
+    const urlValidation = validateGitUrl(repoUrl);
+    if (!urlValidation.isValid) {
+      console.log('Invalid URL:', repoUrl, 'Error:', urlValidation.error);
+      await dialogOps.showCustomMessage({
+        type: 'error',
+        message: urlValidation.error,
+        buttons: ['OK']
+      });
+      // Recursively retry the clone operation
+      return handleGitClone(event, { repoUrl: null }, dialogOps);
+    }
+
+    await waitForDialog();
 
     let directoryResult;
     do {
@@ -204,7 +218,23 @@ const handleGitClone = async (event, { repoUrl }, dialogOps) => {
     const localPath = directoryResult.path;
 
     console.log('Starting git clone operation');
-    await simpleGit().clone(repoUrl, localPath);
+
+    // Create a timeout promise
+    const timeout = new Promise((_, reject) => {
+      setTimeout(
+        () => {
+          reject(new Error('Clone operation timed out after 5 minutes'));
+        },
+        5 * 60 * 1000
+      ); // 5 minutes timeout
+    });
+
+    // Create the clone promise
+    const cloneOperation = simpleGit().clone(repoUrl, localPath);
+
+    // Race between timeout and clone operation
+    await Promise.race([cloneOperation, timeout]);
+
     console.log('Git clone completed');
 
     const successResult = await dialogOps.showCustomMessage({
@@ -223,9 +253,14 @@ const handleGitClone = async (event, { repoUrl }, dialogOps) => {
     };
   } catch (error) {
     console.error('Clone Repository Error:', error);
+
+    const errorMessage = error.message.includes('timed out')
+      ? 'The clone operation timed out after 5 minutes. Please check your internet connection and try again.'
+      : `Failed to clone repository: ${error.message}`;
+
     await dialogOps.showCustomMessage({
       type: 'error',
-      message: `Failed to clone repository: ${error.message}`,
+      message: errorMessage,
       buttons: ['OK']
     });
     return { status: 'error', error: error.message };
@@ -281,3 +316,35 @@ const createGitHandlers = (window, dialogOps) => ({
 });
 
 export { createGitHandlers };
+
+/**
+ * Validates Git repository URL
+ * @param {string} url - URL to validate
+ * @returns {{isValid: boolean, error?: string}} Validation result
+ */
+const validateGitUrl = (url) => {
+  if (!url) {
+    return { isValid: false, error: 'Repository URL is required' };
+  }
+
+  // Strict patterns for different Git URL formats
+  const patterns = {
+    https:
+      /^https:\/\/(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_.]+(?:\.git)?$/,
+    ssh: /^git@([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}:[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_.]+\.git$/,
+    git: /^git:\/\/([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_.]+\.git$/
+  };
+
+  // Check if URL matches any of the allowed patterns
+  const matchesPattern = Object.entries(patterns).some(([type, pattern]) => pattern.test(url));
+
+  if (!matchesPattern) {
+    return {
+      isValid: false,
+      error:
+        'Invalid Git URL format. Must be a valid HTTPS, SSH, or Git protocol URL.\nExample: https://github.com/username/repository.git'
+    };
+  }
+
+  return { isValid: true };
+};
