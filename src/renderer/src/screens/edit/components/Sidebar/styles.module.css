@@ -1,0 +1,37 @@
+.button {
+  display: inline-block;
+  padding: 1rem 2rem;
+  margin: 0 0.5rem;
+  border-radius: var(--default-radius);
+  border: none;
+  background-color: var(--info-background);
+  color: var(--text-color);
+  box-shadow: var(--drop-shadow);
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+    background-color: var(--btn-hover);
+  }
+
+  &.active {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+    background-color: var(--background-disabled);
+    transform: none;
+  }
+
+  &.active:hover {
+    transform: none;
+    background-color: var(--background-disabled);
+  }
+}
+
+
+
+

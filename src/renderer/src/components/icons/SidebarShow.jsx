@@ -1,10 +1,10 @@
 /**
- * Sidebar hide icon component
+ * Sidebar show icon component
  * @param {Object} props - Component props
  * @param {string} [props.className] - Optional class name
  * @returns {JSX.Element} Rendered component
  */
-function SidebarHideIcon({ className }) {
+function SidebarShowIcon({ className }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -15,11 +15,10 @@ function SidebarHideIcon({ className }) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <rect width="18" height="18" x="3" y="3" rx="2"/>
-      <path d="M9 3v18"/>
-      <path d="m16 15-3-3 3-3"/>
+      <rect width="18" height="18" x="3" y="3" rx="2" />
+      <path d="M9 3v18" /><path d="m14 9 3 3-3 3" />
     </svg>
   );
 }
 
-export default SidebarHideIcon;
+export default SidebarShowIcon;

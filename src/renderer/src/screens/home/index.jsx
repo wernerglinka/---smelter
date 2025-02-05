@@ -3,20 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FolderPlusIcon, FolderOpenIcon, FolderMinusIcon, GithubIcon } from '../../components/icons';
 import { StorageOperations } from '../../services/storage';
 import { ProjectOperations } from '../../services/project';
-import { selectProject } from './utils/select-project';
+import { selectProject } from '../lib/utilities/select-project';
 import { handleDeleteProject } from './handlers/delete-project';
 import { handleEditProject } from './handlers/edit-project';
 import { handleCloneGithub } from './handlers/clone-github';
-import { TitleBar } from '../../styles/common';
-import {
-  WelcomeContainer,
-  ProjectList,
-  ProjectItem,
-  ProjectLink,
-  ListHeader,
-  RecentProjectItem,
-  RecentProjectLink
-} from './styles';
+
+import "./styles.css";
 
 /**
  * Home component - main landing page for the Metallurgy application
@@ -120,59 +112,58 @@ const App = () => {
   };
 
   return (
-    <WelcomeContainer className="welcome">
-      <TitleBar className="titlebar" />
+    <main className="welcome">
+      <div className="titlebar" />
       <h1>Smelter</h1>
       <p>Content Management for Metalsmith refined</p>
 
-      <ProjectList className="projects">
-        <ListHeader className="listHeader">Start</ListHeader>
-        <ProjectItem>
-          <ProjectLink className="js-get-project-folder" href="#" onClick={handleNewProject}>
+      <ul className="projects">
+        <li className="listHeader">Start</li>
+        <li>
+          <Link to="#" onClick={handleNewProject}>
             <FolderPlusIcon className="icon" />
             Initialize a Project from existing folder
-          </ProjectLink>
-        </ProjectItem>
-        <ProjectItem>
-          <ProjectLink href="#" onClick={handleCloneClick}>
+          </Link>
+        </li>
+        <li>
+          <Link to="#" onClick={handleCloneClick}>
             <GithubIcon className="icon" />
             Clone a Project from Github
-          </ProjectLink>
-        </ProjectItem>
-        <ProjectItem>
-          <ProjectLink className="js-edit-project" href="#" onClick={handleEditProject}>
+          </Link>
+        </li>
+        <li>
+          <Link to="#" onClick={handleEditProject}>
             <FolderOpenIcon className="icon" />
             Edit a Project
-          </ProjectLink>
-        </ProjectItem>
-        <ProjectItem>
-          <ProjectLink className="js-delete-project-folder" href="#" onClick={handleDeleteProject}>
+          </Link>
+        </li>
+        <li>
+          <Link to="#" onClick={handleDeleteProject}>
             <FolderMinusIcon className="icon" />
             Delete a Project
-          </ProjectLink>
-        </ProjectItem>
+          </Link>
+        </li>
 
         {recentProjects.length > 0 && (
           <>
-            <ListHeader className="listHeader recent">Recent</ListHeader>
+            <li className="listHeader recent">Recent</li>
             {recentProjects.map((project, index) => (
-              <ProjectItem key={index}>
-                <RecentProjectLink
-                  className="js-recent-project"
-                  href="#"
+              <li key={index}>
+                <Link
+                  to="#"
                   onClick={(e) => {
                     e.preventDefault();
                     handleRecentProjectClick(project);
                   }}
                 >
                   {project.name}
-                </RecentProjectLink>
-              </ProjectItem>
+                </Link>
+              </li>
             ))}
           </>
         )}
-      </ProjectList>
-    </WelcomeContainer>
+      </ul>
+    </main>
   );
 };
 

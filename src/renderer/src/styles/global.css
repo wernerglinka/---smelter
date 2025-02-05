@@ -29,6 +29,18 @@ body {
   line-height: 1.5;
 }
 
+.titlebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  height: var(--titlebar-height);
+  width: 100%;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+  cursor: move;
+}
+
 svg {
   width: 2rem;
   height: 2rem;
@@ -39,6 +51,30 @@ svg {
   }
 }
 
+.page-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  margin: 0 0.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: var(--info-background);
+  box-shadow: var(--drop-shadow);
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
 /* Screen Transitions */
 .fade-enter { opacity: 0; }
 .fade-exit { opacity: 1; }
@@ -47,112 +83,4 @@ svg {
 .fade-enter-active,
 .fade-exit-active {
   transition: opacity 500ms;
-}
-
-.new-project {
-  max-width: 80rem;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  height: 100vh;
-
-  & img {
-    max-width: 15rem;
-    margin-bottom: 5rem;
-  }
-
-  & ul {
-    list-style: none;
-    padding: 0;
-    margin: 2rem 0 0;
-
-    & li {
-      height: 5rem;
-      display: flex;
-      align-items: center;
-      font-size: 1.6rem;
-
-      & strong {
-        display: inline-block;
-        width: 15rem;
-        font-size: 0.8em;
-      }
-
-      &.get-path {
-        position: relative;
-        padding: 0;
-
-        & > div {
-          display: flex;
-          align-items: center;
-          height: 100%;
-        }
-
-        & .path-display {
-          opacity: 0;
-          transition: opacity 0.3s ease-in-out;
-
-          &.show {
-            opacity: 1;
-          }
-        }
-
-        & .button-display {
-          position: absolute;
-          top: 0;
-          left: 0;
-          opacity: 1;
-          transition: opacity 0.3s ease-in-out;
-
-          &.show {
-            opacity: 0;
-          }
-
-          & a {
-            margin-left: 1rem;
-          }
-        }
-
-        &.ready {
-          & .path-display {
-            opacity: 1;
-          }
-
-          & .button-display {
-            opacity: 0;
-          }
-        }
-      }
-
-      &.decision-buttons {
-        display: flex;
-        margin-top: 3rem;
-
-        & .btn {
-          margin: 0 2rem 0 0;
-
-          &.start {
-            display: none;
-          }
-        }
-
-        &.ready {
-          & .start {
-            display: inline-block;
-          }
-        }
-      }
-    }
-  }
-
-  & .start-with-config {
-    display: none;
-
-    & strong {
-      font-size: 1.2rem;
-      white-space: nowrap;
-    }
-  }
 }

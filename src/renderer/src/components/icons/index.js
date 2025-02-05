@@ -8,4 +8,5 @@ export { default as FolderOpenIcon } from './FolderOpenIcon';
 export { default as FolderPlusIcon } from './FolderPlusIcon';
 export { default as GithubIcon } from './Github';
 export { default as SidebarHideIcon } from './SidebarHide';
+export { default as SidebarShowIcon } from './SidebarShow';
 export { default as PreviewShowIcon } from './PreviewShow';
