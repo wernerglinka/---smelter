@@ -14,7 +14,6 @@ import { renderObject } from './object.js';
 import { renderList } from './list.js';
 import { renderArray } from './array.js';
 
-
 const renderFunctions = {
   renderSortHandleHTML,
   renderDeleteButtonHTML,

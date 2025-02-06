@@ -10,9 +10,9 @@ export const isProjectReady = () => {
     const contentFolder = StorageOperations.getContentPath();
     const dataFolder = StorageOperations.getDataPath();
 
-    return Boolean( projectFolder && contentFolder && dataFolder );
-  } catch ( error ) {
-    console.error( 'Failed to check project status:', error );
+    return Boolean(projectFolder && contentFolder && dataFolder);
+  } catch (error) {
+    console.error('Failed to check project status:', error);
     return false;
   }
 };

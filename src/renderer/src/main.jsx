@@ -11,8 +11,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <HashRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/edit" element={ <EditPage /> } />
-        <Route path="/new" element={ <NewPage /> } />
+        <Route path="/edit" element={<EditPage />} />
+        <Route path="/new" element={<NewPage />} />
       </Routes>
     </HashRouter>
   </React.StrictMode>

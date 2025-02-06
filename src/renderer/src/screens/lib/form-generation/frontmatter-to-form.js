@@ -16,45 +16,43 @@ import { logFragment } from '../utilities/fragment-debug-helper.js';
  * @param {string} content - The content of the markdown file
  * @throws {Error|Object} Standard error or schema error object
  */
-export const frontmatterToForm = async ( frontmatter, content ) => {
+export const frontmatterToForm = async (frontmatter, content) => {
   try {
-    const schema = await processFrontmatter( frontmatter );
+    const schema = await processFrontmatter(frontmatter);
     const explicitSchemaArray = await getExplicitSchema();
 
     // Create form elements from schema fields
-    const formHTML = buildForm( schema, explicitSchemaArray );
+    const formHTML = buildForm(schema, explicitSchemaArray);
 
     // Create and populate template
-    const template = document.createElement( 'template' );
+    const template = document.createElement('template');
     template.innerHTML = formHTML;
 
     // Get dropzone
-    const dropzone = document.getElementById( 'dropzone' );
-    if ( !dropzone ) {
-      throw new Error( 'Dropzone element not found' );
+    const dropzone = document.getElementById('dropzone');
+    if (!dropzone) {
+      throw new Error('Dropzone element not found');
     }
 
     // Clone and append template content
-    dropzone.appendChild( template.content.cloneNode( true ) );
+    dropzone.appendChild(template.content.cloneNode(true));
     // get the form ID
-    const formId = document.querySelector( '#main-form' ).id;
+    const formId = document.querySelector('#main-form').id;
     // Initialize form manager after new file has been loaded
-    initFormManager( formId );
+    initFormManager(formId);
 
-
-    if ( !document.getElementById( 'editorWrapper' ) ) {
+    if (!document.getElementById('editorWrapper')) {
       window.mdeditor = initializeEditor();
     }
-
-  } catch ( error ) {
+  } catch (error) {
     // Handle schema errors
-    if ( error.isSchemaError ) {
-      console.error( `Schema error (${ error.type }):`, error.message );
-      if ( error.field ) {
-        console.error( 'Problem field:', error.field );
+    if (error.isSchemaError) {
+      console.error(`Schema error (${error.type}):`, error.message);
+      if (error.field) {
+        console.error('Problem field:', error.field);
       }
-      if ( error.path ) {
-        console.error( 'File path:', error.path );
+      if (error.path) {
+        console.error('File path:', error.path);
       }
     }
     throw error;

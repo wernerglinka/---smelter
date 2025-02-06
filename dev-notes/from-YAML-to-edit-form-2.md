@@ -3,6 +3,7 @@
 YAML Frontmatter defines content in modular and component-based web development. In Part 1, we explored how YAML Frontmatter is represented as form fields in an edit form. In this part, we’ll examine how the HTML structure of a form field is derived from the YAML object.
 
 ## The YAML Object Example
+
 ```YAML
 ---
 layout: blocks.njk
@@ -40,7 +41,7 @@ sections:
 ### Mapping the `layout` Field
 
 ```yaml
-layout: "blocks.njk"
+layout: 'blocks.njk'
 ```
 
 In YAML, the layout field is read as a string. However, the rendered form field appears as a select dropdown with blocks.njk pre-selected. This transformation occurs because the form generator also references an optional schema JSON object.
@@ -53,18 +54,18 @@ In YAML, the layout field is read as a string. However, the rendered form field 
   "type": "select",
   "value": "blocks.njk",
   "options": [
-      {
-          "label": "Default",
-          "value": "default.njk"
-      },
-      {
-          "label": "Sections",
-          "value": "sections.njk"
-      },
-      {
-          "label": "Blocks",
-          "value": "blocks.njk"
-      }
+    {
+      "label": "Default",
+      "value": "default.njk"
+    },
+    {
+      "label": "Sections",
+      "value": "sections.njk"
+    },
+    {
+      "label": "Blocks",
+      "value": "blocks.njk"
+    }
   ],
   "default": "sections.njk"
 }
@@ -126,11 +127,12 @@ When a Markdown file is selected, its frontmatter is parsed into a JSON object a
 ```
 
 ### Processing the Frontmatter
+
 1. Parsing the YAML:
-The YAML is converted into JSON using processFrontmatter().
+   The YAML is converted into JSON using processFrontmatter().
 
 2. Type Inference:
-Using convertToSchemaObject(), each property is examined, and a base field object is created by matching types with field validators.
+   Using convertToSchemaObject(), each property is examined, and a base field object is created by matching types with field validators.
 
 **Inferred Base Field for layout**
 
@@ -172,6 +174,7 @@ If a schema.json file exists in the project, the schema properties for the layou
   "noDuplication": true
 }
 ```
+
 ### Creating the Form Element
 
 Using `createFormFragment()`, the form field is generated based on the enhanced schema. The field is rendered within the form’s dropzone.
@@ -181,24 +184,24 @@ Using `createFormFragment()`, the form field is generated based on the enhanced 
 ```html
 <div class="label-exists form-element no-drop" draggable="true">
   <span class="sort-handle">...Icon for drag handle...</span>
-    <label class="label-wrapper">
-      <span>Text Label<sup>*</sup></span>
-      <div>
-        <input type="text" class="element-label" placeholder="Label Placeholder" readonly="">
-      </div>
-    </label>
-    <label class="content-wrapper">
-      <span class="hint">Text for Text element</span>
-      <div> 
-        <select class="element-value">
-          <option value="default.njk">Default</option>
-          <option value="sections.njk">Sections</option>
-          <option value="blocks.njk">Blocks</option>
-        </select>
-      </div>
-    </label>
-    <div class="button-wrapper"></div>
-  </div>
-  ```
+  <label class="label-wrapper">
+    <span>Text Label<sup>*</sup></span>
+    <div>
+      <input type="text" class="element-label" placeholder="Label Placeholder" readonly="" />
+    </div>
+  </label>
+  <label class="content-wrapper">
+    <span class="hint">Text for Text element</span>
+    <div>
+      <select class="element-value">
+        <option value="default.njk">Default</option>
+        <option value="sections.njk">Sections</option>
+        <option value="blocks.njk">Blocks</option>
+      </select>
+    </div>
+  </label>
+  <div class="button-wrapper"></div>
+</div>
+```
 
-  By combining the frontmatter JSON and its corresponding schema, the form generator produces accurate, interactive form fields with appropriate labels, input types, and validation rules. This method ensures a dynamic editing experience that reflects the structure and content of the original YAML object.
+By combining the frontmatter JSON and its corresponding schema, the form generator produces accurate, interactive form fields with appropriate labels, input types, and validation rules. This method ensures a dynamic editing experience that reflects the structure and content of the original YAML object.

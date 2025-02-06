@@ -1,6 +1,5 @@
 export const icon = {
-  blockName: "icon",
-  name: "",
-  caption: ""
-
+  blockName: 'icon',
+  name: '',
+  caption: ''
 };

@@ -1,8 +1,8 @@
 export const lottieSection = {
-  sectionDescription: "Animated lottie element",
+  sectionDescription: 'Animated lottie element',
   lottie: {
-    src: "",
-    caption: "",
+    src: '',
+    caption: '',
     control: {
       autoplay: true,
       loop: true

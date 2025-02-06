@@ -13,29 +13,26 @@ export default function EditPage() {
   const [isSidebarVisible, setSidebarVisible] = useState(true);
 
   const toggleSidebarView = () => {
-    setSidebarVisible(prev => !prev);
+    setSidebarVisible((prev) => !prev);
   };
 
   return (
     <main className="edit-container">
-      <div className="titlebar"/>
+      <div className="titlebar" />
 
-      <h1 id="project-name">
-        { projectName }
-        <Link className="btn" to="/">Start Over</Link>
+      <h1 className="page-title">
+        {projectName}
+        <Link className="btn" to="/">
+          Start Over
+        </Link>
       </h1>
 
-      <div
-        onClick={toggleSidebarView}
-        role="button"
-        tabIndex={0}
-      >
+      <div className="sidebar-toggle"onClick={toggleSidebarView} role="button" tabIndex={0}>
         {isSidebarVisible ? <SidebarHideIcon /> : <SidebarShowIcon />}
       </div>
 
-
       <div className="edit-pane">
-        {isSidebarVisible && <Sidebar />}
+        {isSidebarVisible && <Sidebar path={projectPath} />}
         <EditSpace $expanded={!isSidebarVisible} />
         <PreviewPane />
       </div>

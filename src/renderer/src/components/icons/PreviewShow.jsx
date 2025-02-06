@@ -6,17 +6,15 @@
  */
 function PreviewShowIcon({ className }) {
   return (
-    <svg
-      viewBox="0 0 22 22"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
       <g
         stroke="none"
         strokeWidth="1"
         fill="none"
         fillRule="evenodd"
         strokeLinecap="round"
-        strokeLinejoin="round">
+        strokeLinejoin="round"
+      >
         <g stroke="#000000" strokeWidth="2">
           <g transform="translate(2, 2)">
             <path d="M0,4 L0,2 C0,0.8954305 0.8954305,0 2,0 L4,0"></path>

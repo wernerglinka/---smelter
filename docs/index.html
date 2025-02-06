@@ -1,63 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title>JSDoc: Home</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css" />
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
+  </head>
 
-<body>
+  <body>
+    <div id="main">
+      <h1 class="page-title">Home</h1>
 
-<div id="main">
+      <h3></h3>
 
-    <h1 class="page-title">Home</h1>
-
-    
-
-
-
-    
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-    <section>
-        <article><h1>Smelter</h1>
-<p>An Electron application with React</p>
-<h2>Recommended IDE Setup</h2>
-<ul>
-<li><a href="https://code.visualstudio.com/">VSCode</a> + <a href="https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint">ESLint</a> + <a href="https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode">Prettier</a></li>
-</ul>
-<h2>Project Setup</h2>
-<h3>Install</h3>
-<pre class="prettyprint source lang-bash"><code>$ npm install
+      <section>
+        <article>
+          <h1>Smelter</h1>
+          <p>An Electron application with React</p>
+          <h2>Recommended IDE Setup</h2>
+          <ul>
+            <li>
+              <a href="https://code.visualstudio.com/">VSCode</a> +
+              <a href="https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint"
+                >ESLint</a
+              >
+              +
+              <a href="https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode"
+                >Prettier</a
+              >
+            </li>
+          </ul>
+          <h2>Project Setup</h2>
+          <h3>Install</h3>
+          <pre class="prettyprint source lang-bash"><code>$ npm install
 </code></pre>
-<h3>Development</h3>
-<pre class="prettyprint source lang-bash"><code>$ npm run dev
+          <h3>Development</h3>
+          <pre class="prettyprint source lang-bash"><code>$ npm run dev
 </code></pre>
-<h3>Build</h3>
-<pre class="prettyprint source lang-bash"><code># For windows
+          <h3>Build</h3>
+          <pre class="prettyprint source lang-bash"><code># For windows
 $ npm run build:win
 
 # For macOS
@@ -66,24 +53,27 @@ $ npm run build:mac
 # For Linux
 $ npm run build:linux
 </code></pre>
-<h2>Documentation Standards</h2>
-<p>This project uses JSDoc for documentation. All code should be documented following these guidelines:</p>
-<h3>Components</h3>
-<ul>
-<li>Must have a component description</li>
-<li>Must document all props using TypeDefs</li>
-<li>Must specify return type</li>
-<li>Must document any significant state or effects</li>
-</ul>
-<h3>Functions</h3>
-<ul>
-<li>Must have a description</li>
-<li>Must document all parameters</li>
-<li>Must document return type</li>
-<li>Must document thrown errors if any</li>
-</ul>
-<h3>Example</h3>
-<pre class="prettyprint source lang-javascript"><code>/**
+          <h2>Documentation Standards</h2>
+          <p>
+            This project uses JSDoc for documentation. All code should be documented following these
+            guidelines:
+          </p>
+          <h3>Components</h3>
+          <ul>
+            <li>Must have a component description</li>
+            <li>Must document all props using TypeDefs</li>
+            <li>Must specify return type</li>
+            <li>Must document any significant state or effects</li>
+          </ul>
+          <h3>Functions</h3>
+          <ul>
+            <li>Must have a description</li>
+            <li>Must document all parameters</li>
+            <li>Must document return type</li>
+            <li>Must document thrown errors if any</li>
+          </ul>
+          <h3>Example</h3>
+          <pre class="prettyprint source lang-javascript"><code>/**
  * @typedef {Object} UserProps
  * @property {string} name - The user's name
  * @property {number} age - The user's age
@@ -102,28 +92,65 @@ function User({ name, age }) {
   )
 }
 </code></pre>
-<h3>Generating Documentation</h3>
-<p>Run <code>npm run docs</code> to generate documentation in the <code>docs</code> directory.</p></article>
-    </section>
+          <h3>Generating Documentation</h3>
+          <p>
+            Run <code>npm run docs</code> to generate documentation in the
+            <code>docs</code> directory.
+          </p>
+        </article>
+      </section>
+    </div>
 
+    <nav>
+      <h2><a href="index.html">Home</a></h2>
+      <h3>Global</h3>
+      <ul>
+        <li><a href="global.html#App">App</a></li>
+        <li><a href="global.html#DEFAULT_VERSIONS">DEFAULT_VERSIONS</a></li>
+        <li><a href="global.html#click">click</a></li>
+        <li><a href="global.html#closeProgress">closeProgress</a></li>
+        <li><a href="global.html#createApplicationMenu">createApplicationMenu</a></li>
+        <li><a href="global.html#createConfirmationOptions">createConfirmationOptions</a></li>
+        <li><a href="global.html#createCustomDialog">createCustomDialog</a></li>
+        <li><a href="global.html#createCustomDialogHTML">createCustomDialogHTML</a></li>
+        <li><a href="global.html#createDialogOperations">createDialogOperations</a></li>
+        <li><a href="global.html#createDialogWindow">createDialogWindow</a></li>
+        <li><a href="global.html#createFileOperations">createFileOperations</a></li>
+        <li><a href="global.html#createGitHandlers">createGitHandlers</a></li>
+        <li><a href="global.html#createIPCHandlers">createIPCHandlers</a></li>
+        <li><a href="global.html#createNPMHandlers">createNPMHandlers</a></li>
+        <li><a href="global.html#createWindow">createWindow</a></li>
+        <li><a href="global.html#deleteFile">deleteFile</a></li>
+        <li><a href="global.html#electronAPI">electronAPI</a></li>
+        <li><a href="global.html#ensureDirectoryExists">ensureDirectoryExists</a></li>
+        <li><a href="global.html#executeGitOperations">executeGitOperations</a></li>
+        <li><a href="global.html#fileExists">fileExists</a></li>
+        <li><a href="global.html#getWindow">getWindow</a></li>
+        <li><a href="global.html#handleGitClone">handleGitClone</a></li>
+        <li><a href="global.html#handleGitCommit">handleGitCommit</a></li>
+        <li><a href="global.html#handleGitStatus">handleGitStatus</a></li>
+        <li><a href="global.html#readAllFiles">readAllFiles</a></li>
+        <li><a href="global.html#readDirectoryStructure">readDirectoryStructure</a></li>
+        <li><a href="global.html#readFile">readFile</a></li>
+        <li><a href="global.html#setupIPC">setupIPC</a></li>
+        <li><a href="global.html#showConfirmation">showConfirmation</a></li>
+        <li><a href="global.html#showDialog">showDialog</a></li>
+        <li><a href="global.html#showMessage">showMessage</a></li>
+        <li><a href="global.html#waitForDialog">waitForDialog</a></li>
+        <li><a href="global.html#writeFile">writeFile</a></li>
+      </ul>
+    </nav>
 
+    <br class="clear" />
 
+    <footer>
+      Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jan
+      31 2025 14:10:32 GMT-0800 (Pacific Standard Time)
+    </footer>
 
-
-
-</div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#DEFAULT_VERSIONS">DEFAULT_VERSIONS</a></li><li><a href="global.html#click">click</a></li><li><a href="global.html#closeProgress">closeProgress</a></li><li><a href="global.html#createApplicationMenu">createApplicationMenu</a></li><li><a href="global.html#createConfirmationOptions">createConfirmationOptions</a></li><li><a href="global.html#createCustomDialog">createCustomDialog</a></li><li><a href="global.html#createCustomDialogHTML">createCustomDialogHTML</a></li><li><a href="global.html#createDialogOperations">createDialogOperations</a></li><li><a href="global.html#createDialogWindow">createDialogWindow</a></li><li><a href="global.html#createFileOperations">createFileOperations</a></li><li><a href="global.html#createGitHandlers">createGitHandlers</a></li><li><a href="global.html#createIPCHandlers">createIPCHandlers</a></li><li><a href="global.html#createNPMHandlers">createNPMHandlers</a></li><li><a href="global.html#createWindow">createWindow</a></li><li><a href="global.html#deleteFile">deleteFile</a></li><li><a href="global.html#electronAPI">electronAPI</a></li><li><a href="global.html#ensureDirectoryExists">ensureDirectoryExists</a></li><li><a href="global.html#executeGitOperations">executeGitOperations</a></li><li><a href="global.html#fileExists">fileExists</a></li><li><a href="global.html#getWindow">getWindow</a></li><li><a href="global.html#handleGitClone">handleGitClone</a></li><li><a href="global.html#handleGitCommit">handleGitCommit</a></li><li><a href="global.html#handleGitStatus">handleGitStatus</a></li><li><a href="global.html#readAllFiles">readAllFiles</a></li><li><a href="global.html#readDirectoryStructure">readDirectoryStructure</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#setupIPC">setupIPC</a></li><li><a href="global.html#showConfirmation">showConfirmation</a></li><li><a href="global.html#showDialog">showDialog</a></li><li><a href="global.html#showMessage">showMessage</a></li><li><a href="global.html#waitForDialog">waitForDialog</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jan 31 2025 14:10:32 GMT-0800 (Pacific Standard Time)
-</footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
-</body>
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
 </html>

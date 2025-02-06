@@ -55,7 +55,8 @@ svg {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
+  padding-left: 2rem;
 }
 
 .btn {
@@ -72,14 +73,39 @@ svg {
   text-decoration: none;
   color: #000000;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.5s ease-in-out;
+
+  &:hover {
+    background-color: var(--btn-hover);
+  }
+
+  &.active {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  &:disabled,
+  &[disabled] {
+    opacity: 0.3;
+
+    cursor: not-allowed !important;
+  }
 }
 
 /* Screen Transitions */
-.fade-enter { opacity: 0; }
-.fade-exit { opacity: 1; }
-.fade-enter-active { opacity: 1; }
-.fade-exit-active { opacity: 0; }
+.fade-enter {
+  opacity: 0;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-enter-active {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0;
+}
 .fade-enter-active,
 .fade-exit-active {
   transition: opacity 500ms;

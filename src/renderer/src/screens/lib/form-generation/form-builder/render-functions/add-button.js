@@ -5,5 +5,5 @@ import { ICONS } from '../../../../icons/index.js';
  * @returns Button HTML string with icons
  */
 export function renderAddButtonHTML() {
-  return `<div class="add-button button">${ ICONS.ADD }</div>`;
+  return `<div class="add-button button">${ICONS.ADD}</div>`;
 }

@@ -6,18 +6,17 @@ import { isSimpleList, isDateObject, isSectionsArray } from '../../utilities/typ
  * @param {string} key - The field key
  * @returns {string} The inferred field type
  */
-const inferFieldType = ( value, key ) => {
-  if ( isSectionsArray( value, key ) ) return 'sections-array';
-  if ( isSimpleList( value ) ) return 'list';
-  if ( isDateObject( value ) ) return 'date';
-  if ( Array.isArray( value ) ) return 'array';
+const inferFieldType = (value, key) => {
+  if (isSectionsArray(value, key)) return 'sections-array';
+  if (isSimpleList(value)) return 'list';
+  if (isDateObject(value)) return 'date';
+  if (Array.isArray(value)) return 'array';
 
   const type = typeof value;
-  if ( type === 'string' ) return value.includes( '\n' ) ? 'textarea' : 'text';
-  if ( type === 'object' && value !== null ) return 'object';
+  if (type === 'string') return value.includes('\n') ? 'textarea' : 'text';
+  if (type === 'object' && value !== null) return 'object';
 
-  return type === 'boolean' ? 'checkbox' :
-    type === 'number' ? 'number' : 'text';
+  return type === 'boolean' ? 'checkbox' : type === 'number' ? 'number' : 'text';
 };
 
 /**
@@ -26,52 +25,52 @@ const inferFieldType = ( value, key ) => {
  * @param {*} value - The field value
  * @returns {Object} The field definition
  */
-function createField( key, value ) {
-  const type = inferFieldType( value, key );
+function createField(key, value) {
+  const type = inferFieldType(value, key);
   const baseField = {
     label: key,
     type,
     value,
-    placeholder: `Add ${ key }`
+    placeholder: `Add ${key}`
   };
 
   // Handle sections array specially
-  if ( type === 'sections-array' ) {
+  if (type === 'sections-array') {
     return {
       ...baseField,
       type: 'array',
       isDropzone: true,
       dropzoneType: 'sections',
-      value: Array.isArray( value ) ? value.map( ( section, index ) => ( {
-        type: 'object',
-        label: `section${ index + 1 }`,
-        value: Object.entries( section ).map( ( [ sKey, sValue ] ) =>
-          createField( sKey, sValue )
-        )
-      } ) ) : []
+      value: Array.isArray(value)
+        ? value.map((section, index) => ({
+            type: 'object',
+            label: `section${index + 1}`,
+            value: Object.entries(section).map(([sKey, sValue]) => createField(sKey, sValue))
+          }))
+        : []
     };
   }
 
   // Handle regular arrays
-  if ( type === 'array' ) {
+  if (type === 'array') {
     return {
       ...baseField,
       type: 'array',
       isDropzone: true,
       dropzoneType: 'sections',
-      value: Array.isArray( value ) ? value.map( ( arrayItem, index ) => ( {
-        type: 'object',
-        label: `Item ${ index + 1 }`,
-        value: Object.entries( arrayItem ).map( ( [ key, val ] ) =>
-          createField( key, val )
-        )
-      } ) ) : []
+      value: Array.isArray(value)
+        ? value.map((arrayItem, index) => ({
+            type: 'object',
+            label: `Item ${index + 1}`,
+            value: Object.entries(arrayItem).map(([key, val]) => createField(key, val))
+          }))
+        : []
     };
   }
   // Handle objects
-  else if ( type === 'object' ) {
-    baseField.value = Object.entries( value ).map( ( [ subKey, subValue ] ) =>
-      createField( subKey, subValue )
+  else if (type === 'object') {
+    baseField.value = Object.entries(value).map(([subKey, subValue]) =>
+      createField(subKey, subValue)
     );
     delete baseField.placeholder;
   }
@@ -84,8 +83,8 @@ function createField( key, value ) {
  * @param {Object} json - The JSON to convert
  * @returns {Object} The schema object
  */
-export async function convertToSchemaObject( json ) {
+export async function convertToSchemaObject(json) {
   return {
-    fields: Object.entries( json ).map( ( [ key, value ] ) => createField( key, value ) )
+    fields: Object.entries(json).map(([key, value]) => createField(key, value))
   };
 }

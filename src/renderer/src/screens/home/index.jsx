@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FolderPlusIcon, FolderOpenIcon, FolderMinusIcon, GithubIcon } from '../../components/icons';
+import {
+  FolderPlusIcon,
+  FolderOpenIcon,
+  FolderMinusIcon,
+  GithubIcon
+} from '../../components/icons';
 import { StorageOperations } from '../../services/storage';
 import { ProjectOperations } from '../../services/project';
 import { selectProject } from '../lib/utilities/select-project';
@@ -8,7 +13,7 @@ import { handleDeleteProject } from './handlers/delete-project';
 import { handleEditProject } from './handlers/edit-project';
 import { handleCloneGithub } from './handlers/clone-github';
 
-import "./styles.css";
+import './styles.css';
 
 /**
  * Home component - main landing page for the Metallurgy application
@@ -22,7 +27,7 @@ const App = () => {
     const loadRecentProjects = async () => {
       try {
         const projects = StorageOperations.getRecentProjects();
-        const projectsWithNames = projects.map(project => ({
+        const projectsWithNames = projects.map((project) => ({
           ...project,
           name: StorageOperations.getProjectName(project.projectPath)
         }));
@@ -75,7 +80,7 @@ const App = () => {
     try {
       const projectFolder = await selectProject();
 
-      if (projectFolder === "abort") return;
+      if (projectFolder === 'abort') return;
 
       // Check if this is already a Metallurgy project
       const isValid = await ProjectOperations.validateProject(projectFolder);

@@ -60,14 +60,14 @@ export const FIELD_TYPES = {
     type: 'array',
     default: [],
     canHaveLabel: true,
-    isDropzone: false  // Regular arrays are not dropzones
+    isDropzone: false // Regular arrays are not dropzones
   },
   SECTIONS_ARRAY: {
     type: 'array',
     default: [],
     canHaveLabel: true,
-    isDropzone: true,  // Sections arrays are dropzones
-    dropzoneType: 'sections'  // Specifically for sections
+    isDropzone: true, // Sections arrays are dropzones
+    dropzoneType: 'sections' // Specifically for sections
   },
   OBJECT: {
     type: 'object',

@@ -1,13 +1,13 @@
 export const audioSection = {
-  sectionDescription: "Audio section with optional image",
+  sectionDescription: 'Audio section with optional image',
   audio: {
-    ogg: "",
-    mpeg: ""
+    ogg: '',
+    mpeg: ''
   },
   hasImage: false,
   image: {
-    src: "",
-    alt: "",
-    caption: ""
+    src: '',
+    alt: '',
+    caption: ''
   }
 };

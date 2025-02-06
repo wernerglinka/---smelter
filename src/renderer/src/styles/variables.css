@@ -37,7 +37,7 @@
     *   - https://css-clamp-calculator.netlify.app/
     *   - https://blog.logrocket.com/fluid-vs-responsive-typography-css-clamp/
     */
-  --font-family: "Open Sans", sans-serif;
+  --font-family: 'Open Sans', sans-serif;
   --color-body: var(--text-color);
   --color-header: var(--header-color);
   --font-size-sm: clamp(1.28rem, 0.18vw + 1.21rem, 1.43rem);

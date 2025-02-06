@@ -4,28 +4,28 @@
  * @returns {Promise<{frontmatter: Object, content: string}>}
  * @throws {Error} If file reading fails
  */
-export const getMarkdownFile = async ( filePath ) => {
+export const getMarkdownFile = async (filePath) => {
   try {
     // Remove the file protocol from the path
-    const cleanPath = filePath.replace( 'file://', '' );
+    const cleanPath = filePath.replace('file://', '');
 
     // Get markdown file contents
-    const { status, data, error } = await window.electronAPI.markdown.read( cleanPath );
+    const { status, data, error } = await window.electronAPI.markdown.read(cleanPath);
 
-    if ( status === 'failure' ) {
-      throw new Error( `Failed to read markdown file: ${ error }` );
+    if (status === 'failure') {
+      throw new Error(`Failed to read markdown file: ${error}`);
     }
 
-    if ( !data || !data.frontmatter ) {
-      throw new Error( 'Invalid markdown file format' );
+    if (!data || !data.frontmatter) {
+      throw new Error('Invalid markdown file format');
     }
 
     return {
       frontmatter: data.frontmatter,
       content: data.content || ''
     };
-  } catch ( error ) {
-    console.error( 'Error in getMarkdownFile:', error );
+  } catch (error) {
+    console.error('Error in getMarkdownFile:', error);
     throw error;
   }
 };

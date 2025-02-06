@@ -9,8 +9,8 @@
  * @param {string} key - The field key
  * @returns {boolean} True if value is a sections array
  */
-export function isSectionsArray( value, key ) {
-  return Array.isArray( value ) && key === 'sections';
+export function isSectionsArray(value, key) {
+  return Array.isArray(value) && key === 'sections';
 }
 
 /**
@@ -19,12 +19,12 @@ export function isSectionsArray( value, key ) {
  * @param {string} key - The field key
  * @returns {boolean} True if value is array of strings
  */
-export const isSimpleList = ( value, key ) => {
+export const isSimpleList = (value, key) => {
   // Don't treat sections array as a simple list
-  if ( isSectionsArray( value, key ) ) {
+  if (isSectionsArray(value, key)) {
     return false;
   }
-  return Array.isArray( value ) && value.every( item => typeof item === 'string' );
+  return Array.isArray(value) && value.every((item) => typeof item === 'string');
 };
 
 /**
@@ -32,9 +32,9 @@ export const isSimpleList = ( value, key ) => {
  * @param {string} input - Date string to validate
  * @returns {boolean} True if input is valid date string
  */
-export const isDateString = ( input ) => {
-  const parsedDate = new Date( input );
-  return !isNaN( parsedDate.getTime() );
+export const isDateString = (input) => {
+  const parsedDate = new Date(input);
+  return !isNaN(parsedDate.getTime());
 };
 
 /**
@@ -42,7 +42,7 @@ export const isDateString = ( input ) => {
  * @param {*} input - Value to check
  * @returns {boolean} True if input is Date instance
  */
-export const isDateObject = ( input ) => input instanceof Date;
+export const isDateObject = (input) => input instanceof Date;
 
 /**
  * Determines value type for form field generation
@@ -50,12 +50,12 @@ export const isDateObject = ( input ) => input instanceof Date;
  * @param {string} key - The field key
  * @returns {string} Field type identifier
  */
-export const getFieldType = ( value, key ) => {
-  if ( isSectionsArray( value, key ) ) return 'sections-array';
-  if ( isSimpleList( value, key ) ) return 'list';
-  if ( isDateObject( value ) ) return 'date';
-  if ( Array.isArray( value ) ) return 'array';
-  if ( value === null ) return 'null';
+export const getFieldType = (value, key) => {
+  if (isSectionsArray(value, key)) return 'sections-array';
+  if (isSimpleList(value, key)) return 'list';
+  if (isDateObject(value)) return 'date';
+  if (Array.isArray(value)) return 'array';
+  if (value === null) return 'null';
 
   return typeof value;
 };

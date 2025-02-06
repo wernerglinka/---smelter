@@ -6,16 +6,16 @@
  */
 
 export const cleanMainForm = async () => {
-  const editSpace = document.getElementById( 'main-form' );
-  if ( !editSpace ) return;
+  const editSpace = document.getElementById('main-form');
+  if (!editSpace) return;
 
-  editSpace.classList.add( 'fade-out' );
+  editSpace.classList.add('fade-out');
 
-  return new Promise( resolve => {
-    setTimeout( () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
       editSpace.remove();
-      editSpace.classList.remove( 'fade-out' );
+      editSpace.classList.remove('fade-out');
       resolve();
-    }, 500 );
-  } );
+    }, 500);
+  });
 };

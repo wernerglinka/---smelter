@@ -1,18 +1,18 @@
 export const pageTestColumns = {
-  "layout": "blocks.njk",
-  "sections": [
+  layout: 'blocks.njk',
+  sections: [
     {
-      container: "section",
+      container: 'section',
       columns: [
         {
           column: [
             {
-              blockName: "text",
-              title: "",
-              header: "h2",
+              blockName: 'text',
+              title: '',
+              header: 'h2',
               lextLength: 60,
-              subTitle: "",
-              prose: ""
+              subTitle: '',
+              prose: ''
             }
           ]
         }

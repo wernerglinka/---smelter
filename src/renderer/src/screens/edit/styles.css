@@ -76,6 +76,8 @@ h2 {
 }
 
 .sidebar-toggle {
+  padding: 0 0 2rem 2rem;
+
   svg {
     width: 2rem;
     height: 2rem;
@@ -84,26 +86,6 @@ h2 {
     stroke-width: 2px;
     stroke-linecap: round;
     stroke-linejoin: round;
-  }
-}
-
-
-.sidebar {
-  flex: 0 0 30rem;
-  padding: 0 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  font-size: 1.6rem;
-  overflow-x: hidden;
-  animation: normalWidth 0.8s ease-in-out forwards;
-
-  &.hidden {
-    animation: noWidth 0.8s ease-in-out forwards;
-  }
-
-  & > * {
-    width: 26rem;
   }
 }
 
@@ -123,11 +105,11 @@ h2 {
 .active .right-sidebar {
   padding-left: 1.5rem;
   flex: 0 0 20%;
-  min-width: 30rem;;
+  min-width: 30rem;
 }
 
 .container-background {
-  padding: 1rem 2rem 2rem;
+  padding: 2rem;
   background: var(--white-transparent);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -143,109 +125,12 @@ h2 {
   h3 {
     padding-bottom: 2rem;
   }
-}
-
-/**
- * DOM Tree
- * The DOM Tree is the list of all the files in the project and is displayed in the sidebar
- */
-.dom-tree,
-.dom-tree ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-
-  & ul {
-    margin-left: 2rem;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.5s ease-in-out;
-
-    & > li,
-    & > li:first-child {
-      font-weight: normal;
-      text-transform: none;
-    }
-  }
-
-  & li {
-    padding: 0.5rem 0;
-    font-size: 1.6rem;
-    color: var(--text-color);
-
-    & a {
-      display: block;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.3s ease-in-out;
-
-      &:hover {
-        color: var(--link-color-hover);
-      }
-
-      &.active {
-        opacity: 0.3;
-        pointer-events: none;
-        cursor: default;
-      }
-    }
-
-    &.open > ul {
-      max-height: 100rem;
-    }
+  & .btn {
+    width: 100%;
+    text-align: left;
   }
 }
 
-.folder span {
-  display: block;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.file a:before, .folder span:before {
-  content: "";
-  display: inline-block;
-  width: 1.6rem;
-  height: 1.6rem;
-  margin-right: 1.6rem;
-  position: relative;
-  top: 0.6rem;
-}
-
-.file.md a:before {
-  content: url(../icons/file-md.svg);
-}
-.file.json a:before {
-  content: url(../icons/file-json.svg);
-}
-.file.js a:before {
-  content: url(../icons/file-js.svg);
-}
-.folder span:before {
-  content: url(../icons/folder.svg);
-}
-.folder.open > span:before {
-  content: url(../icons/folder-open.svg);
-}
-
-.templates-wrapper {
-  & .section-header {
-    padding: 2rem 0 ;
-  }
-
-  & .template-selection,
-  & .template-block {
-  padding: 0.5rem;
-  border: var(--component-border);
-  border-radius: var(--default-radius);
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  /* cursor for drag and drop */
-  cursor: move;
-}
-}
 
 /**
  * Edit Container
@@ -253,52 +138,6 @@ h2 {
  */
 .edit-container {
   min-height: 80vh;
-}
-
-/**
- * Sidebar panes
- * The sidebar panes are the different panels that are displayed in the sidebar
- * E.g. DOM Tree and the component selections
- */
-.sidebar-panes {
-  position: relative;
-}
-.sidebar-pane {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transition: opacity 0.3s ease-in-out;
-  opacity: 0;
-  pointer-events: none;
-
-  &.active {
-    opacity: 1;
-    pointer-events: all;
-    margin-bottom: 5rem;
-  }
-}
-
-.sidebar-pane-selection {
-  list-style: none;
-  padding: 2rem 0 0;
-  margin: 0;
-
-  & .btn {
-    display: block;
-    margin-bottom: 2rem;
-    opacity: 1;
-    pointer-events: all;
-    cursor: pointer;
-    transition: opacity 0.3s ease-in-out;
-
-    &.active {
-      opacity: 0.5;
-      pointer-events: none;
-      cursor: default;
-    }
-  }
 }
 
 .component-selection {
@@ -369,7 +208,8 @@ h2 {
     pointer-events: none;
   }
 
-  & .undo-redo-message, & .undo-redo-count {
+  & .undo-redo-message,
+  & .undo-redo-count {
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--message-color);
@@ -467,7 +307,8 @@ fieldset {
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
   }
-  .delete-button, .add-button {
+  .delete-button,
+  .add-button {
     background: none;
     display: flex;
     justify-content: center;
@@ -482,13 +323,13 @@ fieldset {
     margin-left: auto;
 
     & svg g {
-      stroke: var(--text-color) ;
+      stroke: var(--text-color);
     }
 
     &:hover svg g {
-        stroke: var(--link-color-hover);
-        transition: stroke 0.3s;
-      }
+      stroke: var(--link-color-hover);
+      transition: stroke 0.3s;
+    }
   }
 
   &:hover {
@@ -570,17 +411,22 @@ fieldset {
       justify-content: flex-start;
       margin-right: 2rem;
 
-      & *:not([type="checkbox"][role="switch"]) {
+      & *:not([type='checkbox'][role='switch']) {
         width: 100%;
       }
     }
 
     & input.is-error {
-    background-color: var(--error-background-color);
-  }
+      background-color: var(--error-background-color);
+    }
 
-    & [type="text"], & textarea, & [type="number"], & [type="date"], & [type="url"], & select {
-      font-family: "Open Sans", sans-serif;
+    & [type='text'],
+    & textarea,
+    & [type='number'],
+    & [type='date'],
+    & [type='url'],
+    & select {
+      font-family: 'Open Sans', sans-serif;
       border: none;
       background: var(--white-transparent);
       border-radius: 0.5rem;
@@ -615,7 +461,7 @@ fieldset {
       text-overflow: ellipsis;
     }
 
-    & [type="date"]::webkit-calendar-picker-indicator {
+    & [type='date']::webkit-calendar-picker-indicator {
       color: #fff;
     }
   }
@@ -643,7 +489,7 @@ fieldset {
     & li {
       position: relative;
       display: flex;
-      font-family: "Open Sans", sans-serif;
+      font-family: 'Open Sans', sans-serif;
       border: none;
       background: none;
       color: var(--text-color);
@@ -654,7 +500,7 @@ fieldset {
         margin-top: 0.5rem;
       }
 
-      &:hover .button-wrapper{
+      &:hover .button-wrapper {
         opacity: 1;
       }
     }
@@ -694,7 +540,6 @@ fieldset {
       display: flex;
       flex-direction: column;
       justify-content: center;
-
 
       &.object-name {
         min-height: 3rem;
@@ -740,7 +585,6 @@ fieldset {
         }
 
         &.is-collapsed {
-
           & .open {
             display: none;
           }
@@ -811,11 +655,9 @@ fieldset {
   margin: 0.25rem 0;
 }
 
-
 .form-element.draggable-transition {
   transition: transform 0.2s ease-out;
 }
-
 
 /*
 .form-element.no-drop {
@@ -858,7 +700,7 @@ fieldset {
   background-size: cover;
   background-attachment: fixed;
   color: var(--text-color);
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
   justify-content: center;
   display: none;
 
@@ -941,7 +783,7 @@ label > div:has(select) {
     top: 0.5rem;
     right: 2rem;
     z-index: 1;
-    content: "";
+    content: '';
     width: 1rem;
     height: 1rem;
     border-right: 1px solid #000;
@@ -959,14 +801,14 @@ select {
   color: black;
   cursor: pointer;
   padding: var(--element-padding);
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 /**
  * Checkbox as Toggle Switch
  */
 
-input:where([type="checkbox"][role="switch"]) {
+input:where([type='checkbox'][role='switch']) {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -983,8 +825,8 @@ input:where([type="checkbox"][role="switch"]) {
   box-shadow: var(--input-box-shadow);
 }
 
-input:where([type="checkbox"][role="switch"])::before {
-  content: "";
+input:where([type='checkbox'][role='switch'])::before {
+  content: '';
   position: absolute;
   top: 50%;
   left: 0;
@@ -999,12 +841,12 @@ input:where([type="checkbox"][role="switch"])::before {
   opacity: 50%;
 }
 
-input:where([type="checkbox"][role="switch"]):checked::before {
+input:where([type='checkbox'][role='switch']):checked::before {
   opacity: 100%;
   left: 1.5em;
 }
 
-input:where([type="checkbox"][role="switch"]):disabled {
+input:where([type='checkbox'][role='switch']):disabled {
   opacity: 0.4;
 }
 

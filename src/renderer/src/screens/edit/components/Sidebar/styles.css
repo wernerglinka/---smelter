@@ -1,0 +1,162 @@
+.sidebar {
+  flex: 0 0 30rem;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  font-size: 1.6rem;
+  overflow-x: hidden;
+  animation: normalWidth 0.8s ease-in-out forwards;
+
+  &.hidden {
+    animation: noWidth 0.8s ease-in-out forwards;
+  }
+
+  & > * {
+    width: 26rem;
+  }
+
+  & .btn {
+    display: block;
+    margin: 0 0 2rem;
+  }
+}
+
+/**
+ * Sidebar panes
+ * The sidebar panes are the different panels that are displayed in the sidebar
+ * E.g. DOM Tree and the component selections
+ */
+.sidebar-panes {
+  position: relative;
+}
+.sidebar-pane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+  pointer-events: none;
+
+  &.active {
+    opacity: 1;
+    pointer-events: all;
+    margin-bottom: 5rem;
+  }
+}
+
+.sidebar-pane-selection {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  & li:last-child .btn {
+    margin-bottom: 0;
+  }
+}
+
+
+/**
+ * DOM Tree
+ * The DOM Tree is the list of all the files in the project and is displayed in the sidebar
+ */
+.dom-tree,
+.dom-tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  & ul {
+    margin-left: 2rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+
+    & > li,
+    & > li:first-child {
+      font-weight: normal;
+      text-transform: none;
+    }
+  }
+
+  & li {
+    padding: 0.5rem 0;
+    font-size: 1.6rem;
+    color: var(--text-color);
+
+    & a {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        color: var(--link-color-hover);
+      }
+
+      &.active {
+        opacity: 0.3;
+        pointer-events: none;
+        cursor: default;
+      }
+    }
+
+    &.open > ul {
+      max-height: 100rem;
+    }
+  }
+}
+
+.folder span {
+  display: block;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.file a:before,
+.folder span:before {
+  content: '';
+  display: inline-block;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-right: 1.6rem;
+  position: relative;
+  top: 0.6rem;
+}
+
+.file.md a:before {
+  content: url(../icons/file-md.svg);
+}
+.file.json a:before {
+  content: url(../icons/file-json.svg);
+}
+.file.js a:before {
+  content: url(../icons/file-js.svg);
+}
+.folder span:before {
+  content: url(../icons/folder.svg);
+}
+.folder.open > span:before {
+  content: url(../icons/folder-open.svg);
+}
+
+.templates-wrapper {
+  & .section-header {
+    padding: 2rem 0;
+  }
+
+  & .template-selection,
+  & .template-block {
+    padding: 0.5rem;
+    border: var(--component-border);
+    border-radius: var(--default-radius);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    /* cursor for drag and drop */
+    cursor: move;
+  }
+}

@@ -38,18 +38,21 @@ $ npm run build:linux
 This project uses JSDoc for documentation. All code should be documented following these guidelines:
 
 ### Components
+
 - Must have a component description
 - Must document all props using TypeDefs
 - Must specify return type
 - Must document any significant state or effects
 
 ### Functions
+
 - Must have a description
 - Must document all parameters
 - Must document return type
 - Must document thrown errors if any
 
 ### Example
+
 ```javascript
 /**
  * @typedef {Object} UserProps
@@ -67,12 +70,14 @@ function User({ name, age }) {
     <div>
       {name} ({age})
     </div>
-  )
+  );
 }
 ```
 
 ### Generating Documentation
+
 Run `npm run docs` to generate documentation in the `docs` directory.
 
 ### Development Notes
+
 [Dev Notes](./dev-notes/README.md)

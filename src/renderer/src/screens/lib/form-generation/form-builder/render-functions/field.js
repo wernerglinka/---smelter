@@ -3,16 +3,16 @@ import renderFunctions from './index.js';
 
 /**
  * @function renderField
- * @param {*} field 
+ * @param {*} field
  * @returns The HTML string for a field
  */
-export function renderField( field, implicitSchema ) {
+export function renderField(field, implicitSchema) {
   const fieldName = field.label;
-  const implicitDef = helpers.findImplicitDefinition( fieldName, implicitSchema );
+  const implicitDef = helpers.findImplicitDefinition(fieldName, implicitSchema);
 
   // Determine element type
   let elementType = field.type;
-  if ( implicitDef && implicitDef.type ) {
+  if (implicitDef && implicitDef.type) {
     elementType = implicitDef.type;
   }
 
@@ -20,26 +20,26 @@ export function renderField( field, implicitSchema ) {
   // form-element, label-wrapper, content-wrapper, etc.
   // The provided HTML structure is quite extensive. We’ll try to mimic it.
   // For simplicity, we’ll handle just a few field types as examples:
-  switch ( elementType ) {
+  switch (elementType) {
     case 'text':
     case 'url':
     case 'number':
     case 'image':
-      return renderFunctions.renderText( field, implicitDef );
+      return renderFunctions.renderText(field, implicitDef);
     case 'textarea':
-      return renderFunctions.renderTextarea( field, implicitDef );
+      return renderFunctions.renderTextarea(field, implicitDef);
     case 'checkbox':
-      return renderFunctions.renderCheckbox( field, implicitDef );
+      return renderFunctions.renderCheckbox(field, implicitDef);
     case 'select':
-      return renderFunctions.renderSelect( field, implicitDef );
+      return renderFunctions.renderSelect(field, implicitDef);
     case 'object':
-      return renderFunctions.renderObject( field, implicitDef, implicitSchema );
+      return renderFunctions.renderObject(field, implicitDef, implicitSchema);
     case 'list':
-      return renderFunctions.renderList( field, implicitDef );
+      return renderFunctions.renderList(field, implicitDef);
     case 'array':
-      return renderFunctions.renderArray( field, implicitDef, implicitSchema );
+      return renderFunctions.renderArray(field, implicitDef, implicitSchema);
     default:
       // default fallback: treat as text
-      return renderFunctions.renderText( field, implicitDef );
+      return renderFunctions.renderText(field, implicitDef);
   }
 }

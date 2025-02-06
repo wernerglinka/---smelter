@@ -2,3 +2,4 @@ singleQuote: true
 semi: true
 printWidth: 100
 trailingComma: none
+bracketSpacing: true # This will force spaces inside curly braces

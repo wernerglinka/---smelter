@@ -1,10 +1,10 @@
 export const video = {
-  blockName: "video",
-  title: "",
+  blockName: 'video',
+  title: '',
   inline: false,
-  src: "",
-  id: "",
-  thumbnail: "",
-  start: "",
-  end: "",
+  src: '',
+  id: '',
+  thumbnail: '',
+  start: '',
+  end: ''
 };

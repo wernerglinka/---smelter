@@ -13,13 +13,13 @@ export const ValueOps = {
    * @param {HTMLElement} element - Form element
    * @returns {string} Cleaned, camelCased name
    */
-  getName: element => {
-    const input = element.querySelector( '.object-name input' );
-    const text = element.querySelector( '.label-text' );
-    if ( !input && !text ) return '';
+  getName: (element) => {
+    const input = element.querySelector('.object-name input');
+    const text = element.querySelector('.label-text');
+    if (!input && !text) return '';
 
-    const rawName = ( input ? input.value : text.textContent ).trim();
-    return toCamelCase( rawName );
+    const rawName = (input ? input.value : text.textContent).trim();
+    return toCamelCase(rawName);
   },
 
   /**
@@ -28,16 +28,19 @@ export const ValueOps = {
    * @param {HTMLElement} element - Form element
    * @returns {{key: string, value: string|number|boolean}} Key-value pair
    */
-  getKeyValue: element => {
-    const labelInput = element.querySelector( '.element-label' );
-    const valueInput = element.querySelector( '.element-value' );
-    const key = labelInput ? toCamelCase( labelInput.value ) : '';
+  getKeyValue: (element) => {
+    const labelInput = element.querySelector('.element-label');
+    const valueInput = element.querySelector('.element-value');
+    const key = labelInput ? toCamelCase(labelInput.value) : '';
 
     let value = '';
-    if ( valueInput ) {
-      value = valueInput.type === 'checkbox' ? valueInput.checked :
-        valueInput.type === 'number' ? Number( valueInput.value ) :
-          valueInput.value.trim();
+    if (valueInput) {
+      value =
+        valueInput.type === 'checkbox'
+          ? valueInput.checked
+          : valueInput.type === 'number'
+            ? Number(valueInput.value)
+            : valueInput.value.trim();
     }
 
     return { key, value };
@@ -56,7 +59,7 @@ export const PathOps = {
    * @param {string} name - Name to append
    * @returns {string[]} New path array
    */
-  push: ( path, name ) => [ ...path, name ],
+  push: (path, name) => [...path, name],
 
   /**
    * @function pop
@@ -64,7 +67,7 @@ export const PathOps = {
    * @param {string[]} path - Current path array
    * @returns {string[]} Shortened path array
    */
-  pop: path => path.slice( 0, -1 ),
+  pop: (path) => path.slice(0, -1),
 
   /**
    * @function getIn
@@ -73,11 +76,11 @@ export const PathOps = {
    * @param {string[]} path - Path to traverse
    * @returns {Object} Nested object
    */
-  getIn: ( obj, path ) => {
-    return path.reduce( ( current, key ) => {
-      current[ key ] = current[ key ] || {};
-      return current[ key ];
-    }, obj );
+  getIn: (obj, path) => {
+    return path.reduce((current, key) => {
+      current[key] = current[key] || {};
+      return current[key];
+    }, obj);
   },
 
   /**
@@ -88,12 +91,12 @@ export const PathOps = {
    * @param {*} value - Value to set
    * @returns {Object} Updated object
    */
-  setIn: ( obj, path, value ) => {
-    if ( path.length === 0 ) return value;
-    const [ head, ...rest ] = path;
+  setIn: (obj, path, value) => {
+    if (path.length === 0) return value;
+    const [head, ...rest] = path;
     return {
       ...obj,
-      [ head ]: PathOps.setIn( obj[ head ] || {}, rest, value )
+      [head]: PathOps.setIn(obj[head] || {}, rest, value)
     };
   }
 };
@@ -108,10 +111,10 @@ export const FormStateOps = {
    * Creates initial form state
    * @returns {{path: string[], result: Object}} Initial state
    */
-  createState: () => ( {
-    path: [ 'main' ],
+  createState: () => ({
+    path: ['main'],
     result: { main: {} }
-  } ),
+  }),
 
   /**
    * @function handleStructural
@@ -120,11 +123,11 @@ export const FormStateOps = {
    * @param {HTMLElement} element - Form element
    * @returns {Object} Updated state
    */
-  handleStructural: ( state, element ) => {
-    const name = ValueOps.getName( element );
+  handleStructural: (state, element) => {
+    const name = ValueOps.getName(element);
     return {
       ...state,
-      path: PathOps.push( state.path, name )
+      path: PathOps.push(state.path, name)
     };
   },
 
@@ -135,31 +138,27 @@ export const FormStateOps = {
    * @param {HTMLElement} element - Form element
    * @returns {Object} Updated state
    */
-  handleValue: ( state, element ) => {
-    if ( element.classList.contains( 'is-list' ) ) {
-      const name = ValueOps.getName( element );
-      const items = Array.from( element.querySelectorAll( '.list-item' ) )
-        .map( input => input.value.trim() );
-      const currentValue = PathOps.getIn( state.result, state.path );
+  handleValue: (state, element) => {
+    if (element.classList.contains('is-list')) {
+      const name = ValueOps.getName(element);
+      const items = Array.from(element.querySelectorAll('.list-item')).map((input) =>
+        input.value.trim()
+      );
+      const currentValue = PathOps.getIn(state.result, state.path);
       return {
         ...state,
-        result: PathOps.setIn(
-          state.result,
-          state.path,
-          { ...currentValue, [ name ]: items }
-        )
+        result: PathOps.setIn(state.result, state.path, { ...currentValue, [name]: items })
       };
     }
 
-    const { key, value } = ValueOps.getKeyValue( element );
-    if ( !key ) return state;
+    const { key, value } = ValueOps.getKeyValue(element);
+    if (!key) return state;
     return {
       ...state,
-      result: PathOps.setIn(
-        state.result,
-        state.path,
-        { ...PathOps.getIn( state.result, state.path ), [ key ]: value }
-      )
+      result: PathOps.setIn(state.result, state.path, {
+        ...PathOps.getIn(state.result, state.path),
+        [key]: value
+      })
     };
   },
 
@@ -170,17 +169,18 @@ export const FormStateOps = {
    * @param {HTMLElement} element - Form element
    * @returns {Object} Updated state
    */
-  handleList: ( state, element ) => {
-    const name = ValueOps.getName( element );
-    const items = Array.from( element.querySelectorAll( '.list-item' ) )
-      .map( input => input.value.trim() );
+  handleList: (state, element) => {
+    const name = ValueOps.getName(element);
+    const items = Array.from(element.querySelectorAll('.list-item')).map((input) =>
+      input.value.trim()
+    );
 
     return {
       ...state,
-      result: PathOps.setIn( state.result, [ 'main' ], {
-        ...PathOps.getIn( state.result, [ 'main' ] ),
-        [ name ]: items
-      } )
+      result: PathOps.setIn(state.result, ['main'], {
+        ...PathOps.getIn(state.result, ['main']),
+        [name]: items
+      })
     };
   },
 
@@ -190,29 +190,28 @@ export const FormStateOps = {
    * @param {Object} state - Current state
    * @returns {Object} Updated state with array conversion
    */
-  handleArrayConversion: ( state ) => {
-    const currentObj = PathOps.getIn( state.result, state.path );
+  handleArrayConversion: (state) => {
+    const currentObj = PathOps.getIn(state.result, state.path);
 
-    if ( currentObj.isList ) {
+    if (currentObj.isList) {
       const arrayItems = currentObj.items || [];
       delete currentObj.isList;
       delete currentObj.items;
       return {
         ...state,
-        path: PathOps.pop( state.path ),
-        result: PathOps.setIn( state.result, state.path, arrayItems )
+        path: PathOps.pop(state.path),
+        result: PathOps.setIn(state.result, state.path, arrayItems)
       };
     }
 
-    const arrayVersion = Object.entries( currentObj ).map( ( [ key, value ] ) =>
-      key.endsWith( 'block' ) ? { [ key ]: value } :
-        typeof value === 'string' ? value : value
+    const arrayVersion = Object.entries(currentObj).map(([key, value]) =>
+      key.endsWith('block') ? { [key]: value } : typeof value === 'string' ? value : value
     );
 
     return {
       ...state,
-      path: PathOps.pop( state.path ),
-      result: PathOps.setIn( state.result, state.path, arrayVersion )
+      path: PathOps.pop(state.path),
+      result: PathOps.setIn(state.result, state.path, arrayVersion)
     };
   },
 
@@ -222,10 +221,10 @@ export const FormStateOps = {
    * @param {Object} state - Current state
    * @returns {Object} Updated state
    */
-  handleObjectEnd: ( state ) => ( {
+  handleObjectEnd: (state) => ({
     ...state,
-    path: PathOps.pop( state.path )
-  } )
+    path: PathOps.pop(state.path)
+  })
 };
 
 /**
@@ -233,52 +232,53 @@ export const FormStateOps = {
  * @param {HTMLElement[]} allFormElements - Form elements
  * @returns {Object|null} Transformed object
  */
-export const transformFormElementsToObject = ( allFormElements ) => {
-
+export const transformFormElementsToObject = (allFormElements) => {
   try {
-    const finalState = Array.from( allFormElements ).reduce( ( state, element ) => {
+    const finalState = Array.from(allFormElements).reduce((state, element) => {
       const elementClasses = {
-        isObject: element.classList.contains( 'is-object' ),
-        isArray: element.classList.contains( 'is-array' ),
-        isList: element.classList.contains( 'is-list' ),
-        isLast: element.classList.contains( 'is-last' ),
-        isLastInArray: element.classList.contains( 'array-last' )
+        isObject: element.classList.contains('is-object'),
+        isArray: element.classList.contains('is-array'),
+        isList: element.classList.contains('is-list'),
+        isLast: element.classList.contains('is-last'),
+        isLastInArray: element.classList.contains('array-last')
       };
 
-      switch ( true ) {
-        case state.path.length === 1 && !elementClasses.isObject &&
-          !elementClasses.isArray && !elementClasses.isList &&
+      switch (true) {
+        case state.path.length === 1 &&
+          !elementClasses.isObject &&
+          !elementClasses.isArray &&
+          !elementClasses.isList &&
           !elementClasses.isLastInArray:
-          const { key, value } = ValueOps.getKeyValue( element );
-          if ( !key ) return state;
+          const { key, value } = ValueOps.getKeyValue(element);
+          if (!key) return state;
           return {
             ...state,
-            result: PathOps.setIn( state.result, [ 'main' ], {
-              ...PathOps.getIn( state.result, [ 'main' ] ),
-              [ key ]: value
-            } )
+            result: PathOps.setIn(state.result, ['main'], {
+              ...PathOps.getIn(state.result, ['main']),
+              [key]: value
+            })
           };
 
         case elementClasses.isObject || elementClasses.isArray:
-          return FormStateOps.handleStructural( state, element );
+          return FormStateOps.handleStructural(state, element);
 
         case elementClasses.isList:
-          return FormStateOps.handleList( state, element );
+          return FormStateOps.handleList(state, element);
 
         case !elementClasses.isLast:
-          return FormStateOps.handleValue( state, element );
+          return FormStateOps.handleValue(state, element);
 
         case elementClasses.isLastInArray:
-          return FormStateOps.handleArrayConversion( state );
+          return FormStateOps.handleArrayConversion(state);
 
         default:
-          return FormStateOps.handleObjectEnd( state );
+          return FormStateOps.handleObjectEnd(state);
       }
-    }, FormStateOps.createState() );
+    }, FormStateOps.createState());
 
     return finalState.result.main;
-  } catch ( error ) {
-    console.error( 'Transformation error:', error );
+  } catch (error) {
+    console.error('Transformation error:', error);
     return null;
   }
 };

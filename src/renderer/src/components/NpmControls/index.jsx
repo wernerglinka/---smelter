@@ -11,9 +11,7 @@ const NpmControls = () => {
   const hasNodeModules = async (path) => {
     try {
       console.log('Checking for node_modules in:', path);
-      const result = await window.electronAPI.directories.exists(
-        `${path}/node_modules`
-      );
+      const result = await window.electronAPI.directories.exists(`${path}/node_modules`);
       console.log('hasNodeModules result:', result);
       return result.status === 'success' && result.data === true;
     } catch (error) {

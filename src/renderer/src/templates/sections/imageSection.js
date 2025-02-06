@@ -1,8 +1,8 @@
 export const imageSection = {
-  sectionDescription: "Image section with optional caption",
+  sectionDescription: 'Image section with optional caption',
   image: {
-    src: "",
-    alt: "",
-    caption: ""
+    src: '',
+    alt: '',
+    caption: ''
   }
 };

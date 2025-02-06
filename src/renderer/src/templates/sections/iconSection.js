@@ -1,7 +1,7 @@
 export const iconSection = {
-  sectionDescription: "Icon element",
+  sectionDescription: 'Icon element',
   icon: {
-    name: "",
-    caption: ""
+    name: '',
+    caption: ''
   }
 };

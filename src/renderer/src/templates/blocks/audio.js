@@ -1,13 +1,13 @@
 export const audio = {
-  blockName: "audio",
+  blockName: 'audio',
   format: {
-    ogg: "",
-    mpeg: ""
+    ogg: '',
+    mpeg: ''
   },
   hasImage: false,
   image: {
-    src: "",
-    alt: "",
-    caption: ""
+    src: '',
+    alt: '',
+    caption: ''
   }
 };

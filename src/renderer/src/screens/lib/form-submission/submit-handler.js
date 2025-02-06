@@ -10,40 +10,38 @@ import { updateGitStatus } from '../../edit-project/sections/git-controls.js';
  * @param {string} filePath - Path to save the file
  * @param {Object} schema - Form schema
  */
-export const handleFormSubmission = async ( form, filePath, schema = null ) => {
-  const submitButton = form.querySelector( 'button[type="submit"]' );
+export const handleFormSubmission = async (form, filePath, schema = null) => {
+  const submitButton = form.querySelector('button[type="submit"]');
   submitButton.disabled = true;
 
   try {
     // Process form data
     const formData = preprocessFormData();
 
-    if ( !formData ) {
-      throw new Error( 'No form data available' );
+    if (!formData) {
+      throw new Error('No form data available');
     }
 
     // Always validate, but with optional schema
-    const validationErrors = validateSubmission( formData, schema );
-    if ( validationErrors.length ) {
-      throw new Error( `Validation failed:\n${ validationErrors.join( '\n' ) }` );
+    const validationErrors = validateSubmission(formData, schema);
+    if (validationErrors.length) {
+      throw new Error(`Validation failed:\n${validationErrors.join('\n')}`);
     }
 
     // Handle file operations
-    const cleanPath = filePath.replace( 'file://', '' );
-    await handleFileOperations( formData, cleanPath );
+    const cleanPath = filePath.replace('file://', '');
+    await handleFileOperations(formData, cleanPath);
 
     // Update git status after successful file operation
     updateGitStatus();
 
     return { success: true };
-
-  } catch ( error ) {
-    console.error( 'Form submission failed:', error );
+  } catch (error) {
+    console.error('Form submission failed:', error);
     return {
       success: false,
       error: error.message || 'Unknown error occurred'
     };
-
   } finally {
     submitButton.disabled = false;
   }

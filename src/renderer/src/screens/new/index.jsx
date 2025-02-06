@@ -120,37 +120,30 @@ export default function NewProject() {
         <ul>
           <li>
             <strong>Project folder : </strong>
-            <span className="folder-path">{ projectFolder }</span>
+            <span className="folder-path">{projectFolder}</span>
           </li>
           <li className="get-path">
             {!contentPath ? (
-            <button onClick={() => handleSelectFolder('Content')}>
-              Select Content Folder
-            </button>
-          ) : (
-            <div className="path-display">
-              <strong>Content folder :</strong>
-              <span>{formatFolderPath(contentPath)}</span>
-            </div>
-          )}
+              <button onClick={() => handleSelectFolder('Content')}>Select Content Folder</button>
+            ) : (
+              <div className="path-display">
+                <strong>Content folder :</strong>
+                <span>{formatFolderPath(contentPath)}</span>
+              </div>
+            )}
           </li>
           <li className="get-path">
             {!dataPath ? (
-            <button onClick={() => handleSelectFolder('Data')}>
-              Select Data Folder
-            </button>
-          ) : (
-            <div className="path-display">
-              <strong>Data folder : </strong>
-              <span>{formatFolderPath(dataPath)}</span>
-            </div>
-          )}
+              <button onClick={() => handleSelectFolder('Data')}>Select Data Folder</button>
+            ) : (
+              <div className="path-display">
+                <strong>Data folder : </strong>
+                <span>{formatFolderPath(dataPath)}</span>
+              </div>
+            )}
           </li>
           <li class="decision-buttons">
-            <button
-              onClick={handleStartProject}
-              disabled={!contentPath || !dataPath}
-            >
+            <button onClick={handleStartProject} disabled={!contentPath || !dataPath}>
               Start Project
             </button>
             <Link to="/" className="btn">
@@ -158,9 +151,7 @@ export default function NewProject() {
             </Link>
           </li>
         </ul>
-
       </div>
     </main>
   );
 }
-

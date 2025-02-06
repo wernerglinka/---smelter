@@ -13,12 +13,11 @@ import { createFileError } from './schema-errors.js';
  * @param {Object} field - Field definition from schema file
  * @returns {Object} Processed field
  */
-const processSchemaField = ( field ) => {
-  validateField( field );
-  const fieldType = Object.values( FIELD_TYPES )
-    .find( t => t.type === field.type.toLowerCase() );
+const processSchemaField = (field) => {
+  validateField(field);
+  const fieldType = Object.values(FIELD_TYPES).find((t) => t.type === field.type.toLowerCase());
 
-  if ( !field.default && fieldType.default !== undefined ) {
+  if (!field.default && fieldType.default !== undefined) {
     field.default = fieldType.default;
   }
 
@@ -32,30 +31,27 @@ const processSchemaField = ( field ) => {
  */
 export const getExplicitSchema = async () => {
   const projectPath = StorageOperations.getProjectPath();
-  if ( !projectPath ) {
-    throw createFileError( 'No project path found in storage', '' );
+  if (!projectPath) {
+    throw createFileError('No project path found in storage', '');
   }
 
-  const schemaFilePath = `${ projectPath }/.metallurgy/frontmatterTemplates/fields.json`;
-  const schemaExists = await window.electronAPI.files.exists( schemaFilePath );
+  const schemaFilePath = `${projectPath}/.metallurgy/frontmatterTemplates/fields.json`;
+  const schemaExists = await window.electronAPI.files.exists(schemaFilePath);
 
-  if ( !schemaExists.data ) return [];
+  if (!schemaExists.data) return [];
 
-  const { status, data, error } = await window.electronAPI.files.read( schemaFilePath );
-  if ( status === 'failure' ) {
-    throw createFileError( `Error reading schema file: ${ error }`, schemaFilePath );
+  const { status, data, error } = await window.electronAPI.files.read(schemaFilePath);
+  if (status === 'failure') {
+    throw createFileError(`Error reading schema file: ${error}`, schemaFilePath);
   }
 
-  if ( !Array.isArray( data ) ) {
-    throw createFileError( 'Schema file must contain an array', schemaFilePath );
+  if (!Array.isArray(data)) {
+    throw createFileError('Schema file must contain an array', schemaFilePath);
   }
 
   try {
-    return data.map( processSchemaField );
-  } catch ( error ) {
-    throw createFileError(
-      `Invalid field in schema file: ${ error.message }`,
-      schemaFilePath
-    );
+    return data.map(processSchemaField);
+  } catch (error) {
+    throw createFileError(`Invalid field in schema file: ${error.message}`, schemaFilePath);
   }
 };

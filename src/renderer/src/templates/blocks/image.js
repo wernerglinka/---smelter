@@ -1,6 +1,6 @@
 export const image = {
-  blockName: "image",
-  src: "",
-  alt: "",
-  caption: ""
+  blockName: 'image',
+  src: '',
+  alt: '',
+  caption: ''
 };

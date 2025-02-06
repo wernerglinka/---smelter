@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 /**
  * @typedef {Object} Versions
@@ -17,7 +17,7 @@ const DEFAULT_VERSIONS = {
   chrome: 'N/A',
   node: 'N/A',
   v8: 'N/A'
-}
+};
 
 /**
  * Versions component displays the current versions of Electron, Chrome, Node.js, and V8
@@ -25,7 +25,7 @@ const DEFAULT_VERSIONS = {
  */
 function Versions() {
   // State to store version information
-  const [versions, setVersions] = useState(/** @type {Versions|null} */ (null))
+  const [versions, setVersions] = useState(/** @type {Versions|null} */ (null));
 
   useEffect(() => {
     /**
@@ -34,18 +34,18 @@ function Versions() {
      */
     const initializeVersions = () => {
       try {
-        setVersions(window.electronAPI?.process?.versions || DEFAULT_VERSIONS)
+        setVersions(window.electronAPI?.process?.versions || DEFAULT_VERSIONS);
       } catch (error) {
-        console.error('Failed to get versions:', error)
-        setVersions(DEFAULT_VERSIONS)
+        console.error('Failed to get versions:', error);
+        setVersions(DEFAULT_VERSIONS);
       }
-    }
+    };
 
-    initializeVersions()
-  }, [])
+    initializeVersions();
+  }, []);
 
   if (!versions) {
-    return null
+    return null;
   }
 
   return (
@@ -55,7 +55,7 @@ function Versions() {
       <li className="node-version">Node v{versions.node}</li>
       <li className="v8-version">V8 v{versions.v8}</li>
     </ul>
-  )
+  );
 }
 
-export default Versions
+export default Versions;

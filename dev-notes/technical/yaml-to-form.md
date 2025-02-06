@@ -1,17 +1,22 @@
 # YAML to Form Conversion
 
 ## Overview
+
 This document describes how YAML frontmatter in Markdown files is converted into an interactive form interface.
 
 ## Core Concepts
 
 ### YAML Frontmatter
+
 YAML frontmatter defines the structure and metadata of a Markdown file. It serves two purposes:
+
 1. Setting traditional metadata (title, date, layout)
 2. Defining modular page structure using components
 
 ### Schema Enhancement
+
 YAML alone doesn't provide enough detail for comprehensive form generation. We use an optional schema JSON object to define:
+
 - Data types
 - Validation rules
 - UI constraints
@@ -20,6 +25,7 @@ YAML alone doesn't provide enough detail for comprehensive form generation. We u
 ## Form Structure
 
 ### Basic Form Elements
+
 Each form element follows this HTML structure:
 
 ```html
@@ -42,9 +48,11 @@ Each form element follows this HTML structure:
 ```
 
 ### Dropzones
+
 Dropzones are crucial interface elements that serve two primary purposes:
 
 1. **Template Insertion**
+
    - Accept predefined templates from the sidebar
    - Support dragging of page templates into empty forms
    - Allow section templates to be dropped into section arrays
@@ -55,14 +63,17 @@ Dropzones are crucial interface elements that serve two primary purposes:
    - Support hierarchical structure maintenance
 
 ### Template System
+
 Templates are predefined structures located in the `templates` directory:
 
 1. **Page Templates**
+
    - Base structures for different page types
    - Define default frontmatter
    - Example: `templates/pages/pageSections.js`
 
 2. **Section Templates**
+
    - Reusable section configurations
    - Include common section fields
    - Example: `templates/sections/leafletSection.js`
@@ -75,12 +86,14 @@ Templates are predefined structures located in the `templates` directory:
 ### Field Types
 
 1. **Simple Fields**
+
    - Text inputs
    - Select dropdowns
    - Checkboxes
    - Date inputs
 
 2. **Object Fields**
+
    - Contains nested fields
    - Includes dropzone for field reordering
    - Supports dynamic field addition
@@ -94,10 +107,12 @@ Templates are predefined structures located in the `templates` directory:
 ## Conversion Process
 
 1. **YAML Parsing**
+
    - Parse frontmatter into JSON object
    - Validate structure
 
 2. **Schema Application**
+
    - Load schema if available
    - Merge with base field definitions
    - Apply type constraints
@@ -110,33 +125,40 @@ Templates are predefined structures located in the `templates` directory:
 ## Examples
 
 ### Simple Field
+
 YAML:
+
 ```yaml
 layout: blocks.njk
 ```
 
 Schema:
+
 ```json
 {
   "label": "layout",
   "type": "select",
   "options": [
-    {"label": "Default", "value": "default.njk"},
-    {"label": "Blocks", "value": "blocks.njk"}
+    { "label": "Default", "value": "default.njk" },
+    { "label": "Blocks", "value": "blocks.njk" }
   ]
 }
 ```
 
 ### Object Field
+
 YAML:
+
 ```yaml
 seo:
-  title: "Page Title"
-  description: "Page Description"
+  title: 'Page Title'
+  description: 'Page Description'
 ```
 
 ### Array Field
+
 YAML:
+
 ```yaml
 sections:
   - container: section
@@ -148,11 +170,13 @@ sections:
 ## Implementation Notes
 
 1. **Type Inference**
+
    - Default to string type
    - Use schema for specific types
    - Handle nested structures
 
 2. **Validation**
+
    - Required fields
    - Type checking
    - Custom validation rules
@@ -163,6 +187,7 @@ sections:
    - Dynamic updates
 
 ## Related Documentation
+
 - [Form to Object Transformation](./form-to-object.md)
 - [Field Types](../components/field-types.md)
 - [Edit Form](../components/edit-form.md)

@@ -1,11 +1,13 @@
 # Form Element to Object Transformer Documentation
 
 ## Overview
+
 This utility transforms DOM form elements into a structured JavaScript object, handling nested objects and arrays while maintaining immutability throughout the process. It's designed using functional programming principles, with pure functions organized into focused operation groups.
 
 ## Core Components
 
 ### PathOps
+
 A collection of pure functions for handling path operations in nested objects:
 
 - `push(path, name)`: Adds a new segment to a path array
@@ -14,6 +16,7 @@ A collection of pure functions for handling path operations in nested objects:
 - `setIn(obj, path, value)`: Immutably sets values at nested paths
 
 ### ValueOps
+
 Handles extraction of values from DOM elements:
 
 - `getName(element)`: Extracts names from input/text elements
@@ -21,6 +24,7 @@ Handles extraction of values from DOM elements:
 - `getKeyValue(element)`: Combines key and value extraction into a single operation
 
 ### FormStateOps
+
 Manages form state transitions:
 
 - `createState()`: Initializes state with a 'main' root
@@ -33,12 +37,14 @@ Manages form state transitions:
 
 1. **Element Classification**
    The `processElement` function classifies each form element using CSS classes:
+
    - `is-object`: Denotes nested object structures
    - `is-array`: Indicates array structures
    - `is-last`: Marks end of current structure
    - `array-last`: Signals array conversion needed
 
 2. **State Management**
+
    - State consists of:
      - `path`: Array tracking current position in object structure
      - `result`: Accumulated result object
@@ -51,30 +57,34 @@ Manages form state transitions:
    - Returns final object without 'main' wrapper
 
 ## Expected Form Structure
+
 The utility expects form elements with specific classes:
+
 - `.object-name input` or `.label-text`: For names/keys
 - `.element-value`: For values
 - `.element-label`: For custom labels
 - `.is-list`: For list-type elements
 
 ## Example Transformation
+
 ```javascript
 // Input form structure:
 <div class="is-object">
   <span class="object-name">user</span>
   <div class="element-label">name</div>
   <input class="element-value" value="John" />
-</div>
+</div>;
 
 // Resulting object:
 {
   user: {
-    name: "John"
+    name: 'John';
   }
 }
 ```
 
 ## Key Features
+
 1. **Immutability**: All operations create new objects/arrays
 2. **Type Handling**: Automatic conversion of values to appropriate types
 3. **Flexible Structure**: Supports deeply nested objects and arrays
@@ -82,32 +92,35 @@ The utility expects form elements with specific classes:
 5. **Modularity**: Clear separation of concerns between operations
 
 ## Integration with Other Components
+
 The utility works with a separate `processList` function (imported from './process-list.js') for handling list-specific transformations.
 
 ## Real scenario example
+
 ```
 <div class="is-object">
   <div class="object-name"><input value="settings" /></div>
-  
+
   <div class="is-object">
     <div class="object-name"><input value="seo" /></div>
-    
+
     <div>
       <input class="element-label" value="title" />
       <input class="element-value" value="My Homepage" />
     </div>
-    
+
     <div>
       <input class="element-label" value="description" />
       <input class="element-value" value="Welcome to my site" />
     </div>
-    
+
     <div class="is-last"></div>
   </div>
-  
+
   <div class="is-last"></div>
 </div>
 ```
+
 Let's trace how PathOps is used as we process each element:
 
 ### First element (outer object):
@@ -126,6 +139,7 @@ newState = {
   result: { main: {} }
 };
 ```
+
 ### Second element (seo object):
 
 ```javascript
@@ -149,30 +163,24 @@ const current = PathOps.getIn(state.result, state.path);
 // PathOps.setIn creates new object with title added
 newState = {
   path: ['main', 'settings', 'seo'],
-  result: PathOps.setIn(
-    state.result, 
-    state.path,
-    { ...current, title: 'My Homepage' }
-  )
+  result: PathOps.setIn(state.result, state.path, { ...current, title: 'My Homepage' })
 };
 // result is now: { main: { settings: { seo: { title: 'My Homepage' } } } }
 ```
+
 ### Description field:
 
 ```javascript
 // Similar process but adds to existing seo object
 newState = {
   path: ['main', 'settings', 'seo'],
-  result: PathOps.setIn(
-    state.result,
-    state.path,
-    { 
-      ...PathOps.getIn(state.result, state.path),
-      description: 'Welcome to my site'
-    }
-  )
+  result: PathOps.setIn(state.result, state.path, {
+    ...PathOps.getIn(state.result, state.path),
+    description: 'Welcome to my site'
+  })
 };
 ```
+
 ### SEO's is-last div:
 
 ```javascript
@@ -180,10 +188,16 @@ newState = {
 // PathOps.pop removes 'seo' from path
 newState = {
   path: ['main', 'settings'],
-  result: { main: { settings: { seo: {
-    title: 'My Homepage',
-    description: 'Welcome to my site'
-  } } } }
+  result: {
+    main: {
+      settings: {
+        seo: {
+          title: 'My Homepage',
+          description: 'Welcome to my site'
+        }
+      }
+    }
+  }
 };
 ```
 
@@ -193,7 +207,9 @@ newState = {
 // Another pop removes 'settings'
 newState = {
   path: ['main'],
-  result: { /* same as above */ }
+  result: {
+    /* same as above */
+  }
 };
 ```
 

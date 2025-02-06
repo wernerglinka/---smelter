@@ -1,14 +1,12 @@
-export const ctasSection =
-{
-  sectionDescription: "Call to Action element",
+export const ctasSection = {
+  sectionDescription: 'Call to Action element',
   ctas: [
     {
-      url: "",
-      label: "",
+      url: '',
+      label: '',
       isExternal: false,
       isButton: false,
-      buttonStyle: ""
-    },
+      buttonStyle: ''
+    }
   ]
-}
-  ;
+};

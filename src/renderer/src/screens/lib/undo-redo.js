@@ -5,16 +5,16 @@
 /**
  * @function redoUndo
  * @description Add undo and redo buttons to the dropzone
- * @returns 
+ * @returns
  */
 export const redoUndo = () => {
   // create wrapper div for redo, undo and snapshot buttons
-  const wrapper = document.createElement( 'div' );
+  const wrapper = document.createElement('div');
   wrapper.id = 'undo-redo-wrapper';
   // create undo button
-  const undoButton = document.createElement( 'button' );
-  undoButton.classList.add( 'undo', 'btn' );
-  undoButton.setAttribute( 'title', 'Undo' );
+  const undoButton = document.createElement('button');
+  undoButton.classList.add('undo', 'btn');
+  undoButton.setAttribute('title', 'Undo');
   undoButton.disabled = true;
   undoButton.innerHTML = `
     <svg viewBox="0 0 22 14" xmlns="http://www.w3.org/2000/svg">
@@ -28,12 +28,12 @@ export const redoUndo = () => {
       </g>
   </svg>
   `;
-  wrapper.appendChild( undoButton );
+  wrapper.appendChild(undoButton);
 
   // create redo button
-  const redoButton = document.createElement( 'button' );
-  redoButton.classList.add( 'redo', 'btn' );
-  redoButton.setAttribute( 'title', 'Redo' );
+  const redoButton = document.createElement('button');
+  redoButton.classList.add('redo', 'btn');
+  redoButton.setAttribute('title', 'Redo');
   redoButton.disabled = true;
   redoButton.innerHTML = `
     <svg viewBox="0 0 22 14" xmlns="http://www.w3.org/2000/svg">
@@ -47,13 +47,13 @@ export const redoUndo = () => {
       </g>
     </svg>
   `;
-  wrapper.appendChild( redoButton );
+  wrapper.appendChild(redoButton);
 
   // create snapshot button
-  const snapshotButton = document.createElement( 'button' );
-  snapshotButton.classList.add( 'snapshot', 'btn' );
+  const snapshotButton = document.createElement('button');
+  snapshotButton.classList.add('snapshot', 'btn');
   //snapshotButton.disabled = true;
-  snapshotButton.setAttribute( 'title', 'Take a snapshot of the current state' );
+  snapshotButton.setAttribute('title', 'Take a snapshot of the current state');
   snapshotButton.innerHTML = `
     <svg viewBox="0 0 24 20" xmlns="http://www.w3.org/2000/svg">
       <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
@@ -66,19 +66,19 @@ export const redoUndo = () => {
       </g>
     </svg>
   `;
-  wrapper.appendChild( snapshotButton );
+  wrapper.appendChild(snapshotButton);
 
   // Create element for stack length
-  const stackLength = document.createElement( 'div' );
+  const stackLength = document.createElement('div');
   stackLength.id = 'stack-length';
-  stackLength.classList.add( 'undo-redo-count' );
-  wrapper.appendChild( stackLength );
+  stackLength.classList.add('undo-redo-count');
+  wrapper.appendChild(stackLength);
 
   // Create element for snapshot message
-  const snapshotMessage = document.createElement( 'div' );
+  const snapshotMessage = document.createElement('div');
   snapshotMessage.id = 'snapshot-message';
-  snapshotMessage.classList.add( 'undo-redo-message' );
-  wrapper.prepend( snapshotMessage );
+  snapshotMessage.classList.add('undo-redo-message');
+  wrapper.prepend(snapshotMessage);
 
   /**
    * Provide undo and redo functionality for the dropzone
@@ -90,42 +90,41 @@ export const redoUndo = () => {
   let redoStack = [];
 
   // Push initial state onto the undo stack
-  let dropzone = document.getElementById( 'dropzone' );
-  let clone = dropzone.cloneNode( true );
+  let dropzone = document.getElementById('dropzone');
+  let clone = dropzone.cloneNode(true);
   // Push the clone onto the stack
-  undoStack.push( clone );
+  undoStack.push(clone);
   // Update stack length display
   stackLength.innerHTML = undoStack.length - 1;
 
   // Add event listeners to the buttons. Delegate to the wrapper
-  wrapper.addEventListener( 'click', ( e ) => {
+  wrapper.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const dropzone = document.getElementById( 'dropzone' );
-    const mainForm = document.getElementById( 'main-form' );
+    const dropzone = document.getElementById('dropzone');
+    const mainForm = document.getElementById('main-form');
 
     const target = e.target;
-    if ( target.closest( '.undo' ) ) { // UNDO
-      if ( undoStack.length > 1 ) {
-        redoStack.push( undoStack.pop() );
-        mainForm.replaceChild( undoStack[ undoStack.length - 1 ], dropzone );
+    if (target.closest('.undo')) {
+      // UNDO
+      if (undoStack.length > 1) {
+        redoStack.push(undoStack.pop());
+        mainForm.replaceChild(undoStack[undoStack.length - 1], dropzone);
       }
-    }
-
-    else if ( target.closest( '.redo' ) ) {  // REDO
-      if ( redoStack.length > 0 ) {
-        undoStack.push( redoStack.pop() );
-        mainForm.replaceChild( undoStack[ undoStack.length - 1 ], dropzone );
+    } else if (target.closest('.redo')) {
+      // REDO
+      if (redoStack.length > 0) {
+        undoStack.push(redoStack.pop());
+        mainForm.replaceChild(undoStack[undoStack.length - 1], dropzone);
       }
-    }
-
-    else if ( target.closest( '.snapshot' ) ) {  // SNAPSHOT
-      // Clone the current state of the dropzone. We clone so we capture 
+    } else if (target.closest('.snapshot')) {
+      // SNAPSHOT
+      // Clone the current state of the dropzone. We clone so we capture
       // the event listeners as well as the HTML
-      const thisClone = document.getElementById( 'dropzone' ).cloneNode( true );
+      const thisClone = document.getElementById('dropzone').cloneNode(true);
       // Push the clone onto the stack
-      undoStack.push( thisClone );
+      undoStack.push(thisClone);
       // Clear the redo stack
       redoStack = [];
     }
@@ -134,18 +133,18 @@ export const redoUndo = () => {
     stackLength.innerHTML = undoStack.length - 1;
 
     // enable the undo button if there is something on the stack
-    if ( undoStack.length > 1 ) {
+    if (undoStack.length > 1) {
       undoButton.disabled = false;
     } else {
       undoButton.disabled = true;
     }
 
     // disable the redo button if there is nothing on the stack
-    if ( redoStack.length === 0 ) {
+    if (redoStack.length === 0) {
       redoButton.disabled = true;
     } else {
       redoButton.disabled = false;
     }
-  } );
+  });
   return wrapper;
 };
