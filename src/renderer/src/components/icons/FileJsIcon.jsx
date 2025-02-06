@@ -14,7 +14,7 @@ function FileJsIcon({ className }) {
       className={className}
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1"
       strokeLinecap="round"
       strokeLinejoin="round"
     >

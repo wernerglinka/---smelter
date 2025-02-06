@@ -1,3 +1,25 @@
+@keyframes normalWidth {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 30rem;
+    opacity: 1;
+  }
+}
+
+@keyframes noWidth {
+  from {
+    width: 30rem;
+    opacity: 1;
+  }
+  to {
+    width: 0;
+    opacity: 0;
+  }
+}
+
 .sidebar {
   flex: 0 0 30rem;
   padding: 0 2rem;
@@ -10,6 +32,7 @@
 
   &.hidden {
     animation: noWidth 0.8s ease-in-out forwards;
+    pointer-events: none;
   }
 
   & > * {
@@ -29,21 +52,22 @@
  */
 .sidebar-panes {
   position: relative;
+  flex: 1;
+  min-height: 0;  /* This is important for flex containers */
 }
 .sidebar-pane {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;  /* Changed from absolute */
   width: 100%;
-  height: 100%;
+  height: auto;  /* Changed from 100% */
   transition: opacity 0.3s ease-in-out;
   opacity: 0;
   pointer-events: none;
+  display: none;  /* Hide inactive panes completely */
 
   &.active {
     opacity: 1;
     pointer-events: all;
-    margin-bottom: 5rem;
+    display: block;  /* Show active pane */
   }
 }
 
@@ -56,7 +80,6 @@
     margin-bottom: 0;
   }
 }
-
 
 /**
  * DOM Tree
@@ -87,7 +110,8 @@
     color: var(--text-color);
 
     & a {
-      display: block;
+      display: flex;
+      align-items: center;
       text-decoration: none;
       color: inherit;
       transition: all 0.3s ease-in-out;
@@ -110,36 +134,10 @@
 }
 
 .folder span {
-  display: block;
+  display: flex;
+  align-items: center;
   font-weight: 600;
   cursor: pointer;
-}
-
-.file a:before,
-.folder span:before {
-  content: '';
-  display: inline-block;
-  width: 1.6rem;
-  height: 1.6rem;
-  margin-right: 1.6rem;
-  position: relative;
-  top: 0.6rem;
-}
-
-.file.md a:before {
-  content: url(../icons/file-md.svg);
-}
-.file.json a:before {
-  content: url(../icons/file-json.svg);
-}
-.file.js a:before {
-  content: url(../icons/file-js.svg);
-}
-.folder span:before {
-  content: url(../icons/folder.svg);
-}
-.folder.open > span:before {
-  content: url(../icons/folder-open.svg);
 }
 
 .templates-wrapper {
@@ -159,4 +157,10 @@
     /* cursor for drag and drop */
     cursor: move;
   }
+}
+
+/* Make sure the file tree can scroll if needed */
+.file-tree {
+  max-height: calc(100vh - 20rem);  /* Adjust value based on your header height */
+  overflow-y: auto;
 }
