@@ -1,4 +1,4 @@
-import { ICONS } from '../../icons/index.js';
+import EasyMDE from 'easymde';
 
 /**
  * Initializes EasyMDE editor
@@ -41,7 +41,7 @@ const addEditorControls = (editor, overlay) => {
   // Add close button
   const closeButton = document.createElement('div');
   closeButton.id = 'closeEditor';
-  closeButton.innerHTML = ICONS.CLOSE;
+  closeButton.innerHTML = 'close';
   closeButton.addEventListener('click', () => {
     const textareaInput = window.textareaInput;
     textareaInput.value = editor.value();

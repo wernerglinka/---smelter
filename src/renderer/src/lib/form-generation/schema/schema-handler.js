@@ -3,7 +3,7 @@
  * @description Handles project schema file operations
  */
 
-import { StorageOperations } from '../../../../services/storage.js';
+import { StorageOperations } from '../../../services/storage.js';
 import { FIELD_TYPES } from './field-types.js';
 import { validateField } from './validate-schema.js';
 import { createFileError } from './schema-errors.js';

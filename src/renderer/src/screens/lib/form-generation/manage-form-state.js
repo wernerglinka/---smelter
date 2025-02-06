@@ -127,8 +127,16 @@ const clearDropzone = (dropzone) => {
 // Initialize form manager
 export const initFormManager = (formId) => {
   const form = document.getElementById(formId);
+  if (!form) {
+    console.error('Form not found:', formId);
+    return;
+  }
+
   const dropzone = form.querySelector('#dropzone');
-  const clearButton = form.querySelector('#clear-dropzone');
+  if (!dropzone) {
+    console.error('Dropzone not found in form:', formId);
+    return;
+  }
 
   // Mark required fields
   const markRequiredFields = () => {

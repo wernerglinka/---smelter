@@ -114,13 +114,14 @@
       align-items: center;
       text-decoration: none;
       color: inherit;
+      cursor: pointer;
       transition: all 0.3s ease-in-out;
 
       &:hover {
         color: var(--link-color-hover);
       }
 
-      &.active {
+      &.selected {
         opacity: 0.3;
         pointer-events: none;
         cursor: default;

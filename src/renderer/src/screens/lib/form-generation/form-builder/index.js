@@ -23,6 +23,8 @@ export function buildForm(incomingSchema, implicitSchema) {
     .map((field) => renderFunctions.renderField(field, implicitSchema))
     .join('');
 
-  // return HTML string
-  return fieldsHTML;
+  // return HTML string with a form wrapper
+  return `<form id="main-form" class="main-form">
+    ${fieldsHTML}
+  </form>`;
 }

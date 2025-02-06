@@ -34,8 +34,12 @@ export const frontmatterToForm = async (frontmatter, content) => {
       throw new Error('Dropzone element not found');
     }
 
+    // Clear existing content
+    dropzone.innerHTML = '';
+
     // Clone and append template content
     dropzone.appendChild(template.content.cloneNode(true));
+
     // get the form ID
     const formId = document.querySelector('#main-form').id;
     // Initialize form manager after new file has been loaded

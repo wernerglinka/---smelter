@@ -10,3 +10,8 @@ export { default as GithubIcon } from './Github';
 export { default as SidebarHideIcon } from './SidebarHide';
 export { default as SidebarShowIcon } from './SidebarShow';
 export { default as PreviewShowIcon } from './PreviewShow';
+export { default as DragHandleIcon } from './DragHandleIcon';
+export { default as AddIcon } from './AddIcon';
+export { default as DeleteIcon } from './DeleteIcon';
+export { default as CollapseIcon } from './CollapseIcon';
+export { default as CollapsedIcon } from './CollapsedIcon';
