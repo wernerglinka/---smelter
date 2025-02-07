@@ -1,6 +1,6 @@
-import { convertToSchemaObject } from './schema/convert-js-to-schema';
-import { validateSchema } from './schema/validate-schema';
-import { getExplicitSchema } from './schema/schema-handler';
+import { convertToSchemaObject } from '../schema/convert-js-to-schema';
+import { validateSchema } from '../schema/validate-schema';
+import { getExplicitSchema } from '../schema/schema-handler';
 
 /**
  * Processes frontmatter and content into a form schema
@@ -19,9 +19,9 @@ export const processFrontmatter = async (frontmatter, content) => {
 
     // Enhance schema fields with explicit definitions
     if (schema.fields && Array.isArray(schema.fields)) {
-      schema.fields = schema.fields.map(field => {
-        const explicitDef = explicitSchema.find(def => 
-          def.name === field.name || def.label === field.label
+      schema.fields = schema.fields.map((field) => {
+        const explicitDef = explicitSchema.find(
+          (def) => def.name === field.name || def.label === field.label
         );
         return {
           ...field,
