@@ -3,7 +3,7 @@ import { DragHandleIcon, CollapseIcon, CollapsedIcon } from '@components/icons';
 import { FormField } from '../FormField';
 
 export const ObjectField = ({ field, implicitDef }) => {
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [isCollapsed, setIsCollapsed] = React.useState(true);
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);

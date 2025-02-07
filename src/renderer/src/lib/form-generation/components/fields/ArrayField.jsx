@@ -4,7 +4,7 @@ import { DragHandleIcon, CollapseIcon, CollapsedIcon } from '@components/icons';
 
 export const ArrayField = ({ field, implicitDef }) => {
   const { dispatch } = useForm();
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [isCollapsed, setIsCollapsed] = React.useState(true);  // Changed to true
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);

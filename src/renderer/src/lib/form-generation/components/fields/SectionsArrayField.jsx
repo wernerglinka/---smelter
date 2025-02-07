@@ -5,7 +5,7 @@ import { ObjectField } from './ObjectField';
 
 export const SectionsArrayField = ({ field, implicitDef }) => {
   const { dispatch } = useForm();
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [isCollapsed, setIsCollapsed] = React.useState(true);  // Changed to true
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
