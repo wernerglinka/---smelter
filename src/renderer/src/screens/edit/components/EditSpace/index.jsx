@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { FormProvider } from '../../../../lib/form-generation/context/FormContext';
-import { FormField } from '../../../../lib/form-generation/components/FormField';
-import { processFrontmatter } from '../../../../lib/form-generation/processors';
+import { FormProvider } from '@formsContext/FormContext';
+import { FormField } from '@lib/form-generation/components/FormField';
+import { processFrontmatter } from '@lib/form-generation/processors';
 import './styles.css';
 
 const EditSpace = ({ $expanded = false, fileContent }) => {

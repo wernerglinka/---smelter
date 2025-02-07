@@ -1,6 +1,6 @@
 // screens/home/handlers/edit-project.js
-import { StorageOperations } from '../../../services/storage';
-import { ProjectOperations } from '../../../services/project';
+import { StorageOperations } from '@services/storage';
+import { ProjectOperations } from '@services/project';
 import { selectProject } from '../../lib/utilities/select-project';
 
 const ERRORS = {

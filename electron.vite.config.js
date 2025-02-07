@@ -20,7 +20,12 @@ export default defineConfig({
   renderer: {
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src')
+        '@components': resolve(__dirname, 'src/renderer/src/components'),
+        '@hooks': resolve(__dirname, 'src/renderer/src/hooks'),
+        '@services': resolve(__dirname, 'src/renderer/src/lib/utilities/services'),
+        '@lib': resolve(__dirname, 'src/renderer/src/lib'),
+        '@screens': resolve(__dirname, 'src/renderer/src/screens'),
+        '@formsContext': resolve(__dirname, 'src/renderer/src/lib/form-generation/context')
       }
     },
     plugins: [react()]

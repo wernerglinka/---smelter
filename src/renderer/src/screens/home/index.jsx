@@ -6,8 +6,8 @@ import {
   FolderMinusIcon,
   GithubIcon
 } from '../../components/icons';
-import { StorageOperations } from '../../services/storage';
-import { ProjectOperations } from '../../services/project';
+import { StorageOperations } from '@services/storage';
+import { ProjectOperations } from '@services/project';
 import { selectProject } from '../lib/utilities/select-project';
 import { handleDeleteProject } from './handlers/delete-project';
 import { handleEditProject } from './handlers/edit-project';

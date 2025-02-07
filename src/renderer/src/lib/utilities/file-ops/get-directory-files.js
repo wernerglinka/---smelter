@@ -1,5 +1,5 @@
 import { StorageOperations } from '../../../services/storage.js';
-import { createDomTree } from '../page-elements/create-dom-tree.js';
+import { createDomTree } from '../../../screens/lib/page-elements/create-dom-tree.js';
 
 /**
  * Gets directory files and renders a DOM tree representation

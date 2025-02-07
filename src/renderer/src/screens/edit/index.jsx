@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { SidebarHideIcon, SidebarShowIcon } from '../../components/icons';
+import { SidebarHideIcon, SidebarShowIcon } from '@components/icons';
 import Sidebar from './components/Sidebar';
-import { useProject } from '../../hooks/useProject';
+import { useProject } from '@hooks/useProject';
 import EditSpace from './components/EditSpace';
 import PreviewPane from './components/PreviewPane';
-import { FileLoaderService } from '../../services/file-loader';
+import { FileLoaderService } from '@services/file-loader';
 
 import './styles.css';
 

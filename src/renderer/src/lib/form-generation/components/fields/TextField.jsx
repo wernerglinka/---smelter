@@ -1,8 +1,8 @@
 import React from 'react';
 import { BaseField } from './BaseField';
-import { useForm } from '../../context/FormContext';
-import { toTitleCase } from '../../utils';
-import { DragHandleIcon, AddIcon, DeleteIcon } from '../../../../components/icons';
+import { useForm } from '@formsContext/FormContext';
+import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
+import { DragHandleIcon, AddIcon, DeleteIcon } from '@components/icons';
 
 export const TextField = ({ field, implicitDef }) => {
   const { dispatch } = useForm();

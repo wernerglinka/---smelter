@@ -1,5 +1,5 @@
 // screens/home/handlers/delete-project.js
-import { StorageOperations } from '../../../services/storage';
+import { StorageOperations } from '@services/storage';
 import { selectProject } from '../../lib/utilities/select-project';
 
 export const handleDeleteProject = async (e) => {

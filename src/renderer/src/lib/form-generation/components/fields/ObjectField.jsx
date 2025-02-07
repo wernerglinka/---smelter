@@ -1,5 +1,5 @@
 import React from 'react';
-import { DragHandleIcon, CollapseIcon, CollapsedIcon } from '../../../../components/icons';
+import { DragHandleIcon, CollapseIcon, CollapsedIcon } from '@components/icons';
 import { FormField } from '../FormField';
 
 export const ObjectField = ({ field, implicitDef }) => {

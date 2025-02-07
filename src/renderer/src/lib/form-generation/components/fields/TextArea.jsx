@@ -1,7 +1,7 @@
 import React from 'react';
 import { BaseField } from './BaseField';
-import { useForm } from '../../context/FormContext';
-import { toTitleCase } from '../../utils';
+import { useForm } from '@formsContext/FormContext';
+import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const TextArea = ({ field, implicitDef }) => {
   const { dispatch } = useForm();

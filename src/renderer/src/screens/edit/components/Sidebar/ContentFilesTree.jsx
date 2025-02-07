@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FileMdIcon } from '../../../../components/icons';
-import { StorageOperations } from '../../../../services/storage';
+import { FileMdIcon } from '@components/icons';
+import { StorageOperations } from '@services/storage';
 import { FileTreeBase } from './FileTree';
 
 export const RenderContentFilesTree = ({ path, fileSelected, onFileSelect }) => {

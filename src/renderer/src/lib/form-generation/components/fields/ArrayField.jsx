@@ -1,7 +1,6 @@
 import React from 'react';
-import { useForm } from '../../context/FormContext';
-import { toTitleCase } from '../../utils';
-import { DragHandleIcon, CollapseIcon, CollapsedIcon } from '../../../../components/icons';
+import { useForm } from '@formsContext/FormContext';
+import { DragHandleIcon, CollapseIcon, CollapsedIcon } from '@components/icons';
 
 export const ArrayField = ({ field, implicitDef }) => {
   const { dispatch } = useForm();
@@ -18,19 +17,19 @@ export const ArrayField = ({ field, implicitDef }) => {
       </span>
       <label className="object-name label-wrapper">
         <span>{field.label}</span>
-        <input 
-          type="text" 
-          className="element-label" 
-          placeholder="Array Name" 
-          value={field.label} 
-          readOnly 
+        <input
+          type="text"
+          className="element-label"
+          placeholder="Array Name"
+          value={field.label}
+          readOnly
         />
         <span className="collapse-icon" onClick={handleCollapse}>
           {isCollapsed ? <CollapsedIcon className="icon" /> : <CollapseIcon className="icon" />}
         </span>
       </label>
-      <div 
-        className={`array-dropzone dropzone js-dropzone ${isCollapsed ? 'is-collapsed' : ''}`} 
+      <div
+        className={`array-dropzone dropzone js-dropzone ${isCollapsed ? 'is-collapsed' : ''}`}
         data-wrapper="is-array"
       >
         {field.value && field.value.map((item, index) => (

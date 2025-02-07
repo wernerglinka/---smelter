@@ -1,6 +1,6 @@
 import React from 'react';
-import { useForm } from '../../context/FormContext';
-import { DragHandleIcon, CollapseIcon, CollapsedIcon, AddIcon, DeleteIcon } from '../../../../components/icons';
+import { useForm } from '@formsContext/FormContext';
+import { DragHandleIcon, CollapseIcon, CollapsedIcon, AddIcon, DeleteIcon } from '@components/icons';
 import { ObjectField } from './ObjectField';
 
 export const SectionsArrayField = ({ field, implicitDef }) => {

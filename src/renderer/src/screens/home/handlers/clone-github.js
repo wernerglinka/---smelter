@@ -1,4 +1,4 @@
-import { StorageOperations } from '../../../services/storage';
+import { StorageOperations } from '@services/storage';
 
 export const handleCloneGithub = async (e, navigate) => {
   if (e?.preventDefault) {

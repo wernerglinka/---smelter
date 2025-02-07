@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FolderIcon } from '../../../../components/icons';
+import { FolderIcon } from '@components/icons';
 
 // Base component with shared tree rendering logic
 export const FileTreeBase = ({

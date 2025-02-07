@@ -1,6 +1,6 @@
 // screens/home/handlers/new-project.js
 import { navigate } from '../navigation/utils.js';
-import { StorageOperations } from '../../lib/storage-operations.js';
+import { StorageOperations } from '@services/storage';
 import { selectProject } from '../../lib/utilities/select-project';
 
 export const handleNewProject = async (e) => {

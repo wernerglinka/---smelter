@@ -1,4 +1,4 @@
-import { getMarkdownFile } from '../screens/lib/file-ops/get-markdown-file';
+import { getMarkdownFile } from '@lib/utilities/file-ops/get-markdown-file';
 
 export class FileLoaderService {
   static async loadFile(filepath) {
@@ -35,7 +35,7 @@ export class FileLoaderService {
   static async loadJSONFile(filepath) {
     try {
       const { status, data, error } = await window.electronAPI.files.read(filepath);
-      
+
       if (status === 'failure') {
         throw new Error(`Failed to read JSON file: ${error}`);
       }

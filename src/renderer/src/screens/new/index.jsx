@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { StorageOperations } from '../../services/storage';
-import { selectFolder } from '../lib/utilities/select-folder';
-import getFolderName from '../lib/utilities/get-folder-name';
+import { StorageOperations } from '@services/storage';
+import { selectFolder } from '@lib/utilities/select-folder';
+import getFolderName from '@lib/utilities/get-folder-name';
 
 import './styles.css';
 

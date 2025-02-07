@@ -1,4 +1,8 @@
-import { isSimpleList, isDateObject, isSectionsArray } from '../utilities/type-validators.js';
+import {
+  isSimpleList,
+  isDateObject,
+  isSectionsArray
+} from '@lib/utilities/validation/type-validators.js';
 
 /**
  * Infers the field type from a value and key
