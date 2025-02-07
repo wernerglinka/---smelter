@@ -1,11 +1,23 @@
-import React, { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { FormProvider } from '@formsContext/FormContext';
 import { FormField } from '@lib/form-generation/components/FormField';
 import { processFrontmatter } from '@lib/form-generation/processors';
+import { StorageOperations } from '@services/storage';
 import './styles.css';
 
 const EditSpace = ({ $expanded = false, fileContent }) => {
-  const [formData, setFormData] = React.useState(null);
+  const [formData, setFormData] = useState(null);
+
+  const getRelativePath = (fullPath) => {
+    // Get project path from local storage
+    const projectPath = StorageOperations.getProjectPath();
+    if (projectPath && fullPath.startsWith(projectPath)) {
+      // Remove the project path and get the relative path
+      const relativePath = fullPath.substring(projectPath.length);
+      return relativePath;
+    }
+    return fullPath; // Fallback to full path if something goes wrong
+  };
 
   useEffect(() => {
     if (fileContent?.type === 'markdown') {
@@ -35,6 +47,9 @@ const EditSpace = ({ $expanded = false, fileContent }) => {
 
   return (
     <div className={`edit-space ${$expanded ? 'expanded' : ''}`}>
+      <div className="edit-space-header">
+        <h2 className="filename">{getRelativePath(fileContent.path)}</h2>
+      </div>
       <FormProvider initialData={formData}>
         <form id="main-form" className="main-form">
           <div id="dropzone" className="dropzone">
