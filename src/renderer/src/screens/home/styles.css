@@ -65,3 +65,32 @@
     }
   }
 }
+
+.recent-project {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.recent-project .delete-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.recent-project .delete-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.recent-project .delete-wrapper:hover .delete-icon {
+  opacity: 1;
+}
+
+.recent-project a {
+  flex: 1;
+  margin-right: 10px;
+}

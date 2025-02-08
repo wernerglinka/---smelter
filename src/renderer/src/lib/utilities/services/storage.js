@@ -72,13 +72,21 @@ export const StorageOperations = {
   /**
    * Saves all project paths
    * @param {ProjectPaths} paths - Object containing all project paths
-   * @throws {Error} If required paths are missing
+   * @throws {Error} If required paths are missing or inconsistent
    */
   saveProjectData: (paths) => {
     const { projectPath, contentPath, dataPath } = paths;
 
     if (!projectPath || !contentPath || !dataPath) {
       throw new Error('All project paths are required');
+    }
+
+    // Validate that content and data paths are within project path
+    if (!contentPath.startsWith(projectPath)) {
+      throw new Error('Content path must be within project directory');
+    }
+    if (!dataPath.startsWith(projectPath)) {
+      throw new Error('Data path must be within project directory');
     }
 
     localStorage.setItem('projectFolder', projectPath);
@@ -165,6 +173,9 @@ export const StorageOperations = {
    */
   setCurrentProject: (projectData) => {
     console.log('Setting current project:', projectData);
+    // First clear ALL existing project data
+    StorageOperations.clearProjectData();
+    // Then save new project data
     StorageOperations.saveProjectData(projectData);
     StorageOperations.addToRecentProjects(projectData);
   },

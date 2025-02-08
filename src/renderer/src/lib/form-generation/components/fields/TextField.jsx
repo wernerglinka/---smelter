@@ -2,23 +2,39 @@ import React from 'react';
 import { BaseField } from './BaseField';
 import { useForm } from '@formsContext/FormContext';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
-import { DragHandleIcon, AddIcon, DeleteIcon } from '@components/icons';
+import { DragHandleIcon } from '@components/icons';
 
 export const TextField = ({ field, implicitDef }) => {
   const { dispatch } = useForm();
 
-  const handleChange = (value) => {
+  const handleChange = (e) => {
+    console.log('TextField handleChange:', {
+      id: field.id,
+      value: e.target.value,
+      field
+    });
+
+    if (!field.id) {
+      console.warn('Field is missing ID:', field);
+      return;
+    }
+
     dispatch({
       type: 'UPDATE_FIELD',
-      payload: { id: field.id, value }
+      payload: {
+        id: field.id,
+        value: e.target.value,
+        path: field.path // Add path for nested fields
+      }
     });
   };
 
   return (
-    <div className="form-element label-exists no-drop" draggable="true">
-      <span className="sort-handle">
-        <DragHandleIcon className="icon" />
-      </span>
+    <BaseField
+      field={field}
+      allowDuplication={!implicitDef?.noDuplication}
+      allowDeletion={!implicitDef?.noDeletion}
+    >
       <label className="label-wrapper">
         <span>{toTitleCase(field.label)}</span>
         <div>
@@ -26,35 +42,18 @@ export const TextField = ({ field, implicitDef }) => {
             type="text"
             className="element-label"
             placeholder="Label Placeholder"
-            value={field.label.toLowerCase()}
+            value={field.label || ''}
             readOnly
           />
-        </div>
-      </label>
-      <label className="content-wrapper">
-        <span className="hint">Text for Text element</span>
-        <div>
           <input
             type="text"
             className="element-value"
-            placeholder={`Add ${field.label.toLowerCase()}`}
+            placeholder={field.placeholder || `Enter ${field.label}`}
             value={field.value || ''}
-            onChange={(e) => handleChange(e.target.value)}
+            onChange={handleChange}
           />
         </div>
       </label>
-      <div className="button-wrapper">
-        {!implicitDef?.noDuplication && (
-          <div className="add-button button">
-            <AddIcon className="icon" />
-          </div>
-        )}
-        {!implicitDef?.noDeletion && (
-          <div className="delete-button">
-            <DeleteIcon className="icon" />
-          </div>
-        )}
-      </div>
-    </div>
+    </BaseField>
   );
 };

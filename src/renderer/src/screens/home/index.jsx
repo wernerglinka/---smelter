@@ -4,7 +4,8 @@ import {
   FolderPlusIcon,
   FolderOpenIcon,
   FolderMinusIcon,
-  GithubIcon
+  GithubIcon,
+  DeleteIcon
 } from '../../components/icons';
 import { StorageOperations } from '@services/storage';
 import { ProjectOperations } from '@services/project';
@@ -116,6 +117,28 @@ const App = () => {
     handleCloneGithub(e, navigate);
   };
 
+  const handleRemoveRecentProject = async (project) => {
+    try {
+      // Remove from recent projects in storage
+      StorageOperations.removeFromRecentProjects(project.projectPath);
+
+      // Update the UI with fresh data
+      const updatedProjects = StorageOperations.getRecentProjects().map(project => ({
+        ...project,
+        name: StorageOperations.getProjectName(project.projectPath)
+      }));
+
+      setRecentProjects(updatedProjects);
+    } catch (error) {
+      console.error('Failed to remove recent project:', error);
+      await window.electronAPI.dialog.showCustomMessage({
+        type: 'error',
+        message: `Failed to remove project from recent list: ${error.message}`,
+        buttons: ['OK']
+      });
+    }
+  };
+
   return (
     <main className="welcome">
       <div className="titlebar" />
@@ -153,7 +176,7 @@ const App = () => {
           <>
             <li className="listHeader recent">Recent</li>
             {recentProjects.map((project, index) => (
-              <li key={index}>
+              <li key={index} className="recent-project">
                 <Link
                   to="#"
                   onClick={(e) => {
@@ -163,6 +186,12 @@ const App = () => {
                 >
                   {project.name}
                 </Link>
+                <span
+                  className="delete-wrapper"
+                  onClick={() => handleRemoveRecentProject(project)}
+                >
+                  <DeleteIcon className="delete-icon" />
+                </span>
               </li>
             ))}
           </>

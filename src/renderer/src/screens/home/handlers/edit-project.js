@@ -39,6 +39,10 @@ const getProjectFromDialog = async () => {
  */
 const setupProjectConfig = async (projectFolder) => {
   try {
+    // Clear any existing project data first
+    StorageOperations.clearProjectData();
+
+    // Then save new project data
     StorageOperations.saveProjectPath(projectFolder);
     const config = await ProjectOperations.loadProjectConfig(projectFolder);
 
@@ -69,12 +73,20 @@ export const handleEditProject = async (e) => {
       return;
     }
 
-    await setupProjectConfig(projectFolder);
-    console.log('Project config setup complete');
+    // Load config directly from the project folder
+    const config = await ProjectOperations.loadProjectConfig(projectFolder);
 
-    // Add this: Get the project data and add to recent projects
-    const projectData = StorageOperations.getProjectData();
+    // Create project data object
+    const projectData = {
+      projectPath: projectFolder,
+      contentPath: config.contentPath,
+      dataPath: config.dataPath
+    };
+
+    // Set as current project (this will handle both saving and adding to recent projects)
     StorageOperations.setCurrentProject(projectData);
+
+    console.log('Final project data:', StorageOperations.getProjectData());
 
     window.location.hash = '/edit';
   } catch (error) {

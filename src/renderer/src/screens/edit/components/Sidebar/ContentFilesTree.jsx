@@ -21,24 +21,47 @@ export const RenderContentFilesTree = ({ path, fileSelected, onFileSelect }) => 
           throw new Error(`Failed to read directory: ${error}`);
         }
 
+        /**
+         * Processes directory data into a structured tree format for markdown files
+         * @param {Object} data - Raw directory data from electronAPI.directories.read
+         * @returns {Object} Structured tree with 'src' as root containing markdown files
+         */
         const processFiles = (data) => {
+          // Initialize tree structure with 'src' as root
           const tree = { src: {} };
+          // Extract the files array from the first (and only) property of data object
           const files = Object.values(data)[0];
 
           files.forEach((fileObj) => {
+            // Skip if fileObj is an array (shouldn't occur in normal operation)
             if (Array.isArray(fileObj)) return;
 
-            if (typeof fileObj === 'object' && fileObj !== null && !Object.keys(fileObj)[0].includes('.')) {
+            // Determine if current item is a folder by checking:
+            // 1. If it's an object
+            // 2. If it's not null
+            // 3. If its first value is either an array or object (indicating nested content)
+            const isFolder = typeof fileObj === 'object' &&
+              fileObj !== null &&
+              (Array.isArray(Object.values(fileObj)[0]) ||
+              typeof Object.values(fileObj)[0] === 'object');
+
+            if (isFolder) {
+              // Extract folder name and its contents
               const folderName = Object.keys(fileObj)[0];
               const folderContents = fileObj[folderName];
 
+              // Process files within the folder if contents are in array format
               if (Array.isArray(folderContents)) {
                 folderContents.forEach(file => {
+                  // Each file is an object with one entry: { filename: filepath }
                   const [filename, filepath] = Object.entries(file)[0];
+                  // Only process markdown files
                   if (filename.endsWith('.md')) {
+                    // Create folder in tree if it doesn't exist
                     if (!tree.src[folderName]) {
                       tree.src[folderName] = {};
                     }
+                    // Add file to folder in tree
                     tree.src[folderName][filename] = filepath;
                   }
                 });
@@ -46,7 +69,10 @@ export const RenderContentFilesTree = ({ path, fileSelected, onFileSelect }) => 
               return;
             }
 
+            // Process files at root level
+            // Each fileObj is { filename: filepath }
             const [filename, filepath] = Object.entries(fileObj)[0];
+            // Only include markdown files
             if (filename.endsWith('.md')) {
               tree.src[filename] = filepath;
             }
