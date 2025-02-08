@@ -6,34 +6,48 @@ const updateFieldsRecursively = (fields, payload) => {
   return fields.map(field => {
     // Direct match
     if (field.id === payload.id) {
-      return { ...field, value: payload.value };
+      return {
+        ...field,
+        value: payload.value,
+        label: payload.label || field.label
+      };
     }
 
     // Check nested fields in objects
     if (field.type === 'object') {
-      // If field has nested fields array
+      const pathParts = payload.path?.split('.') || [];
+
+      if (pathParts[0] === field.label) {
+        const updatedFields = field.fields.map(f => {
+          if (f.label === pathParts[1]) {
+            return {
+              ...f,
+              value: payload.value,
+              label: f.label // Explicitly preserve the original label
+            };
+          }
+          return f;
+        });
+
+        // Create value object using original labels
+        const newValue = updatedFields.reduce((acc, f) => ({
+          ...acc,
+          [f.label]: f.value // Use original label as key
+        }), {});
+
+        return {
+          ...field,
+          fields: updatedFields,
+          value: newValue
+        };
+      }
+
       if (Array.isArray(field.fields)) {
         const updatedFields = updateFieldsRecursively(field.fields, payload);
         return {
           ...field,
-          fields: updatedFields,
-          // Update the value object to match the fields
-          value: updatedFields.reduce((obj, f) => ({
-            ...obj,
-            [f.label]: f.value
-          }), {})
+          fields: updatedFields
         };
-      }
-
-      // If field has value as object
-      if (field.value && typeof field.value === 'object') {
-        const pathParts = payload.path?.split('.') || [];
-        if (pathParts[0] === field.label) {
-          const newValue = { ...field.value };
-          const lastKey = pathParts[pathParts.length - 1];
-          newValue[lastKey] = payload.value;
-          return { ...field, value: newValue };
-        }
       }
     }
 
@@ -70,8 +84,11 @@ const formReducer = (state, action) => {
 };
 
 export const FormProvider = ({ children, initialData }) => {
+  console.log('Initial Data:', JSON.stringify(initialData, null, 2));
+
   // Add IDs and paths to fields recursively
   const addIdsToFields = (fields, parentPath = '') => {
+    console.log('Processing fields:', JSON.stringify(fields, null, 2));
     return fields.map(field => {
       const fieldPath = parentPath ? `${parentPath}.${field.label}` : field.label;
       const newField = {
@@ -81,17 +98,37 @@ export const FormProvider = ({ children, initialData }) => {
       };
 
       if (field.type === 'object') {
-        if (field.fields) {
-          newField.fields = addIdsToFields(field.fields, fieldPath);
-        } else if (field.value && typeof field.value === 'object') {
-          // Convert object values to fields array
+        // Handle the case where value is an array of field definitions
+        if (Array.isArray(field.value)) {
+          newField.fields = field.value.map(subField => ({
+            ...subField,
+            id: `${newField.id}-${subField.label}`,
+            path: `${fieldPath}.${subField.label}`
+          }));
+
+          // Convert array to object structure
+          newField.value = newField.fields.reduce((acc, f) => ({
+            ...acc,
+            [f.label]: f.value
+          }), {});
+        }
+        // Handle the case where value is already an object
+        else if (field.value && typeof field.value === 'object') {
           newField.fields = Object.entries(field.value).map(([key, value]) => ({
-            id: `${newField.id}-${key}`,
             label: key,
             value: value,
-            type: typeof value === 'boolean' ? 'checkbox' : 'text',
-            path: `${fieldPath}.${key}`
+            type: typeof value === 'object' ? 'object' : 'text',
+            path: `${fieldPath}.${key}`,
+            id: `${newField.id}-${key}`
           }));
+        }
+        // Handle the case where fields array exists
+        else if (field.fields) {
+          newField.fields = addIdsToFields(field.fields, fieldPath);
+          newField.value = newField.fields.reduce((acc, f) => ({
+            ...acc,
+            [f.label]: f.value
+          }), {});
         }
       }
 

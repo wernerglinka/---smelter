@@ -18,7 +18,8 @@ export const TextField = ({ field, implicitDef }) => {
       payload: {
         id: field.id,
         value: e.target.value,
-        path: field.path
+        path: field.path,
+        label: field.label  // Add this to preserve the label
       }
     });
   };
