@@ -1,3 +1,1 @@
-export const renderJSONFile = (data) => {
-  console.log(data);
-};
+export const renderJSONFile = (data) => {};

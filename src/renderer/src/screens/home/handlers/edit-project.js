@@ -64,9 +64,7 @@ export const handleEditProject = async (e) => {
   e.preventDefault();
 
   try {
-    console.log('Starting edit project flow');
     const projectFolder = await getProjectFromDialog();
-    console.log('Selected project folder:', projectFolder);
 
     if (!projectFolder) {
       console.log('No project folder selected');
@@ -85,8 +83,6 @@ export const handleEditProject = async (e) => {
 
     // Set as current project (this will handle both saving and adding to recent projects)
     StorageOperations.setCurrentProject(projectData);
-
-    console.log('Final project data:', StorageOperations.getProjectData());
 
     window.location.hash = '/edit';
   } catch (error) {

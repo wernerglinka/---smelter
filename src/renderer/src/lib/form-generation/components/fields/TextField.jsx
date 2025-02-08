@@ -2,18 +2,12 @@ import React from 'react';
 import { BaseField } from './BaseField';
 import { useForm } from '@formsContext/FormContext';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
-import { DragHandleIcon } from '@components/icons';
+import { DragHandleIcon, AddIcon, DeleteIcon } from '@components/icons';
 
 export const TextField = ({ field, implicitDef }) => {
   const { dispatch } = useForm();
 
   const handleChange = (e) => {
-    console.log('TextField handleChange:', {
-      id: field.id,
-      value: e.target.value,
-      field
-    });
-
     if (!field.id) {
       console.warn('Field is missing ID:', field);
       return;
@@ -24,36 +18,52 @@ export const TextField = ({ field, implicitDef }) => {
       payload: {
         id: field.id,
         value: e.target.value,
-        path: field.path // Add path for nested fields
+        path: field.path
       }
     });
   };
 
+  // Get the actual label and value, handling nested objects
+  const fieldLabel = field.label || (field.implicitDef && field.implicitDef.label) || '';
+  const fieldValue = typeof field.value === 'object' ? '' : (field.value || '');
+
   return (
-    <BaseField
-      field={field}
-      allowDuplication={!implicitDef?.noDuplication}
-      allowDeletion={!implicitDef?.noDeletion}
-    >
+    <div className="form-element null label-exists no-drop" draggable="true">
+      <span className="sort-handle">
+        <DragHandleIcon />
+      </span>
       <label className="label-wrapper">
-        <span>{toTitleCase(field.label)}</span>
+        <span>{toTitleCase(fieldLabel)}</span>
         <div>
           <input
             type="text"
             className="element-label"
             placeholder="Label Placeholder"
-            value={field.label || ''}
+            value={fieldLabel}
             readOnly
           />
+        </div>
+      </label>
+      <label className="content-wrapper">
+        <span className="hint">Text for Text element</span>
+        <div>
           <input
             type="text"
             className="element-value"
-            placeholder={field.placeholder || `Enter ${field.label}`}
-            value={field.value || ''}
+            placeholder={field.placeholder || `Enter ${fieldLabel}`}
+            value={fieldValue}
             onChange={handleChange}
           />
         </div>
       </label>
-    </BaseField>
+      <div className="button-wrapper">
+        <div className="add-button button">
+          <AddIcon />
+        </div>
+        <div className="delete-button">
+          <DeleteIcon />
+        </div>
+      </div>
+    </div>
   );
 };

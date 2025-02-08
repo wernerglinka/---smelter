@@ -38,6 +38,7 @@ const FormContent = () => {
 const EditSpace = ({ $expanded = false, fileContent }) => {
   // State to store processed form data
   const [formData, setFormData] = useState(null);
+  const [formKey, setFormKey] = useState(0);
 
   /**
    * Converts absolute file path to relative path based on project root
@@ -47,15 +48,9 @@ const EditSpace = ({ $expanded = false, fileContent }) => {
   const getRelativePath = (fullPath) => {
     const projectPath = StorageOperations.getProjectPath();
 
-    console.log( `projectPath: ${projectPath}` );
-
-    console.log( `fullPath: ${fullPath}` );
-
-
     if ( projectPath && fullPath.startsWith( projectPath ) ) {
       const relativePath = fullPath.substring( projectPath.length );
 
-      console.log( relativePath );
       return relativePath;
     }
     return fullPath;
@@ -80,8 +75,8 @@ const EditSpace = ({ $expanded = false, fileContent }) => {
           processedData = processJsonData(fileContent.data);
         }
 
-        console.log('Processed form data:', processedData);
         setFormData(processedData);
+        setFormKey(prev => prev + 1);
       } catch (error) {
         console.error('Error processing form data:', error);
       }
@@ -108,7 +103,7 @@ const EditSpace = ({ $expanded = false, fileContent }) => {
       <div className="edit-space-header">
         <h2 className="filename">{getRelativePath(fileContent.path)}</h2>
       </div>
-      <FormProvider initialData={formData}>
+      <FormProvider key={formKey} initialData={formData}>
         <FormContent />
       </FormProvider>
     </div>

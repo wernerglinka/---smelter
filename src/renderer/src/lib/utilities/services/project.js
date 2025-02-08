@@ -5,10 +5,8 @@ export const ProjectOperations = {
       // Check if .metallurgy directory exists
       const metallurgyPath = `${projectFolder}/.metallurgy`;
       const { status: dirStatus } = await window.electronAPI.directories.exists(metallurgyPath);
-      console.log('Metallurgy directory check:', metallurgyPath, dirStatus);
 
       if (dirStatus !== 'success') {
-        console.log('Metallurgy directory not found');
         return false;
       }
 
@@ -17,7 +15,6 @@ export const ProjectOperations = {
       const { status: fileStatus } = await window.electronAPI.files.exists(configPath);
 
       if (fileStatus !== 'success') {
-        console.log('projectData.json not found');
         return false;
       }
 
@@ -25,7 +22,6 @@ export const ProjectOperations = {
       const { status: readStatus, data } = await window.electronAPI.files.read(configPath);
 
       if (readStatus !== 'success' || !data) {
-        console.log('Failed to read projectData.json');
         return false;
       }
 
@@ -39,7 +35,6 @@ export const ProjectOperations = {
         JSON.parse(data);
         return true;
       } catch (error) {
-        console.log('Invalid JSON in projectData.json:', error);
         return false;
       }
     } catch (error) {

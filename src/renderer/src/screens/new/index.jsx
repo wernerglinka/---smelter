@@ -142,7 +142,7 @@ export default function NewProject() {
               </div>
             )}
           </li>
-          <li class="decision-buttons">
+          <li className="decision-buttons">
             <button onClick={handleStartProject} disabled={!contentPath || !dataPath}>
               Start Project
             </button>

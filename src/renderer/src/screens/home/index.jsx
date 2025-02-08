@@ -60,7 +60,6 @@ const App = () => {
 
       // Project exists, set it as current and navigate
       StorageOperations.setCurrentProject(projectData);
-      console.log('Navigating to edit screen...');
       navigate('/edit');
     } catch (error) {
       console.error('Error opening recent project:', error);

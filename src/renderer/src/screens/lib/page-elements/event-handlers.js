@@ -61,11 +61,11 @@ function processNewField(e, component) {
     });
 
   /*
-    To insert the dragged element either before or after an existing element 
-    in the drop container, including the ability to insert before the first 
-    element, we need to determine the relative position of the cursor to the 
-    center of each potential sibling element. This way, we can decide whether 
-    to insert the dragged element before or after each child based on the 
+    To insert the dragged element either before or after an existing element
+    in the drop container, including the ability to insert before the first
+    element, we need to determine the relative position of the cursor to the
+    center of each potential sibling element. This way, we can decide whether
+    to insert the dragged element before or after each child based on the
     cursor's position.
   */
   const { closest, position } = getInsertionPoint(dropzone, e.clientY);
@@ -91,13 +91,8 @@ async function processTemplate(e, url) {
   let dropzone = e.target.closest('.dropzone');
   if (!dropzone) return;
 
-  console.log(url);
-  console.log(templates);
-
   try {
     const templateName = url.split('/').pop().replace('.js', '');
-
-    console.log(templateName);
 
     const templateSchema = templates[templateName];
 

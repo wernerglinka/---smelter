@@ -39,18 +39,14 @@ export const handleDeleteProject = async (e) => {
     }
 
     // Delete the entire project folder
-    console.log('Attempting to delete folder:', projectFolder);
     const deleteResult = await window.electronAPI.directories.delete(projectFolder);
-    console.log('Delete result:', deleteResult);
 
     if (deleteResult.status !== 'success') {
       throw new Error(`Failed to delete directory: ${deleteResult.error || 'Unknown error'}`);
     }
 
     // Remove from recent projects
-    console.log('Before removal - Recent projects:', StorageOperations.getRecentProjects());
     StorageOperations.removeFromRecentProjects(projectFolder);
-    console.log('After removal - Recent projects:', StorageOperations.getRecentProjects());
 
     // Clear current project data
     StorageOperations.clearProjectData();

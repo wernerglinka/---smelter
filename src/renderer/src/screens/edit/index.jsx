@@ -49,9 +49,6 @@ export default function EditPage() {
       setSelectedFile(filepath);
       const content = await FileLoaderService.loadFile( filepath );
 
-      // Content coming in after click on file icon in sidebar
-      console.log( 'File content:', content );
-
       setFileContent(content);
     } catch (error) {
       console.error('Error loading file:', error);

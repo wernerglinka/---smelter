@@ -30,7 +30,6 @@ export const StorageOperations = {
       if (savedPath !== path) {
         throw new Error('Failed to verify saved project path');
       }
-      console.log('Successfully saved project path:', path); // Debug log
     } catch (error) {
       console.error('Error saving project path:', error);
       throw error;
@@ -53,7 +52,6 @@ export const StorageOperations = {
    */
   getProjectPath: () => {
     const path = localStorage.getItem(STORAGE_KEYS.PROJECT_PATH);
-    console.log('Retrieved project path from storage:', path); // Debug log
     return path;
   },
 
@@ -139,7 +137,6 @@ export const StorageOperations = {
   getRecentProjects: () => {
     const projects = localStorage.getItem('recentProjects');
     const parsedProjects = projects ? JSON.parse(projects) : [];
-    console.log('Getting recent projects:', parsedProjects);
     return parsedProjects;
   },
 
@@ -148,9 +145,7 @@ export const StorageOperations = {
    * @param {ProjectPaths} projectData - Project data to add
    */
   addToRecentProjects: (projectData) => {
-    console.log('Adding to recent projects:', projectData);
     const recentProjects = StorageOperations.getRecentProjects();
-    console.log('Current recent projects:', recentProjects);
 
     // Remove this project if it already exists in the list
     const filteredProjects = recentProjects.filter(
@@ -164,7 +159,6 @@ export const StorageOperations = {
     const updatedProjects = filteredProjects.slice(0, MAX_RECENT_PROJECTS);
 
     localStorage.setItem('recentProjects', JSON.stringify(updatedProjects));
-    console.log('Updated recent projects:', updatedProjects);
   },
 
   /**
@@ -172,7 +166,6 @@ export const StorageOperations = {
    * @param {ProjectPaths} projectData - Project data to set as current
    */
   setCurrentProject: (projectData) => {
-    console.log('Setting current project:', projectData);
     // First clear ALL existing project data
     StorageOperations.clearProjectData();
     // Then save new project data
