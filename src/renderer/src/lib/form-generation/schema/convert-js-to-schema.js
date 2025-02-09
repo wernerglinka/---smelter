@@ -27,68 +27,56 @@ const inferFieldType = (value, key) => {
  * Creates a field definition from a key-value pair
  * @param {string} key - The field key
  * @param {*} value - The field value
- * @returns {Object} The field definition
+ * @param {Object} explicitSchema - Schema from fields.json
+ * @returns {Object} The field definition with immutable type
  */
-function createField(key, value) {
-  const type = inferFieldType(value, key);
+function createField(key, value, explicitSchema) {
+  // First, find if we have an explicit schema definition
+  const explicitDef = explicitSchema?.find((def) => def.name === key);
+
+  // If we have an explicit type in schema, use it
+  if (explicitDef?.type) {
+    return Object.defineProperty(
+      {
+        label: key,
+        value,
+        placeholder: `Add ${key}`,
+        ...explicitDef
+      },
+      'type',
+      {
+        value: explicitDef.type,
+        writable: false,
+        configurable: false
+      }
+    );
+  }
+
+  // Otherwise, infer type from value
+  const inferredType = inferFieldType(value, key);
+
   const baseField = {
     label: key,
-    type,
     value,
     placeholder: `Add ${key}`
   };
 
-  // Handle sections array specially
-  if (type === 'sections-array') {
-    return {
-      ...baseField,
-      type: 'array',
-      isDropzone: true,
-      dropzoneType: 'sections',
-      value: Array.isArray(value)
-        ? value.map((section, index) => ({
-            type: 'object',
-            label: `section${index + 1}`,
-            value: Object.entries(section).map(([sKey, sValue]) => createField(sKey, sValue))
-          }))
-        : []
-    };
-  }
-
-  // Handle regular arrays
-  if (type === 'array') {
-    return {
-      ...baseField,
-      type: 'array',
-      isDropzone: true,
-      dropzoneType: 'sections',
-      value: Array.isArray(value)
-        ? value.map((arrayItem, index) => ({
-            type: 'object',
-            label: `Item ${index + 1}`,
-            value: Object.entries(arrayItem).map(([key, val]) => createField(key, val))
-          }))
-        : []
-    };
-  }
-  // Handle objects
-  else if (type === 'object') {
-    baseField.value = Object.entries(value).map(([subKey, subValue]) =>
-      createField(subKey, subValue)
-    );
-    delete baseField.placeholder;
-  }
-
-  return baseField;
+  // Make type immutable
+  return Object.defineProperty(baseField, 'type', {
+    value: inferredType,
+    writable: false,
+    configurable: false
+  });
 }
 
 /**
  * Converts JSON to schema object
  * @param {Object} json - The JSON to convert
- * @returns {Object} The schema object
+ * @param {Object} explicitSchema - Schema from fields.json
+ * @returns {Object} The schema object with immutable field types
  */
-export async function convertToSchemaObject(json) {
+export async function convertToSchemaObject(json, explicitSchema) {
   return {
-    fields: Object.entries(json).map(([key, value]) => createField(key, value))
+    fields: Object.entries(json).map(([key, value]) => createField(key, value, explicitSchema))
   };
 }
