@@ -1,7 +1,34 @@
 import React, { createContext, useContext, useReducer } from 'react';
 
+/**
+ * @typedef {Object} FieldDefinition
+ * @property {string} label - The field's display label and object key
+ * @property {string} type - Field type ('text', 'object', etc.)
+ * @property {any} value - The field's current value
+ * @property {string} [placeholder] - Optional placeholder text
+ * @property {string} [id] - Unique identifier (generated if not provided)
+ * @property {string} [path] - Dot-notation path in the form structure
+ * @property {FieldDefinition[]} [fields] - Nested fields for object types
+ */
+
+/**
+ * @typedef {Object} FormState
+ * @property {FieldDefinition[]} fields - Array of form fields
+ * @property {string} content - Form content
+ */
+
+/**
+ * Context for form state and operations
+ * @type {React.Context<{state: FormState, dispatch: Function}>}
+ */
 export const FormContext = createContext();
 
+/**
+ * Recursively updates fields in the form structure
+ * @param {FieldDefinition[]} fields - Array of field definitions
+ * @param {Object} payload - Update payload containing id, value, and optional label
+ * @returns {FieldDefinition[]} Updated fields array
+ */
 const updateFieldsRecursively = (fields, payload) => {
   return fields.map(field => {
     // Direct match
@@ -32,7 +59,7 @@ const updateFieldsRecursively = (fields, payload) => {
         // Create value object using original labels
         const newValue = updatedFields.reduce((acc, f) => ({
           ...acc,
-          [f.label]: f.value // Use original label as key
+          [f.label]: f.value
         }), {});
 
         return {
@@ -55,6 +82,14 @@ const updateFieldsRecursively = (fields, payload) => {
   });
 };
 
+/**
+ * Reducer for form state management
+ * @param {FormState} state - Current form state
+ * @param {Object} action - Action object
+ * @param {string} action.type - Action type
+ * @param {Object} action.payload - Action payload
+ * @returns {FormState} New form state
+ */
 const formReducer = (state, action) => {
   switch (action.type) {
     case 'UPDATE_FIELD': {
@@ -83,12 +118,42 @@ const formReducer = (state, action) => {
   }
 };
 
+/**
+ * Provider component for form context
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components
+ * @param {Object} props.initialData - Initial form data
+ * @param {FieldDefinition[]} props.initialData.fields - Initial fields array
+ * @returns {JSX.Element} Provider component
+ *
+ * @example
+ * // Expected initial data structure:
+ * const initialData = {
+ *   fields: [
+ *     {
+ *       label: "title",
+ *       type: "text",
+ *       value: "My Title",
+ *       placeholder: "Enter title"
+ *     },
+ *     {
+ *       label: "seo",
+ *       type: "object",
+ *       value: [
+ *         {
+ *           label: "description",
+ *           type: "text",
+ *           value: "SEO description"
+ *         }
+ *       ]
+ *     }
+ *   ],
+ *   content: ""
+ * };
+ */
 export const FormProvider = ({ children, initialData }) => {
-  console.log('Initial Data:', JSON.stringify(initialData, null, 2));
-
   // Add IDs and paths to fields recursively
   const addIdsToFields = (fields, parentPath = '') => {
-    console.log('Processing fields:', JSON.stringify(fields, null, 2));
     return fields.map(field => {
       const fieldPath = parentPath ? `${parentPath}.${field.label}` : field.label;
       const newField = {
@@ -98,7 +163,7 @@ export const FormProvider = ({ children, initialData }) => {
       };
 
       if (field.type === 'object') {
-        // Handle the case where value is an array of field definitions
+        // Handle array of field definitions
         if (Array.isArray(field.value)) {
           newField.fields = field.value.map(subField => ({
             ...subField,
@@ -112,7 +177,7 @@ export const FormProvider = ({ children, initialData }) => {
             [f.label]: f.value
           }), {});
         }
-        // Handle the case where value is already an object
+        // Handle object value
         else if (field.value && typeof field.value === 'object') {
           newField.fields = Object.entries(field.value).map(([key, value]) => ({
             label: key,
@@ -122,7 +187,7 @@ export const FormProvider = ({ children, initialData }) => {
             id: `${newField.id}-${key}`
           }));
         }
-        // Handle the case where fields array exists
+        // Handle existing fields array
         else if (field.fields) {
           newField.fields = addIdsToFields(field.fields, fieldPath);
           newField.value = newField.fields.reduce((acc, f) => ({
@@ -150,6 +215,11 @@ export const FormProvider = ({ children, initialData }) => {
   );
 };
 
+/**
+ * Hook to access form context
+ * @returns {{state: FormState, dispatch: Function}} Form context value
+ * @throws {Error} If used outside of FormProvider
+ */
 export const useForm = () => {
   const context = useContext(FormContext);
   if (!context) {
