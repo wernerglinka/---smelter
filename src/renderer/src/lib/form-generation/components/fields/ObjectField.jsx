@@ -38,18 +38,25 @@ export const ObjectField = ({ field, implicitDef }) => {
     }
 
     if (typeof field.value === 'object' && field.value !== null) {
-      return Object.entries(field.value).map(([key, value]) => ({
-        id: `${field.id || field.label}-${key}`,
-        path: `${basePath}.${key}`,
-        type: typeof value === 'object' ? (value.type || 'text') : 'text',
-        label: key,
-        value: typeof value === 'object' ? value.value : value,
-        placeholder: `Enter ${key}`
-      }));
+      return Object.entries(field.value).map(([key, value]) => {
+        // Check if we have a schema definition for this field
+        const schemaField = implicitDef?.fields?.find(f => f.name === key) || {};
+
+        return {
+          id: `${field.id || field.label}-${key}`,
+          path: `${basePath}.${key}`,
+          // Prioritize schema type, then value's type, then fallback to text
+          type: schemaField.type || (typeof value === 'object' ? value.type : null) ||
+                (typeof value === 'boolean' ? 'checkbox' : 'text'),
+          label: key,
+          value: typeof value === 'object' ? value.value : value,
+          placeholder: schemaField.placeholder || `Enter ${key}`
+        };
+      });
     }
 
     return [];
-  }, [field, basePath]);
+  }, [field, basePath, implicitDef]);
 
   return (
     <div className="form-element is-object label-exists no-drop" draggable="true">

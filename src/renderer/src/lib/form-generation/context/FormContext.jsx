@@ -35,8 +35,9 @@ const updateFieldsRecursively = (fields, payload) => {
     if (field.id === payload.id) {
       return {
         ...field,
-        value: payload.value,
-        label: payload.label || field.label
+        value: payload.type === 'checkbox' ? Boolean(payload.value) : payload.value,
+        label: payload.label || field.label,
+        type: field.type
       };
     }
 
@@ -49,17 +50,21 @@ const updateFieldsRecursively = (fields, payload) => {
           if (f.label === pathParts[1]) {
             return {
               ...f,
-              value: payload.value,
-              label: f.label // Explicitly preserve the original label
+              value: payload.type === 'checkbox' ? Boolean(payload.value) : payload.value,
+              label: f.label,
+              type: f.type
             };
           }
           return f;
         });
 
-        // Create value object using original labels
+        // Create value object preserving types and ensuring proper boolean values
         const newValue = updatedFields.reduce((acc, f) => ({
           ...acc,
-          [f.label]: f.value
+          [f.label]: {
+            value: f.type === 'checkbox' ? Boolean(f.value) : f.value,
+            type: f.type
+          }
         }), {});
 
         return {

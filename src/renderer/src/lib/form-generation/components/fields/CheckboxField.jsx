@@ -9,7 +9,12 @@ export const CheckboxField = ({ field, implicitDef }) => {
   const handleChange = (checked) => {
     dispatch({
       type: 'UPDATE_FIELD',
-      payload: { id: field.id, value: checked }
+      payload: {
+        id: field.id,
+        value: checked,
+        path: field.path, // Add path for nested fields
+        type: 'checkbox'  // Preserve field type
+      }
     });
   };
 
@@ -38,7 +43,7 @@ export const CheckboxField = ({ field, implicitDef }) => {
             type="checkbox"
             role="switch"
             className="element-value"
-            checked={field.value || false}
+            checked={field.value === true}  // Explicit boolean check
             onChange={(e) => handleChange(e.target.checked)}
           />
         </div>
