@@ -8,7 +8,7 @@ import { SelectField } from './fields/SelectField';
 import { UrlField } from './fields/UrlField';
 import { ObjectField } from './fields/ObjectField';
 import { ArrayField } from './fields/ArrayField';
-import { SectionsArrayField } from './fields/SectionsArrayField';
+import { ListField } from './fields/ListField';
 
 export const FormField = ({ field }) => {
   if (!field) {
@@ -16,22 +16,21 @@ export const FormField = ({ field }) => {
     return null;
   }
 
-  // First check if it's a sections array based on schema type
-  if ( field.type === 'array' && field.name === 'sections' ) {
-    return <SectionsArrayField field={field} />;
-  }
-
-  // Then handle regular arrays
-  if (field.type === 'array') {
-    return <ArrayField field={field} />;
-  }
-
-  // Then handle objects
+  // Handle objects
   if (field.type === 'object') {
     return <ObjectField field={field} />;
   }
 
-  // Finally handle all simple field types
+  // Handle arrays and lists
+  if (field.type === 'array') {
+    return <ArrayField field={field} />;
+  }
+
+  if (field.type === 'list') {
+    return <ListField field={field} />;
+  }
+
+  // Handle simple field types
   switch (field.type) {
     case 'textarea':
       return <TextArea field={field} />;
