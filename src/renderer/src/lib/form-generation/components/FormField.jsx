@@ -21,14 +21,24 @@ export const FormField = ({ field, schema, onChange }) => {
     schema: schema?.[field.name]
   };
 
+  // First check if it's a sections array based on schema type
+  if (schema?.type === 'SECTIONS_ARRAY' ||
+      (field.type === 'array' && field.name === 'sections')) {
+    return <SectionsArrayField {...commonProps} />;
+  }
+
+  // Then handle regular arrays
+  if (field.type === 'array') {
+    return <ArrayField {...commonProps} />;
+  }
+
+  // Then handle objects
+  if (field.type === 'object') {
+    return <ObjectField {...commonProps} />;
+  }
+
+  // Finally handle all other field types
   switch (field.type) {
-    case 'array':
-      if (field.name === 'sections') {
-        return <SectionsArrayField {...commonProps} />;
-      }
-      return <ArrayField {...commonProps} />;
-    case 'object':
-      return <ObjectField {...commonProps} />;
     case 'textarea':
       return <TextArea {...commonProps} />;
     case 'number':
