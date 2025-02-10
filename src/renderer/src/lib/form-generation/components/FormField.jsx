@@ -1,4 +1,5 @@
 import React from 'react';
+import { createFieldDefinition } from '../utils/field-utils';
 import { TextField } from './fields/TextField';
 import { TextArea } from './fields/TextArea';
 import { NumberField } from './fields/NumberField';
@@ -9,47 +10,40 @@ import { ObjectField } from './fields/ObjectField';
 import { ArrayField } from './fields/ArrayField';
 import { SectionsArrayField } from './fields/SectionsArrayField';
 
-export const FormField = ({ field, schema, onChange }) => {
+export const FormField = ({ field }) => {
   if (!field) {
     console.warn('FormField received null or undefined field');
     return null;
   }
 
-  const commonProps = {
-    field: field,
-    onChange: onChange,
-    schema: schema?.[field.name]
-  };
-
   // First check if it's a sections array based on schema type
-  if (schema?.type === 'SECTIONS_ARRAY' ||
-      (field.type === 'array' && field.name === 'sections')) {
-    return <SectionsArrayField {...commonProps} />;
+  if ( field.type === 'array' && field.name === 'sections' ) {
+    return <SectionsArrayField field={field} />;
   }
 
   // Then handle regular arrays
   if (field.type === 'array') {
-    return <ArrayField {...commonProps} />;
+    return <ArrayField field={field} />;
   }
 
   // Then handle objects
   if (field.type === 'object') {
-    return <ObjectField {...commonProps} />;
+    return <ObjectField field={field} />;
   }
 
-  // Finally handle all other field types
+  // Finally handle all simple field types
   switch (field.type) {
     case 'textarea':
-      return <TextArea {...commonProps} />;
+      return <TextArea field={field} />;
     case 'number':
-      return <NumberField {...commonProps} />;
+      return <NumberField field={field} />;
     case 'checkbox':
-      return <CheckboxField {...commonProps} />;
+      return <CheckboxField field={field} />;
     case 'select':
-      return <SelectField {...commonProps} options={field.options} />;
+      return <SelectField field={field} />;
     case 'url':
-      return <UrlField {...commonProps} />;
+      return <UrlField field={field} />;
     default:
-      return <TextField {...commonProps} />;
+      return <TextField field={field} />;
   }
 };

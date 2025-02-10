@@ -3321,8 +3321,27 @@
   </span>
   <label class="object-name label-wrapper">
     <span>sections<sup>*</sup>
-    </span><input type="text" class="element-label" placeholder="Array Name" readonly="" value="sections"></label>
-  <div class="array-dropzone dropzone js-dropzone" data-wrapper="is-array">
+    </span><input type="text" class="element-label" placeholder="Array Name" readonly="" value="sections">
+    <span class="collapse-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+          <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+            <g stroke="#FFFFFF" stroke-width="2">
+              <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+              <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+              <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+              <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+              <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+              <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+              <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+              <polyline id="Path" points="15 5 12 8 9 5"></polyline>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
+  </label>
+  <div class="array-dropzone dropzone js-dropzone " data-wrapper="is-array">
     <div class="form-element is-object label-exists no-drop" draggable="true">
       <span class="sort-handle">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
@@ -3339,9 +3358,27 @@
         </svg>
       </span>
       <label class="object-name label-wrapper label-exists">
-        <span>text</span>
-        <span class="hint">Sections Object</span></label>
-      <div class="object-dropzone dropzone js-dropzone">
+        <span>text</span><input type="text" class="element-label" readonly="" value="text">
+        <span class="collapse-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+              <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                <g stroke="#FFFFFF" stroke-width="2">
+                  <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                  <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                  <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                  <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                  <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                  <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                  <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                  <polyline id="Path" points="15 5 12 8 9 5"></polyline>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </span>
+      </label>
+      <div class="object-dropzone dropzone js-dropzone ">
         <div class="form-element label-exists no-drop" draggable="true">
           <span class="sort-handle">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
@@ -3462,9 +3499,27 @@
             </svg>
           </span>
           <label class="object-name label-wrapper label-exists">
-            <span>Container Fields</span>
-            <span class="hint">Container Settings</span></label>
-          <div class="object-dropzone dropzone js-dropzone">
+            <span>Container Fields</span><input type="text" class="element-label" readonly="" value="containerFields">
+            <span class="collapse-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                  <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                      <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                      <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                      <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                      <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                      <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                      <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                      <polyline id="Path" points="15 5 12 8 9 5"></polyline>
+                    </g>
+                  </g>
+                </g>
+              </svg>
+            </span>
+          </label>
+          <div class="object-dropzone dropzone js-dropzone ">
             <div class="form-element label-exists no-drop" draggable="true">
               <span class="sort-handle">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
@@ -3485,8 +3540,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Disabled"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for Is Disabled</span>
-                <div><input type="checkbox" role="switch" name="isDisabled" class="checkbox-input"></div>
+                <span class="hint">Text for Is Disabled</span>
+                <div><input type="text" name="isDisabled" placeholder="Enter is disabled" value=""></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -3537,8 +3592,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Animated"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for Is Animated</span>
-                <div><input type="checkbox" role="switch" name="isAnimated" class="checkbox-input"></div>
+                <span class="hint">Text for Is Animated</span>
+                <div><input type="text" name="isAnimated" placeholder="Enter is animated" value=""></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -3693,8 +3748,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="In Container"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for In Container</span>
-                <div><input type="checkbox" role="switch" name="inContainer" class="checkbox-input" checked=""></div>
+                <span class="hint">Text for In Container</span>
+                <div><input type="text" name="inContainer" placeholder="Enter in container" value="true"></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -3745,8 +3800,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Narrow"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for Is Narrow</span>
-                <div><input type="checkbox" role="switch" name="isNarrow" class="checkbox-input" checked=""></div>
+                <span class="hint">Text for Is Narrow</span>
+                <div><input type="text" name="isNarrow" placeholder="Enter is narrow" value="true"></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -3793,9 +3848,27 @@
                 </svg>
               </span>
               <label class="object-name label-wrapper label-exists">
-                <span>Background</span>
-                <span class="hint">Background Settings</span></label>
-              <div class="object-dropzone dropzone js-dropzone">
+                <span>Background</span><input type="text" class="element-label" readonly="" value="background">
+                <span class="collapse-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                        <g stroke="#FFFFFF" stroke-width="2">
+                          <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                          <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                          <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                          <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                          <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                          <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                          <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                          <polyline id="Path" points="15 5 12 8 9 5"></polyline>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </span>
+              </label>
+              <div class="object-dropzone dropzone js-dropzone ">
                 <div class="form-element label-exists no-drop" draggable="true">
                   <span class="sort-handle">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
@@ -3916,12 +3989,12 @@
                     </svg>
                   </span>
                   <label class="label-wrapper">
-                    <span> Is Dark</span>
-                    <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="IsDark"></div>
+                    <span> Is  Dark</span>
+                    <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Dark"></div>
                   </label>
                   <label class="content-wrapper">
-                    <span class="hint">Checkbox for IsDark</span>
-                    <div><input type="checkbox" role="switch" name="isDark" class="checkbox-input"></div>
+                    <span class="hint">Text for Is Dark</span>
+                    <div><input type="text" name="isDark" placeholder="Enter is dark" value=""></div>
                   </label>
                   <div class="button-wrapper">
                     <div class="add-button button">
@@ -3956,7 +4029,7 @@
             </div>
           </div>
         </div>
-        <div class="form-element label-exists no-drop" draggable="true">
+        <div class="form-element is-object label-exists no-drop" draggable="true">
           <span class="sort-handle">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
               <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
@@ -3971,40 +4044,287 @@
               </g>
             </svg>
           </span>
-          <label class="label-wrapper">
-            <span> Text</span>
-            <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Text"></div>
-          </label>
-          <label class="content-wrapper">
-            <span class="hint">Text for Text</span>
-            <div><input type="text" name="text" placeholder="Enter text" value="[object Object]"></div>
-          </label>
-          <div class="button-wrapper">
-            <div class="add-button button">
+          <label class="object-name label-wrapper label-exists">
+            <span>Text</span><input type="text" class="element-label" readonly="" value="text">
+            <span class="collapse-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-                  <g stroke="#000000" stroke-width="2">
-                    <g transform="translate(2, 2)">
-                      <circle cx="10" cy="10" r="10"></circle>
-                      <line x1="6" y1="10" x2="14" y2="10"></line>
-                      <line x1="10" y1="6" x2="10" y2="14"></line>
+                  <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                      <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                      <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                      <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                      <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                      <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                      <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                      <polyline id="Path" points="15 5 12 8 9 5"></polyline>
                     </g>
                   </g>
                 </g>
               </svg>
+            </span>
+          </label>
+          <div class="object-dropzone dropzone js-dropzone ">
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Prefix</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Prefix"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Prefix</span>
+                <div><input type="text" name="prefix" placeholder="Enter prefix" value=""></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div class="delete-button">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-                  <g stroke="#000000" stroke-width="2">
-                    <g transform="translate(2, 2)">
-                      <circle cx="10" cy="10" r="10"></circle>
-                      <line x1="13" y1="7" x2="7" y2="13"></line>
-                      <line x1="7" y1="7" x2="13" y2="13"></line>
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
                     </g>
                   </g>
-                </g>
-              </svg>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Title</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Title"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Title</span>
+                <div><input type="text" name="title" placeholder="Enter title" value="Second Page"></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Header</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Header"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Header</span>
+                <div><input type="text" name="header" placeholder="Enter header" value="h1"></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Subtitle</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Subtitle"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Subtitle</span>
+                <div><input type="text" name="subtitle" placeholder="Enter subtitle" value="Ora et labora"></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Prose</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Prose"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Prose</span>
+                <div><input type="text" name="prose" placeholder="Enter prose" value=""></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -4026,9 +4346,27 @@
         </svg>
       </span>
       <label class="object-name label-wrapper label-exists">
-        <span>image</span>
-        <span class="hint">Sections Object</span></label>
-      <div class="object-dropzone dropzone js-dropzone">
+        <span>image</span><input type="text" class="element-label" readonly="" value="image">
+        <span class="collapse-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+              <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                <g stroke="#FFFFFF" stroke-width="2">
+                  <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                  <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                  <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                  <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                  <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                  <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                  <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                  <polyline id="Path" points="15 5 12 8 9 5"></polyline>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </span>
+      </label>
+      <div class="object-dropzone dropzone js-dropzone ">
         <div class="form-element label-exists no-drop" draggable="true">
           <span class="sort-handle">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
@@ -4149,9 +4487,27 @@
             </svg>
           </span>
           <label class="object-name label-wrapper label-exists">
-            <span>Container Fields</span>
-            <span class="hint">Container Settings</span></label>
-          <div class="object-dropzone dropzone js-dropzone">
+            <span>Container Fields</span><input type="text" class="element-label" readonly="" value="containerFields">
+            <span class="collapse-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                  <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                      <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                      <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                      <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                      <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                      <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                      <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                      <polyline id="Path" points="15 5 12 8 9 5"></polyline>
+                    </g>
+                  </g>
+                </g>
+              </svg>
+            </span>
+          </label>
+          <div class="object-dropzone dropzone js-dropzone ">
             <div class="form-element label-exists no-drop" draggable="true">
               <span class="sort-handle">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
@@ -4172,8 +4528,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Disabled"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for Is Disabled</span>
-                <div><input type="checkbox" role="switch" name="isDisabled" class="checkbox-input"></div>
+                <span class="hint">Text for Is Disabled</span>
+                <div><input type="text" name="isDisabled" placeholder="Enter is disabled" value=""></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -4224,8 +4580,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Animated"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for Is Animated</span>
-                <div><input type="checkbox" role="switch" name="isAnimated" class="checkbox-input"></div>
+                <span class="hint">Text for Is Animated</span>
+                <div><input type="text" name="isAnimated" placeholder="Enter is animated" value=""></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -4380,8 +4736,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="In Container"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for In Container</span>
-                <div><input type="checkbox" role="switch" name="inContainer" class="checkbox-input" checked=""></div>
+                <span class="hint">Text for In Container</span>
+                <div><input type="text" name="inContainer" placeholder="Enter in container" value="true"></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -4432,8 +4788,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Narrow"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for Is Narrow</span>
-                <div><input type="checkbox" role="switch" name="isNarrow" class="checkbox-input" checked=""></div>
+                <span class="hint">Text for Is Narrow</span>
+                <div><input type="text" name="isNarrow" placeholder="Enter is narrow" value="true"></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -4480,9 +4836,27 @@
                 </svg>
               </span>
               <label class="object-name label-wrapper label-exists">
-                <span>Background</span>
-                <span class="hint">Background Settings</span></label>
-              <div class="object-dropzone dropzone js-dropzone">
+                <span>Background</span><input type="text" class="element-label" readonly="" value="background">
+                <span class="collapse-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                        <g stroke="#FFFFFF" stroke-width="2">
+                          <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                          <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                          <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                          <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                          <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                          <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                          <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                          <polyline id="Path" points="15 5 12 8 9 5"></polyline>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </span>
+              </label>
+              <div class="object-dropzone dropzone js-dropzone ">
                 <div class="form-element label-exists no-drop" draggable="true">
                   <span class="sort-handle">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
@@ -4603,12 +4977,12 @@
                     </svg>
                   </span>
                   <label class="label-wrapper">
-                    <span> Is Dark</span>
-                    <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="IsDark"></div>
+                    <span> Is  Dark</span>
+                    <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Dark"></div>
                   </label>
                   <label class="content-wrapper">
-                    <span class="hint">Checkbox for IsDark</span>
-                    <div><input type="checkbox" role="switch" name="isDark" class="checkbox-input"></div>
+                    <span class="hint">Text for Is Dark</span>
+                    <div><input type="text" name="isDark" placeholder="Enter is dark" value=""></div>
                   </label>
                   <div class="button-wrapper">
                     <div class="add-button button">
@@ -4643,7 +5017,7 @@
             </div>
           </div>
         </div>
-        <div class="form-element label-exists no-drop" draggable="true">
+        <div class="form-element is-object label-exists no-drop" draggable="true">
           <span class="sort-handle">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
               <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
@@ -4658,40 +5032,183 @@
               </g>
             </svg>
           </span>
-          <label class="label-wrapper">
-            <span> Image</span>
-            <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Image"></div>
-          </label>
-          <label class="content-wrapper">
-            <span class="hint">Text for Image</span>
-            <div><input type="text" name="image" placeholder="Enter image" value="[object Object]"></div>
-          </label>
-          <div class="button-wrapper">
-            <div class="add-button button">
+          <label class="object-name label-wrapper label-exists">
+            <span>Image</span><input type="text" class="element-label" readonly="" value="image">
+            <span class="collapse-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-                  <g stroke="#000000" stroke-width="2">
-                    <g transform="translate(2, 2)">
-                      <circle cx="10" cy="10" r="10"></circle>
-                      <line x1="6" y1="10" x2="14" y2="10"></line>
-                      <line x1="10" y1="6" x2="10" y2="14"></line>
+                  <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                      <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                      <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                      <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                      <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                      <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                      <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                      <polyline id="Path" points="15 5 12 8 9 5"></polyline>
                     </g>
                   </g>
                 </g>
               </svg>
+            </span>
+          </label>
+          <div class="object-dropzone dropzone js-dropzone ">
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Src</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Src"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Src</span>
+                <div><input type="text" name="src" placeholder="Enter src" value="/assets/images/second.jpg"></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div class="delete-button">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-                  <g stroke="#000000" stroke-width="2">
-                    <g transform="translate(2, 2)">
-                      <circle cx="10" cy="10" r="10"></circle>
-                      <line x1="13" y1="7" x2="7" y2="13"></line>
-                      <line x1="7" y1="7" x2="13" y2="13"></line>
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
                     </g>
                   </g>
-                </g>
-              </svg>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Alt</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Alt"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Alt</span>
+                <div><input type="text" name="alt" placeholder="Enter alt" value="Old Man with pidgons"></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Caption</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Caption"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Caption</span>
+                <div><input type="text" name="caption" placeholder="Enter caption" value="Image by Tiểu Bảo Trương from Pixabay"></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -4713,9 +5230,27 @@
         </svg>
       </span>
       <label class="object-name label-wrapper label-exists">
-        <span>text</span>
-        <span class="hint">Sections Object</span></label>
-      <div class="object-dropzone dropzone js-dropzone">
+        <span>text</span><input type="text" class="element-label" readonly="" value="text">
+        <span class="collapse-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+              <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                <g stroke="#FFFFFF" stroke-width="2">
+                  <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                  <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                  <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                  <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                  <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                  <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                  <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                  <polyline id="Path" points="15 5 12 8 9 5"></polyline>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </span>
+      </label>
+      <div class="object-dropzone dropzone js-dropzone ">
         <div class="form-element label-exists no-drop" draggable="true">
           <span class="sort-handle">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
@@ -4836,9 +5371,27 @@
             </svg>
           </span>
           <label class="object-name label-wrapper label-exists">
-            <span>Container Fields</span>
-            <span class="hint">Container Settings</span></label>
-          <div class="object-dropzone dropzone js-dropzone">
+            <span>Container Fields</span><input type="text" class="element-label" readonly="" value="containerFields">
+            <span class="collapse-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                  <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                      <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                      <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                      <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                      <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                      <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                      <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                      <polyline id="Path" points="15 5 12 8 9 5"></polyline>
+                    </g>
+                  </g>
+                </g>
+              </svg>
+            </span>
+          </label>
+          <div class="object-dropzone dropzone js-dropzone ">
             <div class="form-element label-exists no-drop" draggable="true">
               <span class="sort-handle">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
@@ -4859,8 +5412,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Disabled"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for Is Disabled</span>
-                <div><input type="checkbox" role="switch" name="isDisabled" class="checkbox-input"></div>
+                <span class="hint">Text for Is Disabled</span>
+                <div><input type="text" name="isDisabled" placeholder="Enter is disabled" value=""></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -4911,8 +5464,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Animated"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for Is Animated</span>
-                <div><input type="checkbox" role="switch" name="isAnimated" class="checkbox-input"></div>
+                <span class="hint">Text for Is Animated</span>
+                <div><input type="text" name="isAnimated" placeholder="Enter is animated" value=""></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -5067,8 +5620,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="In Container"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for In Container</span>
-                <div><input type="checkbox" role="switch" name="inContainer" class="checkbox-input" checked=""></div>
+                <span class="hint">Text for In Container</span>
+                <div><input type="text" name="inContainer" placeholder="Enter in container" value="true"></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -5119,8 +5672,8 @@
                 <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Narrow"></div>
               </label>
               <label class="content-wrapper">
-                <span class="hint">Checkbox for Is Narrow</span>
-                <div><input type="checkbox" role="switch" name="isNarrow" class="checkbox-input" checked=""></div>
+                <span class="hint">Text for Is Narrow</span>
+                <div><input type="text" name="isNarrow" placeholder="Enter is narrow" value="true"></div>
               </label>
               <div class="button-wrapper">
                 <div class="add-button button">
@@ -5167,9 +5720,27 @@
                 </svg>
               </span>
               <label class="object-name label-wrapper label-exists">
-                <span>Background</span>
-                <span class="hint">Background Settings</span></label>
-              <div class="object-dropzone dropzone js-dropzone">
+                <span>Background</span><input type="text" class="element-label" readonly="" value="background">
+                <span class="collapse-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                        <g stroke="#FFFFFF" stroke-width="2">
+                          <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                          <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                          <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                          <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                          <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                          <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                          <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                          <polyline id="Path" points="15 5 12 8 9 5"></polyline>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </span>
+              </label>
+              <div class="object-dropzone dropzone js-dropzone ">
                 <div class="form-element label-exists no-drop" draggable="true">
                   <span class="sort-handle">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
@@ -5290,12 +5861,12 @@
                     </svg>
                   </span>
                   <label class="label-wrapper">
-                    <span> Is Dark</span>
-                    <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="IsDark"></div>
+                    <span> Is  Dark</span>
+                    <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Is Dark"></div>
                   </label>
                   <label class="content-wrapper">
-                    <span class="hint">Checkbox for IsDark</span>
-                    <div><input type="checkbox" role="switch" name="isDark" class="checkbox-input"></div>
+                    <span class="hint">Text for Is Dark</span>
+                    <div><input type="text" name="isDark" placeholder="Enter is dark" value=""></div>
                   </label>
                   <div class="button-wrapper">
                     <div class="add-button button">
@@ -5330,7 +5901,7 @@
             </div>
           </div>
         </div>
-        <div class="form-element label-exists no-drop" draggable="true">
+        <div class="form-element is-object label-exists no-drop" draggable="true">
           <span class="sort-handle">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
               <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
@@ -5345,44 +5916,319 @@
               </g>
             </svg>
           </span>
-          <label class="label-wrapper">
-            <span> Text</span>
-            <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Text"></div>
-          </label>
-          <label class="content-wrapper">
-            <span class="hint">Text for Text</span>
-            <div><input type="text" name="text" placeholder="Enter text" value="[object Object]"></div>
-          </label>
-          <div class="button-wrapper">
-            <div class="add-button button">
+          <label class="object-name label-wrapper label-exists">
+            <span>Text</span><input type="text" class="element-label" readonly="" value="text">
+            <span class="collapse-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-                  <g stroke="#000000" stroke-width="2">
-                    <g transform="translate(2, 2)">
-                      <circle cx="10" cy="10" r="10"></circle>
-                      <line x1="6" y1="10" x2="14" y2="10"></line>
-                      <line x1="10" y1="6" x2="10" y2="14"></line>
+                  <g transform="translate(-2, 0)" stroke="#FFFFFF" stroke-width="2">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <line x1="12" y1="22" x2="12" y2="16" id="Path"></line>
+                      <line x1="12" y1="8" x2="12" y2="2" id="Path"></line>
+                      <line x1="4" y1="12" x2="2" y2="12" id="Path"></line>
+                      <line x1="10" y1="12" x2="8" y2="12" id="Path"></line>
+                      <line x1="16" y1="12" x2="14" y2="12" id="Path"></line>
+                      <line x1="22" y1="12" x2="20" y2="12" id="Path"></line>
+                      <polyline id="Path" points="15 19 12 16 9 19"></polyline>
+                      <polyline id="Path" points="15 5 12 8 9 5"></polyline>
                     </g>
                   </g>
                 </g>
               </svg>
+            </span>
+          </label>
+          <div class="object-dropzone dropzone js-dropzone ">
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Prefix</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Prefix"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Prefix</span>
+                <div><input type="text" name="prefix" placeholder="Enter prefix" value=""></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div class="delete-button">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-                  <g stroke="#000000" stroke-width="2">
-                    <g transform="translate(2, 2)">
-                      <circle cx="10" cy="10" r="10"></circle>
-                      <line x1="13" y1="7" x2="7" y2="13"></line>
-                      <line x1="7" y1="7" x2="13" y2="13"></line>
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
                     </g>
                   </g>
-                </g>
-              </svg>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Title</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Title"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Title</span>
+                <div><input type="text" name="title" placeholder="Enter title" value=""></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Header</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Header"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Header</span>
+                <div><input type="text" name="header" placeholder="Enter header" value=""></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Subtitle</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Subtitle"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Subtitle</span>
+                <div><input type="text" name="subtitle" placeholder="Enter subtitle" value=""></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="form-element label-exists no-drop" draggable="true">
+              <span class="sort-handle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 22">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                    <g stroke="#FFFFFF" stroke-width="2">
+                      <circle cx="4" cy="11" r="1"></circle>
+                      <circle cx="4" cy="4" r="1"></circle>
+                      <circle cx="4" cy="18" r="1"></circle>
+                      <circle cx="10" cy="11" r="1"></circle>
+                      <circle cx="10" cy="4" r="1"></circle>
+                      <circle cx="10" cy="18" r="1"></circle>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <label class="label-wrapper">
+                <span> Prose</span>
+                <div><input type="text" class="element-label" placeholder="Label Placeholder" readonly="" value="Prose"></div>
+              </label>
+              <label class="content-wrapper">
+                <span class="hint">Text for Prose</span>
+                <div><input type="text" name="prose" placeholder="Enter prose" value="This is a second page. It is a simple page with a title, an image, and some text. It is here to show of the SWUP page transitions and how the navigation works. Also, it is a good place to test the layout when using page sections. The third page is much simpler and has no sections."></div>
+              </label>
+              <div class="button-wrapper">
+                <div class="add-button button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="6" y1="10" x2="14" y2="10"></line>
+                          <line x1="10" y1="6" x2="10" y2="14"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                      <g stroke="#000000" stroke-width="2">
+                        <g transform="translate(2, 2)">
+                          <circle cx="10" cy="10" r="10"></circle>
+                          <line x1="13" y1="7" x2="7" y2="13"></line>
+                          <line x1="7" y1="7" x2="13" y2="13"></line>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="button-wrapper">
+    <div class="add-button button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+          <g stroke="#000000" stroke-width="2">
+            <g transform="translate(2, 2)">
+              <circle cx="10" cy="10" r="10"></circle>
+              <line x1="6" y1="10" x2="14" y2="10"></line>
+              <line x1="10" y1="6" x2="10" y2="14"></line>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="delete-button button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+          <g stroke="#000000" stroke-width="2">
+            <g transform="translate(2, 2)">
+              <circle cx="10" cy="10" r="10"></circle>
+              <line x1="13" y1="7" x2="7" y2="13"></line>
+              <line x1="7" y1="7" x2="13" y2="13"></line>
+            </g>
+          </g>
+        </g>
+      </svg>
     </div>
   </div>
 </div>

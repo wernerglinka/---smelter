@@ -1,7 +1,7 @@
 import React from 'react';
 import { DragHandleIcon, AddIcon, DeleteIcon, CollapseIcon, CollapsedIcon } from '@components/icons';
 
-export const ListField = ({ field, implicitDef, onChange }) => {
+export const ListField = ({ field }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
 
   const handleCollapse = () => {

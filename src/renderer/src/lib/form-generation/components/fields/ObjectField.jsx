@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { FormField } from '../FormField';
 import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '@components/icons';
 
-export const ObjectField = ({ field, schema, onChange }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+export const ObjectField = ({ field }) => {
+  const [ isCollapsed, setIsCollapsed ] = useState( false );
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -32,12 +32,6 @@ export const ObjectField = ({ field, schema, onChange }) => {
           <FormField
             key={`${childField.label}-${index}`}
             field={childField}
-            schema={schema}
-            onChange={(value) => {
-              const newFields = [...(field.fields || [])];
-              newFields[index] = { ...childField, value };
-              onChange?.({ ...field, fields: newFields });
-            }}
           />
         ))}
       </div>

@@ -79,7 +79,8 @@ export default function EditPage() {
         />
         <EditSpace
           $expanded={!isSidebarVisible}
-          fileContent={fileContent}
+          fileContent={ fileContent }
+          filePath={ selectedFile }
         />
         <PreviewPane />
       </div>

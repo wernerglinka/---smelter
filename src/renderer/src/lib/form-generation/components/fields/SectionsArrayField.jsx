@@ -2,7 +2,7 @@ import React from 'react';
 import { DragHandleIcon, CollapseIcon, CollapsedIcon, AddIcon, DeleteIcon } from '@components/icons';
 import { FormField } from '../FormField';
 
-export const SectionsArrayField = ({ field, schema, implicitDef }) => {
+export const SectionsArrayField = ({ field }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [collapsedFields, setCollapsedFields] = React.useState(new Set());
 
@@ -19,53 +19,6 @@ export const SectionsArrayField = ({ field, schema, implicitDef }) => {
         newSet.add(fieldPath);
       }
       return newSet;
-    });
-  };
-
-  const renderObjectField = (fieldData, path = '') => {
-    return Object.entries(fieldData).map(([key, value]) => {
-      const fieldPath = `${path}${key}`;
-
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
-        const isFieldCollapsed = collapsedFields.has(fieldPath);
-
-        return (
-          <div key={key} className="form-element is-object label-exists no-drop" draggable="true">
-            <span className="sort-handle">
-              <DragHandleIcon />
-            </span>
-            <label className="object-name label-wrapper label-exists">
-              <span>{key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}</span>
-              <input
-                type="text"
-                className="element-label"
-                defaultValue={key}
-                readOnly
-              />
-              <span className="collapse-icon" onClick={() => handleFieldCollapse(fieldPath)}>
-                {isFieldCollapsed ? <CollapsedIcon /> : <CollapseIcon />}
-              </span>
-            </label>
-            <div className={`object-dropzone dropzone js-dropzone ${isFieldCollapsed ? 'is-collapsed' : ''}`}>
-              {renderObjectField(value, `${fieldPath}.`)}
-            </div>
-          </div>
-        );
-      }
-
-      // Let FormField handle the field type determination based on schema
-      return (
-        <FormField
-          key={key}
-          field={{
-            name: key,
-            value: value,
-            label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')
-          }}
-          schema={schema}
-          implicitDef={implicitDef}
-        />
-      );
     });
   };
 
@@ -94,6 +47,7 @@ export const SectionsArrayField = ({ field, schema, implicitDef }) => {
         {(field.value || []).map((section, index) => {
           const sectionPath = `section${index}`;
           const isSectionCollapsed = collapsedFields.has(sectionPath);
+          const sectionFields = field.fields[index] || [];
 
           return (
             <div key={index} className="form-element is-object label-exists no-drop" draggable="true">
@@ -113,19 +67,24 @@ export const SectionsArrayField = ({ field, schema, implicitDef }) => {
                 </span>
               </label>
               <div className={`object-dropzone dropzone js-dropzone ${isSectionCollapsed ? 'is-collapsed' : ''}`}>
-                {renderObjectField(section, `${sectionPath}.`)}
+                {sectionFields.map((childField, fieldIndex) => (
+                  <FormField
+                    key={`${sectionPath}-field-${fieldIndex}`}
+                    field={childField}
+                  />
+                ))}
               </div>
             </div>
           );
         })}
       </div>
       <div className="button-wrapper">
-        {!implicitDef?.noDuplication && (
+        {!field?.noDuplication && (
           <div className="add-button button">
             <AddIcon />
           </div>
         )}
-        {!implicitDef?.noDeletion && (
+        {!field?.noDeletion && (
           <div className="delete-button button">
             <DeleteIcon />
           </div>

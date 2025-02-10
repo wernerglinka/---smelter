@@ -9,7 +9,7 @@ import { handleFormSubmission } from '@lib/form-submission/submit-handler';
  * @param {boolean} props.$expanded Whether the edit space is in expanded mode
  * @param {Object} props.fileContent The content of the file being edited
  */
-const EditSpace = ({ fileContent, schema, filePath }) => {
+const EditSpace = ({ fileContent, filePath }) => {
   const formRef = useRef(null);
   const [formFields, setFormFields] = useState(null);
 
@@ -43,11 +43,10 @@ const EditSpace = ({ fileContent, schema, filePath }) => {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} id="main-form">
-      {formFields.map((field) => (
+      {formFields.map((field, i) => (
         <FormField
-          key={field.id || field.label}
+          key={`${field.name}${i}`}
           field={field}
-          schema={schema}
         />
       ))}
       <button type="submit">Save</button>

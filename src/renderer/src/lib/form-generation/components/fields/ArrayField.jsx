@@ -1,7 +1,8 @@
 import React from 'react';
 import { DragHandleIcon, CollapseIcon, CollapsedIcon, AddIcon, DeleteIcon } from '@components/icons';
+import { FormField } from '../FormField';
 
-export const ArrayField = ({ field, implicitDef, onChange }) => {
+export const ArrayField = ({ field }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
 
   const handleCollapse = () => {
@@ -32,18 +33,21 @@ export const ArrayField = ({ field, implicitDef, onChange }) => {
       >
         {field.value && field.value.map((item, index) => (
           <div key={index} className="form-element is-object label-exists no-drop" draggable="true">
-            {/* Child objects will be rendered here */}
+            <FormField
+              field={{ name: `${field.name}[${index}]`, value: item }}
+              onChange={(value) => handleItemChange(index, value)}
+            />
           </div>
         ))}
       </div>
       <div className="button-wrapper">
-        {!implicitDef?.noDuplication && (
+        {!field?.noDuplication && (
           <div className="add-button button">
             <AddIcon className="icon" />
           </div>
         )}
-        {!implicitDef?.noDeletion && (
-          <div className="delete-button">
+        {!field?.noDeletion && (
+          <div className="delete-button button">
             <DeleteIcon className="icon" />
           </div>
         )}

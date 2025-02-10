@@ -13,10 +13,7 @@ import {
 const inferFieldType = (value, key) => {
   if (typeof value === 'boolean') return 'checkbox';
   if (typeof value === 'number') return 'number';
-  if (Array.isArray(value)) {
-    // All arrays should just use type 'array'
-    return 'array';
-  }
+  if (Array.isArray(value)) return 'array';
   if (typeof value === 'object' && value !== null) return 'object';
   return 'text';
 };
@@ -28,6 +25,27 @@ const inferFieldType = (value, key) => {
  * @param {Object} explicitSchema - Schema from fields.json
  * @returns {Object} The field definition with immutable type
  */
+function processChildren(value, explicitSchema) {
+  if (Array.isArray(value)) {
+    return value.map((item) => {
+      if (typeof item === 'object' && item !== null) {
+        return Object.entries(item).map(([childKey, childValue]) =>
+          createField(childKey, childValue, explicitSchema)
+        );
+      }
+      return item;
+    });
+  }
+
+  if (typeof value === 'object' && value !== null) {
+    return Object.entries(value).map(([childKey, childValue]) =>
+      createField(childKey, childValue, explicitSchema)
+    );
+  }
+
+  return value;
+}
+
 function createField(key, value, explicitSchema) {
   const schemaField = explicitSchema?.find((field) => field.name === key);
   const inferredType = inferFieldType(value, key);
@@ -41,7 +59,7 @@ function createField(key, value, explicitSchema) {
     placeholder: schemaField?.placeholder || `Add ${key}`
   };
 
-  // Merge all properties from schema field if it exists
+  // Merge schema properties if they exist
   if (schemaField) {
     Object.assign(baseField, {
       ...schemaField,
@@ -49,11 +67,9 @@ function createField(key, value, explicitSchema) {
     });
   }
 
-  // Handle nested objects
-  if (inferredType === 'object' && typeof value === 'object') {
-    baseField.fields = Object.entries(value).map(([childKey, childValue]) =>
-      createField(childKey, childValue, explicitSchema)
-    );
+  // Process children recursively for both objects and arrays
+  if (typeof value === 'object' && value !== null) {
+    baseField.fields = processChildren(value, explicitSchema);
   }
 
   // Make type immutable
@@ -71,53 +87,9 @@ function createField(key, value, explicitSchema) {
  * @returns {Object} The schema object with immutable field types
  */
 export const convertToSchemaObject = async (frontmatter, explicitSchema) => {
-  const fields = Object.entries(frontmatter).map(([key, value]) => {
-    // Find matching schema field
-    const schemaField = explicitSchema.find((field) => field.name === key);
-    console.log(`Processing field ${key}:`, { value, schemaField });
-
-    // First infer the type from the value
-    const inferredType = inferFieldType(value, key); // Pass the key here
-
-    // Create base field with inferred type
-    let field = {
-      label: schemaField?.label || key,
-      name: key,
-      value: value,
-      type: inferredType,
-      placeholder: schemaField?.placeholder || `Add ${key}`
-    };
-
-    // If schema definition exists, override the field properties
-    if (schemaField) {
-      field = {
-        ...field,
-        ...schemaField, // This includes the schema-defined type
-        value: value // Preserve the current value
-      };
-    }
-
-    // Handle nested objects (like 'seo')
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      field.fields = Object.entries(value).map(([childKey, childValue]) => {
-        const nestedSchemaField = explicitSchema.find((f) => f.name === childKey);
-        const childInferredType = inferFieldType(childValue, childKey); // Pass the child key here
-
-        return {
-          label: nestedSchemaField?.label || childKey,
-          name: childKey,
-          value: childValue,
-          type: nestedSchemaField?.type || childInferredType,
-          placeholder: nestedSchemaField?.placeholder || `Add ${childKey}`,
-          ...(nestedSchemaField || {})
-        };
-      });
-    }
-
-    console.log(`Final field for ${key}:`, field);
-
-    return field;
-  });
+  const fields = Object.entries(frontmatter).map(([key, value]) =>
+    createField(key, value, explicitSchema)
+  );
 
   return { fields };
 };

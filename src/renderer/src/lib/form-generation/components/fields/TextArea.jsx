@@ -2,12 +2,11 @@ import React from 'react';
 import { BaseField } from './BaseField';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
-export const TextArea = ({ field, implicitDef }) => {
+export const TextArea = ({ field }) => {
   return (
     <BaseField
-      field={field}
-      allowDuplication={!implicitDef?.noDuplication}
-      allowDeletion={!implicitDef?.noDeletion}
+      allowDuplication={!field?.noDuplication}
+      allowDeletion={!field?.noDeletion}
     >
       <label className="label-wrapper">
         <span>{toTitleCase(field.label)}</span>

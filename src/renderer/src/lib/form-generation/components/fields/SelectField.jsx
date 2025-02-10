@@ -2,14 +2,13 @@ import React from 'react';
 import { BaseField } from './BaseField';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
-export const SelectField = ({ field, implicitDef }) => {
-  const options = implicitDef?.options || field.options || [];
+export const SelectField = ({ field }) => {
+  const options = field.options || [];
 
   return (
     <BaseField
-      field={field}
-      allowDuplication={!implicitDef?.noDuplication}
-      allowDeletion={!implicitDef?.noDeletion}
+      allowDuplication={!field?.noDuplication}
+      allowDeletion={!field?.noDeletion}
     >
       <label className="label-wrapper">
         <span>{toTitleCase(field.label)}</span>
@@ -28,7 +27,7 @@ export const SelectField = ({ field, implicitDef }) => {
         <div>
           <select
             name={field.name}
-            defaultValue={field.value || implicitDef?.default || ''}
+            defaultValue={field.value || field?.default || ''}
           >
             {options.map((option, index) => (
               <option key={index} value={option.value || option}>
