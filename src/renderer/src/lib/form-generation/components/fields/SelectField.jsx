@@ -1,20 +1,9 @@
 import React from 'react';
 import { BaseField } from './BaseField';
-import { useForm } from '@formsContext/FormContext';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const SelectField = ({ field, implicitDef }) => {
-  const { dispatch } = useForm();
-
-  const handleChange = (value) => {
-    dispatch({
-      type: 'UPDATE_FIELD',
-      payload: { id: field.id, value }
-    });
-  };
-
   const options = implicitDef?.options || field.options || [];
-  const currentValue = field.value || implicitDef?.default || '';
 
   return (
     <BaseField
@@ -29,22 +18,21 @@ export const SelectField = ({ field, implicitDef }) => {
             type="text"
             className="element-label"
             placeholder="Label Placeholder"
-            value={field.label || ''}
+            defaultValue={field.label || ''}
             readOnly
           />
         </div>
       </label>
       <label className="content-wrapper">
-        <span className="hint">Select an option</span>
+        <span className="hint">Select for {field.label}</span>
         <div>
           <select
-            className="element-value"
-            value={currentValue}
-            onChange={(e) => handleChange(e.target.value)}
+            name={field.name}
+            defaultValue={field.value || implicitDef?.default || ''}
           >
             {options.map((option, index) => (
-              <option key={index} value={option.value}>
-                {option.label}
+              <option key={index} value={option.value || option}>
+                {option.label || option}
               </option>
             ))}
           </select>

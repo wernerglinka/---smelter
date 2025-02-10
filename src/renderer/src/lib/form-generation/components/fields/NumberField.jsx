@@ -1,18 +1,8 @@
 import React from 'react';
 import { BaseField } from './BaseField';
-import { useForm } from '@formsContext/FormContext';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const NumberField = ({ field, implicitDef }) => {
-  const { dispatch } = useForm();
-
-  const handleChange = (value) => {
-    dispatch({
-      type: 'UPDATE_FIELD',
-      payload: { id: field.id, value: Number(value) }
-    });
-  };
-
   return (
     <BaseField
       field={field}
@@ -26,20 +16,19 @@ export const NumberField = ({ field, implicitDef }) => {
             type="text"
             className="element-label"
             placeholder="Label Placeholder"
-            value={field.label || ''}
+            defaultValue={field.label || ''}
             readOnly
           />
         </div>
       </label>
       <label className="content-wrapper">
-        <span className="hint">Number input</span>
+        <span className="hint">Number for {field.label}</span>
         <div>
           <input
             type="number"
-            className="element-value"
-            placeholder={field.placeholder || implicitDef?.placeholder || "Enter a number"}
-            value={field.value || ''}
-            onChange={(e) => handleChange(e.target.value)}
+            name={field.name}
+            defaultValue={field.value || ''}
+            placeholder={`Enter ${field.label}`}
           />
         </div>
       </label>

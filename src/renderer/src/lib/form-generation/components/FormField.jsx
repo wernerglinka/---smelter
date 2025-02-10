@@ -1,45 +1,45 @@
 import React from 'react';
 import { TextField } from './fields/TextField';
 import { TextArea } from './fields/TextArea';
-import { ListField } from './fields/ListField';
+import { NumberField } from './fields/NumberField';
+import { CheckboxField } from './fields/CheckboxField';
+import { SelectField } from './fields/SelectField';
+import { UrlField } from './fields/UrlField';
+import { ObjectField } from './fields/ObjectField';
 import { ArrayField } from './fields/ArrayField';
 import { SectionsArrayField } from './fields/SectionsArrayField';
-import { CheckboxField } from './fields/CheckboxField';
-import { ObjectField } from './fields/ObjectField';
-import { SelectField } from './fields/SelectField';
-import { NumberField } from './fields/NumberField';
-import { UrlField } from './fields/UrlField';
 
-export const FormField = ({ field, implicitDef }) => {
-  // Check if it's a sections array
-  if (field.type === 'array' && field.dropzoneType === 'sections') {
-    return <SectionsArrayField field={field} implicitDef={implicitDef} />;
+export const FormField = ({ field, schema, onChange }) => {
+  if (!field) {
+    console.warn('FormField received null or undefined field');
+    return null;
   }
 
-  // Ensure type is lowercase for consistent comparison
-  const fieldType = field.type.toLowerCase();
+  const commonProps = {
+    field: field,
+    onChange: onChange,
+    schema: schema?.[field.name]
+  };
 
-  switch (fieldType) {
-    case 'text':
-      return <TextField field={field} implicitDef={implicitDef} />;
-    case 'textarea':
-      return <TextArea field={field} implicitDef={implicitDef} />;
-    case 'number':
-      return <NumberField field={field} implicitDef={implicitDef} />;
-    case 'checkbox':
-      return <CheckboxField field={field} implicitDef={implicitDef} />;
-    case 'select':
-      return <SelectField field={field} implicitDef={implicitDef} />;
-    case 'list':
-      return <ListField field={field} implicitDef={implicitDef} />;
+  switch (field.type) {
     case 'array':
-      return <ArrayField field={field} implicitDef={implicitDef} />;
+      if (field.name === 'sections') {
+        return <SectionsArrayField {...commonProps} />;
+      }
+      return <ArrayField {...commonProps} />;
     case 'object':
-      return <ObjectField field={field} implicitDef={implicitDef} />;
+      return <ObjectField {...commonProps} />;
+    case 'textarea':
+      return <TextArea {...commonProps} />;
+    case 'number':
+      return <NumberField {...commonProps} />;
+    case 'checkbox':
+      return <CheckboxField {...commonProps} />;
+    case 'select':
+      return <SelectField {...commonProps} options={field.options} />;
     case 'url':
-      return <UrlField field={field} implicitDef={implicitDef} />;
+      return <UrlField {...commonProps} />;
     default:
-      console.warn(`Unsupported field type: ${field.type}`);
-      return <TextField field={field} implicitDef={implicitDef} />;
+      return <TextField {...commonProps} />;
   }
 };

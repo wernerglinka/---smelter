@@ -15,6 +15,7 @@ export const processFrontmatter = async (frontmatter, content) => {
 
     // Convert frontmatter to schema with explicit definitions
     const schema = await convertToSchemaObject(frontmatter, explicitSchema);
+    console.log('Converted schema:', schema);
     validateSchema(schema);
 
     return schema;

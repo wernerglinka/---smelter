@@ -1,41 +1,29 @@
-import React, { useState } from 'react';
-import { BaseField } from './BaseField';
-import { useForm } from '@formsContext/FormContext';
+import React from 'react';
 import { DragHandleIcon, AddIcon, DeleteIcon, CollapseIcon, CollapsedIcon } from '@components/icons';
 
-export const ListField = ({ field, implicitDef }) => {
-  const { dispatch } = useForm();
+export const ListField = ({ field, implicitDef, onChange }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  const handleItemChange = (index, value) => {
+  const handleItemChange = (index, e) => {
     const newValue = [...(field.value || [])];
-    newValue[index] = value;
-    dispatch({
-      type: 'UPDATE_FIELD',
-      payload: { id: field.id, value: newValue }
-    });
+    newValue[index] = e.target.value;
+    onChange?.(newValue);
   };
 
   const handleAddItem = (index) => {
     const newValue = [...(field.value || [])];
     newValue.splice(index + 1, 0, '');
-    dispatch({
-      type: 'UPDATE_FIELD',
-      payload: { id: field.id, value: newValue }
-    });
+    onChange?.(newValue);
   };
 
   const handleDeleteItem = (index) => {
     const newValue = [...(field.value || [])];
     newValue.splice(index, 1);
-    dispatch({
-      type: 'UPDATE_FIELD',
-      payload: { id: field.id, value: newValue }
-    });
+    onChange?.(newValue);
   };
 
   return (
@@ -62,10 +50,8 @@ export const ListField = ({ field, implicitDef }) => {
             <li key={index}>
               <input
                 type="text"
-                className="list-item"
-                placeholder="Item Placeholder"
                 value={item}
-                onChange={(e) => handleItemChange(index, e.target.value)}
+                onChange={(e) => handleItemChange(index, e)}
               />
               <div className="button-wrapper">
                 <div className="add-button button" onClick={() => handleAddItem(index)}>
@@ -78,14 +64,6 @@ export const ListField = ({ field, implicitDef }) => {
             </li>
           ))}
         </ul>
-      </div>
-      <div className="button-wrapper">
-        <div className="add-button button" onClick={() => handleAddItem(field.value?.length || 0)}>
-          <AddIcon />
-        </div>
-        <div className="delete-button">
-          <DeleteIcon />
-        </div>
       </div>
     </div>
   );

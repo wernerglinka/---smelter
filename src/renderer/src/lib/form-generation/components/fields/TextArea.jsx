@@ -1,18 +1,8 @@
 import React from 'react';
 import { BaseField } from './BaseField';
-import { useForm } from '@formsContext/FormContext';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const TextArea = ({ field, implicitDef }) => {
-  const { dispatch } = useForm();
-
-  const handleChange = (value) => {
-    dispatch({
-      type: 'UPDATE_FIELD',
-      payload: { id: field.id, value }
-    });
-  };
-
   return (
     <BaseField
       field={field}
@@ -26,19 +16,18 @@ export const TextArea = ({ field, implicitDef }) => {
             type="text"
             className="element-label"
             placeholder="Label Placeholder"
-            value={field.label || ''}
+            defaultValue={field.label || ''}
             readOnly
           />
         </div>
       </label>
       <label className="content-wrapper">
-        <span className="hint">Text for Textarea element</span>
+        <span className="hint">Text for {field.label}</span>
         <div>
           <textarea
-            className="element-value is-editor"
-            placeholder={field.placeholder || implicitDef?.placeholder || "Click to open editor"}
-            value={field.value || ''}
-            onChange={(e) => handleChange(e.target.value)}
+            name={field.name}
+            defaultValue={field.value || ''}
+            placeholder={`Enter ${field.label}`}
           />
         </div>
       </label>

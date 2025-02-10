@@ -1,23 +1,8 @@
 import React from 'react';
 import { BaseField } from './BaseField';
-import { useForm } from '@formsContext/FormContext';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const CheckboxField = ({ field, implicitDef }) => {
-  const { dispatch } = useForm();
-
-  const handleChange = (checked) => {
-    dispatch({
-      type: 'UPDATE_FIELD',
-      payload: {
-        id: field.id,
-        value: checked,
-        path: field.path, // Add path for nested fields
-        type: 'checkbox'  // Preserve field type
-      }
-    });
-  };
-
   return (
     <BaseField
       field={field}
@@ -31,20 +16,20 @@ export const CheckboxField = ({ field, implicitDef }) => {
             type="text"
             className="element-label"
             placeholder="Label Placeholder"
-            value={field.label || ''}
+            defaultValue={field.label || ''}
             readOnly
           />
         </div>
       </label>
       <label className="content-wrapper">
-        <span className="hint">Initial state of checkbox</span>
+        <span className="hint">Checkbox for {field.label}</span>
         <div>
           <input
             type="checkbox"
             role="switch"
-            className="element-value"
-            checked={field.value === true}  // Explicit boolean check
-            onChange={(e) => handleChange(e.target.checked)}
+            name={field.name}
+            className="checkbox-input"
+            defaultChecked={field.value || false}
           />
         </div>
       </label>

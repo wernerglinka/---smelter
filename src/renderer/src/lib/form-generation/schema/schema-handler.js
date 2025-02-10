@@ -32,16 +32,22 @@ const processSchemaField = (field) => {
 export const getExplicitSchema = async () => {
   const projectPath = StorageOperations.getProjectPath();
   if (!projectPath) {
+    console.warn('No project path found in storage');
     throw createFileError('No project path found in storage', '');
   }
 
   const schemaFilePath = `${projectPath}/.metallurgy/frontmatterTemplates/fields.json`;
+
   const schemaExists = await window.electronAPI.files.exists(schemaFilePath);
 
-  if (!schemaExists.data) return [];
+  if (!schemaExists.data) {
+    console.warn('Schema file not found');
+    return [];
+  }
 
   const { status, data, error } = await window.electronAPI.files.read(schemaFilePath);
   if (status === 'failure') {
+    console.error('Failed to read schema:', error);
     throw createFileError(`Error reading schema file: ${error}`, schemaFilePath);
   }
 
@@ -50,7 +56,8 @@ export const getExplicitSchema = async () => {
   }
 
   try {
-    return data.map(processSchemaField);
+    const processedSchema = data.map(processSchemaField);
+    return processedSchema;
   } catch (error) {
     throw createFileError(`Invalid field in schema file: ${error.message}`, schemaFilePath);
   }
