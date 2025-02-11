@@ -1,4 +1,5 @@
 export { default as FileIcon } from './FileIcon';
+export { default as FilePlusIcon } from './FilePlusIcon';
 export { default as FileJsIcon } from './FileJsIcon';
 export { default as FileJsonIcon } from './FileJsonIcon';
 export { default as FileMdIcon } from './FileMdIcon';

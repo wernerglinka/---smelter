@@ -125,7 +125,7 @@ h2 {
   h3 {
     padding-bottom: 2rem;
   }
-  & .btn {
+  & .sidebar-pane-selection .btn {
     width: 100%;
     text-align: left;
   }

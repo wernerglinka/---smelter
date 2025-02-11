@@ -2,6 +2,8 @@ import { useRef, useEffect, useState } from 'react';
 import { FormField } from '@lib/form-generation/components/FormField';
 import { processFrontmatter } from '@lib/form-generation/processors/frontmatter-processor';
 import { handleFormSubmission } from '@lib/form-submission/submit-handler';
+import { PreviewShowIcon } from '@components/icons';
+import './styles.css';
 
 /**
  * Main editing space component that handles file content processing and form rendering
@@ -9,9 +11,11 @@ import { handleFormSubmission } from '@lib/form-submission/submit-handler';
  * @param {boolean} props.$expanded Whether the edit space is in expanded mode
  * @param {Object} props.fileContent The content of the file being edited
  */
-const EditSpace = ({ fileContent, filePath }) => {
+const EditSpace = ({ fileContent }) => {
   const formRef = useRef(null);
-  const [formFields, setFormFields] = useState(null);
+  const [ formFields, setFormFields ] = useState( null );
+  const [ activeFilePath, setActiveFilePath ] = useState( null );
+  const [ fileName, setFileName ] = useState( null );
 
   useEffect(() => {
     const processContent = async () => {
@@ -20,7 +24,15 @@ const EditSpace = ({ fileContent, filePath }) => {
           fileContent.data.frontmatter,
           fileContent.data.content
         );
-        setFormFields(processedData.fields);
+        setFormFields( processedData.fields );
+
+        // set active file path
+        const path = fileContent.path;
+        setActiveFilePath( path );
+
+        // get file name from path
+        const fileName = path.split('/').pop();
+        setFileName( fileName );
       }
     };
 
@@ -30,27 +42,35 @@ const EditSpace = ({ fileContent, filePath }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(formRef.current);
-    const result = await handleFormSubmission(formData, filePath);
+    const result = await handleFormSubmission(formData, activeFilePath);
 
     if (!result.success) {
       console.error('Form submission failed:', result.error);
     }
   };
 
-  if (!fileContent || !formFields) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <form ref={formRef} onSubmit={handleSubmit} id="main-form">
-      {formFields.map((field, i) => (
-        <FormField
-          key={`${field.name}${i}`}
-          field={field}
-        />
-      ))}
-      <button type="submit">Save</button>
-    </form>
+    <main className="edit-container container-background">
+      <h2 id="file-name">
+       {fileName}
+        <span id="preview-button" className="btn" role="button" title="Open preview pane">
+          <PreviewShowIcon />
+        </span>
+      </h2>
+      <div id="content-container">
+        {fileContent && formFields && (
+          <form ref={formRef} onSubmit={handleSubmit} id="main-form">
+            {formFields.map((field, i) => (
+              <FormField
+                key={`${field.name}${i}`}
+                field={field}
+              />
+            ))}
+            <button type="submit">Save</button>
+          </form>
+        )}
+      </div>
+    </main>
   );
 };
 

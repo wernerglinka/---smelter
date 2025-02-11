@@ -2,6 +2,7 @@ import React, { useState, useCallback, memo } from 'react';
 import './styles.css';
 import { RenderContentFilesTree } from './ContentFilesTree';
 import { RenderDataFilesTree } from './DataFilesTree';
+import { FolderPlusIcon, FilePlusIcon } from '@components/icons';
 
 // Memoize the Sidebar component to prevent unnecessary re-renders
 const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
@@ -35,17 +36,25 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   };
 
   /**
-   * Handles the "Add New File" button click
+   * Handles the "Add New File" click
    * TODO: Implement new file creation functionality
    */
   const handleNewFileClick = () => {
-    console.log('New file button clicked');
+    console.log('New file icon clicked');
+  };
+
+  /**
+   * Handles the "Add New Folder" click
+   * TODO: Implement new file creation functionality
+   */
+  const handleNewFolderClick = () => {
+    console.log('New folder icon clicked');
   };
 
   return (
     <div className={`sidebar ${className}`}>
       {/* Sidebar Header with Tab Navigation */}
-      <div className="sidebar-tabs">
+      <div className="container-background">
         <ul className="sidebar-pane-selection">
           {/* File Selection Tab */}
           <li>
@@ -92,8 +101,11 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
             <div className="js-dom-tree-wrapper container-background">
               <h3>Project Files</h3>
 
-              {/* New File Creation Button */}
-              <button className="btn" onClick={handleNewFileClick}>Add New File</button>
+              {/* New File/Folder Creation Button */ }
+              <ul className="add-new">
+                <li onClick={handleNewFolderClick}><FolderPlusIcon /></li>
+                <li onClick={handleNewFileClick}><FilePlusIcon /></li>
+              </ul>
 
               {/* Content Files Tree - Shows markdown files */}
               <RenderContentFilesTree

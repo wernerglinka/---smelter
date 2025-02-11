@@ -1,0 +1,36 @@
+@keyframes normalWidth {
+  0% {
+    flex: 0 0 0;
+    padding: 0;
+    opacity: 0;
+  }
+  100% {
+    flex: 0 0 30rem;
+    opacity: 1;
+  }
+}
+
+@keyframes noWidth {
+  0% {
+    flex: 0 0 30rem;
+    opacity: 1;
+  }
+  100% {
+    flex: 0 0 0;
+    padding: 0;
+    opacity: 0;
+  }
+}
+
+.edit-pane {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.edit-container {
+  flex: 0 0 120rem;
+  will-change: transform;
+  transition: transform 0.8s ease-in-out;
+}

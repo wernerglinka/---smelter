@@ -82,6 +82,29 @@
 }
 
 /**
+ * Add new folder/file buttons
+ * The add new folder/file buttons are the buttons that are displayed in the sidebar
+ * to add new folders or files
+ */
+ .add-new {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  list-style: none;
+  padding: 0 0 1rem;
+  margin: 0 0 2rem;
+  border-bottom: 1px dashed var(--border-color);
+
+  & li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+}
+
+/**
  * DOM Tree
  * The DOM Tree is the list of all the files in the project and is displayed in the sidebar
  */
@@ -132,6 +155,10 @@
       display: flex;
       justify-content: space-between;
 
+      & svg {
+        margin-right: 1rem;
+      }
+
       & .delete-wrapper {
         display: none}
       }
@@ -152,6 +179,10 @@
   align-items: center;
   font-weight: 600;
   cursor: pointer;
+
+  & svg {
+    margin-right: 1rem;
+  }
 }
 
 .templates-wrapper {
