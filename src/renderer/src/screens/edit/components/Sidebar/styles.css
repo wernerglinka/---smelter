@@ -76,6 +76,11 @@
   padding: 0;
   margin: 0;
 
+  & .btn {
+    width: 100%;
+    text-align: left;
+  }
+
   & li:last-child .btn {
     margin-bottom: 0;
   }

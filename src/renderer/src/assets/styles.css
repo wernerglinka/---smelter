@@ -344,7 +344,7 @@ h2 {
 /**
  * Main form styles
  */
-#main-form {
+.main-form {
   position: relative;
   width: 100%;
   padding-bottom: 3rem;

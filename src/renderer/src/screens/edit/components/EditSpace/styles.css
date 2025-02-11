@@ -22,6 +22,14 @@
   }
 }
 
+/**
+ * Edit Container
+ * The Edit Container is the main part of the editing screen to the right of the sidebar
+ */
+.edit-container {
+
+}
+
 .edit-pane {
   display: flex;
   width: 100%;
@@ -30,7 +38,684 @@
 }
 
 .edit-container {
-  flex: 0 0 120rem;
+  flex: 1;
+  min-width: 65rem;
+  min-height: 80vh;
   will-change: transform;
   transition: transform 0.8s ease-in-out;
 }
+
+/**
+ * Main form styles
+ */
+.main-form {
+  position: relative;
+  width: 100%;
+  padding: 3rem 0;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+
+  &.fade-out {
+    opacity: 0;
+  }
+
+  & .button-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin: 3rem 0;
+  }
+}
+
+#undo-redo-wrapper {
+  position: absolute;
+  top: -3rem;
+  right: 0.4rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1000;
+
+  & .btn {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  & svg {
+    width: 1.6rem;
+
+    & * {
+      stroke: var(--text-color);
+    }
+  }
+
+  & .undo[disabled] {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  & .redo[disabled] {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  & .snapshot[disabled] {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  & .undo-redo-message,
+  & .undo-redo-count {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--message-color);
+  }
+}
+
+
+
+/**
+ * Dropzone holds all the form elements that are added
+ * to the form from the component selection panel (left panel)
+ */
+#dropzone {
+  min-height: 10rem;
+  padding: 1rem 1rem 3rem;
+  margin-bottom: 2rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--default-radius);
+
+  &.dropzone-highlight {
+    background-color: var(--dropzone-background-highlight-color);
+
+    & .form-element {
+      margin: 2rem 0;
+    }
+  }
+}
+
+/*
+ * Fieldsets and form elements
+ */
+fieldset {
+  position: relative;
+  margin: 2rem 0;
+  padding: 1.4rem 0.5rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--default-radius);
+}
+
+.form-element {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px dotted var(--border-color);
+  border-radius: var(--default-radius);
+  padding: 0.5rem 6rem 0.5rem 2rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  transition: all 0.2s ease-in-out;
+
+  .sort-handle {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 2rem;
+    height: 2rem;
+    transform: translateY(-50%);
+    cursor: move;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+
+    & svg {
+      flex: 1;
+      height: 1.6rem;
+      width: 1.6rem;
+
+      & * {
+        stroke: #000;
+      }
+    }
+  }
+
+  .button-wrapper {
+    position: absolute;
+    right: 1rem;
+    top: calc(50% - 0.5rem);
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+    flex: 0 0 6rem;
+    padding-left: 1rem;
+    height: 1.6rem;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  .delete-button,
+  .add-button {
+    background: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 2rem;
+    font-size: 1.6rem;
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    color: var(--text-color);
+    cursor: pointer;
+    margin-left: auto;
+
+    & svg g {
+      stroke: var(--text-color);
+    }
+
+    &:hover svg g {
+      stroke: var(--link-color-hover);
+      transition: stroke 0.3s;
+    }
+  }
+
+  &:hover {
+    > .sort-handle,
+    > .button-wrapper {
+      opacity: 1;
+    }
+  }
+
+  &.is-last {
+    border: none;
+    border-top: 1px double var(--highlight-color);
+    padding: 0;
+    overflow: hidden;
+    height: 0;
+  }
+
+  & label {
+    flex: 0 0 30%;
+
+    &:last-of-type {
+      flex: 1 1 auto;
+    }
+
+    & span {
+      display: inline-block !important;
+      margin-right: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    & .help {
+      position: relative;
+      display: inline-flex !important;
+      justify-content: center;
+      align-items: center;
+      width: 1.2rem;
+      height: 1.2rem;
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      margin: 0 0 0 0.5rem;
+
+      &:hover {
+        cursor: help;
+
+        & .help-text {
+          opacity: 1;
+        }
+      }
+    }
+
+    & .help-text {
+      position: absolute;
+      top: 1rem;
+      right: -12rem;
+      width: 10rem;
+      padding: 0.5rem;
+      background-color: var(--help-background-color);
+      border-radius: var(--default-radius);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.5s ease-in-out;
+    }
+
+    & .error-message {
+      position: absolute;
+      top: -2rem;
+      left: 1rem;
+      font-size: 0.75rem;
+      padding: 0.5rem;
+      color: var(--text-color);
+      background-color: var(--error-color);
+      margin: 0.25rem 0 0;
+    }
+
+    & div {
+      position: relative;
+      flex: 1 1 auto;
+      display: flex;
+      justify-content: flex-start;
+      margin-right: 2rem;
+
+      & *:not([type='checkbox'][role='switch']) {
+        width: 100%;
+      }
+    }
+
+    & input.is-error {
+      background-color: var(--error-background-color);
+    }
+
+    & [type='text'],
+    & textarea,
+    & [type='number'],
+    & [type='date'],
+    & [type='url'],
+    & select {
+      font-family: 'Open Sans', sans-serif;
+      border: none;
+      background: var(--white-transparent);
+      border-radius: 0.5rem;
+      box-shadow: var(--input-box-shadow);
+      backdrop-filter: blur(5px);
+      border: var(--input-border);
+      color: var(--text-color);
+      padding: var(--element-padding);
+
+      &.invalid {
+        border-bottom-color: var(--error-color);
+      }
+
+      &[readonly] {
+        background: none !important;
+        box-shadow: none;
+        backdrop-filter: none;
+        border: none;
+      }
+    }
+
+    &.object-name > input {
+      font-size: 1.5rem;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    & textarea {
+      height: 29px;
+      max-height: 10rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & [type='date']::webkit-calendar-picker-indicator {
+      color: #fff;
+    }
+  }
+
+  &.label-exists {
+    & > .label-wrapper span:first-child {
+      display: none !important;
+    }
+    & > .content-wrapper .hint {
+      display: none !important;
+    }
+    & > .label-wrapper .hint {
+      display: none !important;
+    }
+  }
+
+  &.is-list {
+    display: block;
+
+    & ul {
+      padding: 0;
+      margin: 0;
+    }
+
+    & li {
+      position: relative;
+      display: flex;
+      font-family: 'Open Sans', sans-serif;
+      border: none;
+      background: none;
+      color: var(--text-color);
+      padding: var(--element-padding);
+
+      & .button-wrapper {
+        position: static;
+        margin-top: 0.5rem;
+      }
+
+      &:hover .button-wrapper {
+        opacity: 1;
+      }
+    }
+
+    & input {
+      border: none;
+      background: var(--white-transparent);
+      border-radius: 0.5rem;
+      box-shadow: var(--input-box-shadow);
+      backdrop-filter: blur(5px);
+      color: var(--text-color);
+      padding: var(--element-padding);
+      flex: 0 0 80%;
+    }
+
+    & .button-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      flex: 0 0 5rem;
+      height: 1.6rem;
+
+      & .button {
+        position: static;
+      }
+    }
+  }
+
+  &.is-array,
+  &.is-object,
+  &.is-list,
+  &.is-block {
+    display: block;
+
+    & label {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      &.object-name {
+        min-height: 3rem;
+
+        & .section-description {
+          font-size: 1.5rem;
+          font-weight: 600;
+          font-style: italic;
+
+          & + .element-label {
+            display: none;
+          }
+        }
+      }
+
+      & .collapse-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: -0.1rem;
+        right: 2rem;
+        margin: 0;
+        cursor: pointer;
+        transition: all 0.5s ease-in-out;
+
+        & svg {
+          position: absolute;
+          left: 0;
+          width: 2rem;
+          height: 2.6rem;
+
+          & * {
+            stroke: #000;
+          }
+        }
+
+        & .open {
+          display: block;
+        }
+        & .collapsed {
+          display: none;
+        }
+
+        &.is-collapsed {
+          & .open {
+            display: none;
+          }
+          & .collapsed {
+            display: block;
+          }
+        }
+      }
+    }
+
+    /* Special label for the object in an array */
+    /* We need to hide the regular input as it results from a valid JSON to schema conversion
+    & .array-dropzone > .form-element > .object-name {
+      & span:first-child, & input {
+        display: none;
+      }
+      & .hint {
+        display: inline-block !important;
+        font-size: 1.4rem;
+        font-style: italic;
+        opacity: 0.3;
+        position: relative;
+        top: 0.7rem;
+      }
+    }
+    */
+  }
+
+  & .object-dropzone,
+  & .array-dropzone,
+  & .block-fields-container,
+  & .list-dropzone {
+    min-height: 5rem;
+    border: 1px dotted var(--border-color);
+    border-radius: var(--default-radius);
+    padding: 0.5rem;
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+
+    &.is-collapsed {
+      max-height: 0 !important;
+      min-height: 0;
+      padding: 0 !important;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+}
+
+.dropzone-highlight {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
+  font-style: italic;
+}
+
+.dropzone {
+  position: relative;
+  min-height: 2rem; /* Ensure dropzone always has height */
+  padding: 0.5rem;
+  /* Add a small buffer zone */
+  margin: 0.25rem 0;
+}
+
+.form-element.draggable-transition {
+  transition: transform 0.2s ease-out;
+}
+
+/**
+ * EasyMD Editor styles
+ */
+#editorOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  padding: 5rem 2rem 2rem;
+  background-image: var(--page-background);
+  background-blend-mode: overlay, overlay, overlay, normal;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  color: var(--text-color);
+  font-family: 'Open Sans', sans-serif;
+  justify-content: center;
+  display: none;
+
+  &.show {
+    display: flex;
+  }
+
+  #closeEditor {
+    position: absolute;
+    top: 2rem;
+    right: 1rem;
+    z-index: 10001;
+    width: 4rem;
+    height: 4rem;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+
+    & svg {
+      margin: 0.25rem;
+
+      & * {
+        stroke: #000;
+      }
+    }
+  }
+
+  & .EasyMDEContainer {
+    width: 90%;
+    color: inherit;
+
+    & .editor-toolbar {
+      background-image: var(--editor-background);
+
+      & button {
+        color: var(--text-color);
+        transition: all 0.5s ease-in-out;
+
+        &:hover {
+          color: var(--button-hover-color);
+        }
+      }
+
+      & i.separator {
+        border-right: none;
+      }
+    }
+
+    & .CodeMirror {
+      background-image: var(--editor-background);
+      height: 90%;
+      overflow-y: auto;
+
+      &.disable-markdown-styles {
+        & .cm-header {
+          font-size: 1rem !important;
+          font-weight: normal !important;
+        }
+      }
+    }
+
+    & .editor-preview {
+      background-image: var(--editor-background);
+    }
+  }
+
+  #disableMarkdownStyles.disabled {
+    text-decoration: line-through !important;
+  }
+}
+
+/**
+ * A nicer looking Select Element
+ */
+label > div:has(select) {
+  position: relative;
+  color: #fff;
+
+  &:after {
+    position: absolute;
+    top: 0.5rem;
+    right: 2rem;
+    z-index: 1;
+    content: '';
+    width: 1rem;
+    height: 1rem;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+    transform: rotate(45deg);
+  }
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  color: black;
+  cursor: pointer;
+  padding: var(--element-padding);
+  font-family: 'Open Sans', sans-serif;
+}
+
+/**
+ * Checkbox as Toggle Switch
+ */
+
+input:where([type='checkbox'][role='switch']) {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  position: relative;
+  color: inherit;
+  font-size: inherit;
+  width: 3em;
+  height: 1.5em;
+  box-sizing: content-box;
+  border: 1px solid;
+  border-radius: 0.75em;
+  vertical-align: text-bottom;
+  margin: 0.9rem auto 0.9rem 2rem;
+  box-shadow: var(--input-box-shadow);
+}
+
+input:where([type='checkbox'][role='switch'])::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50%);
+  box-sizing: border-box;
+  width: 1em;
+  height: 1em;
+  margin: 0 0.15em;
+  border: 1px solid;
+  border-radius: 50%;
+  background: currentcolor;
+  opacity: 50%;
+}
+
+input:where([type='checkbox'][role='switch']):checked::before {
+  opacity: 100%;
+  left: 1.5em;
+}
+
+input:where([type='checkbox'][role='switch']):disabled {
+  opacity: 0.4;
+}
+

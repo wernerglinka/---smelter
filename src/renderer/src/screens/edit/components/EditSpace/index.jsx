@@ -59,14 +59,19 @@ const EditSpace = ({ fileContent }) => {
       </h2>
       <div id="content-container">
         {fileContent && formFields && (
-          <form ref={formRef} onSubmit={handleSubmit} id="main-form">
-            {formFields.map((field, i) => (
-              <FormField
-                key={`${field.name}${i}`}
-                field={field}
-              />
-            ))}
-            <button type="submit">Save</button>
+          <form ref={ formRef } onSubmit={ handleSubmit } className="main-form">
+            <div id="dropzone" class="dropzone js-main-dropzone js-dropzone">
+              {formFields.map((field, i) => (
+                <FormField
+                  key={`${field.name}${i}`}
+                  field={field}
+                />
+              ))}
+              <div className="button-wrapper">
+                <button type="submit" id="submit-primary" className="btn primary">Submit</button>
+                <button className="btn" id="clear-dropzone">Clear Dropzone</button>
+              </div>
+            </div>
           </form>
         )}
       </div>
@@ -75,3 +80,5 @@ const EditSpace = ({ fileContent }) => {
 };
 
 export default EditSpace;
+
+<div id="dropzone" class="dropzone js-main-dropzone js-dropzone"></div>

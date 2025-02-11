@@ -98,7 +98,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
               <p>Select a file to start editing...</p>
             </div>
             {/* File Tree Container */}
-            <div className="js-dom-tree-wrapper container-background">
+            <div className="container-background">
               <h3>Project Files</h3>
 
               {/* New File/Folder Creation Button */ }
