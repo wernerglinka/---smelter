@@ -47,8 +47,14 @@ export default function EditPage() {
   const handleFileSelect = async (filepath) => {
     try {
       setSelectedFile(filepath);
-      const content = await FileLoaderService.loadFile( filepath );
 
+      // If filepath is null, clear the content
+      if (!filepath) {
+        setFileContent(null);
+        return;
+      }
+
+      const content = await FileLoaderService.loadFile(filepath);
       setFileContent(content);
     } catch (error) {
       console.error('Error loading file:', error);
@@ -75,10 +81,10 @@ export default function EditPage() {
         <Sidebar
           path={projectPath}
           className={!isSidebarVisible ? 'hidden' : ''}
-          onFileSelect={handleFileSelect}
+          onFileSelect={ handleFileSelect }
         />
         <EditSpace
-          $expanded={!isSidebarVisible}
+          $expanded={ !isSidebarVisible }
           fileContent={ fileContent }
           filePath={ selectedFile }
         />

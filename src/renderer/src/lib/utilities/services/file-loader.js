@@ -3,6 +3,11 @@ import { getMarkdownFile } from '@lib/utilities/file-ops/get-markdown-file';
 export class FileLoaderService {
   static async loadFile(filepath) {
     try {
+      // Return early if filepath is null
+      if (!filepath) {
+        return null;
+      }
+
       if (filepath.endsWith('.md')) {
         return await this.loadMarkdownFile(filepath);
       } else if (filepath.endsWith('.json')) {

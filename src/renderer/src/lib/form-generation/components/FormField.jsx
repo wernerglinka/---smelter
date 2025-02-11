@@ -1,5 +1,4 @@
 import React from 'react';
-import { createFieldDefinition } from '../utils/field-utils';
 import { TextField } from './fields/TextField';
 import { TextArea } from './fields/TextArea';
 import { NumberField } from './fields/NumberField';

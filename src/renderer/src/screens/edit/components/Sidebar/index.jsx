@@ -1,22 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import './styles.css';
 import { RenderContentFilesTree } from './ContentFilesTree';
 import { RenderDataFilesTree } from './DataFilesTree';
 
-/**
- * Sidebar component for file navigation and editing options
- * @param {Object} props - Component props
- * @param {string} props.path - Project root path
- * @param {string} props.className - Additional CSS classes
- * @param {Function} props.onFileSelect - Callback function when a file is selected
- */
-const Sidebar = ({ path, className = '', onFileSelect }) => {
-  // Tracks which pane is currently active ('select-file', 'add-field', or 'add-template')
+// Memoize the Sidebar component to prevent unnecessary re-renders
+const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   const [activePane, setActivePane] = useState('select-file');
-
-  // Tracks the currently selected file path
-  // Used to enable/disable buttons and highlight selected file in tree
   const [fileSelected, setFileSelected] = useState(null);
+  const [openFolders, setOpenFolders] = useState(() => new Set());
+
+  const handleFolderToggle = useCallback((folderPath) => {
+    setOpenFolders(prevOpenFolders => {
+      const newOpenFolders = new Set(prevOpenFolders);
+      if (newOpenFolders.has(folderPath)) {
+        newOpenFolders.delete(folderPath);
+      } else {
+        newOpenFolders.add(folderPath);
+      }
+      return newOpenFolders;
+    });
+  }, []);
+
+  const handleFileSelect = useCallback((filepath) => {
+    setFileSelected(filepath);
+    onFileSelect(filepath);
+  }, [onFileSelect]);
 
   /**
    * Handles switching between different sidebar panes
@@ -34,23 +42,10 @@ const Sidebar = ({ path, className = '', onFileSelect }) => {
     console.log('New file button clicked');
   };
 
-  /**
-   * Handles file selection from either content or data file trees
-   * Updates local state and notifies parent component so it can  respond to
-   * the file selection
-   * @param {string} filepath - Path of the selected file
-   */
-  const handleFileSelect = async (filepath) => {
-    setFileSelected(filepath);
-    if (onFileSelect) {
-      onFileSelect(filepath);
-    }
-  };
-
   return (
     <div className={`sidebar ${className}`}>
       {/* Sidebar Header with Tab Navigation */}
-      <div className="sidebar-container container-background">
+      <div className="sidebar-tabs">
         <ul className="sidebar-pane-selection">
           {/* File Selection Tab */}
           <li>
@@ -105,6 +100,8 @@ const Sidebar = ({ path, className = '', onFileSelect }) => {
                 path={path}
                 fileSelected={fileSelected}
                 onFileSelect={handleFileSelect}
+                openFolders={openFolders}
+                onFolderToggle={handleFolderToggle}
               />
 
               {/* Data Files Tree - Shows JSON/YAML data files */}
@@ -112,6 +109,8 @@ const Sidebar = ({ path, className = '', onFileSelect }) => {
                 path={path}
                 fileSelected={fileSelected}
                 onFileSelect={handleFileSelect}
+                openFolders={openFolders}
+                onFolderToggle={handleFolderToggle}
               />
             </div>
           </div>
@@ -121,6 +120,8 @@ const Sidebar = ({ path, className = '', onFileSelect }) => {
       </div>
     </div>
   );
-};
+});
+
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar;

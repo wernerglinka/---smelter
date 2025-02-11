@@ -75,7 +75,7 @@ export const RenderDataFilesTree = ({ path, fileSelected, onFileSelect }) => {
     <FileTreeBase
       fileTree={fileTree}
       fileSelected={fileSelected}
-      onFileClick={onFileSelect}
+      onFileClick={ onFileSelect }
       fileType="json"
       FileIcon={FileJsonIcon}
     />

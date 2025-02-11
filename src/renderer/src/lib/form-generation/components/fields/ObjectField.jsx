@@ -21,27 +21,6 @@ export const ObjectField = ({ field }) => {
       ));
     }
 
-    // If we have a value object but no field definitions, create them
-    if (typeof field.value === 'object' && field.value !== null) {
-      return Object.entries(field.value).map(([key, value], index) => {
-        const childField = {
-          name: key,
-          label: key,
-          value: value,
-          type: typeof value === 'object' ?
-            (Array.isArray(value) ? 'array' : 'object') :
-            typeof value
-        };
-
-        return (
-          <FormField
-            key={`${field.name}-${key}-${index}`}
-            field={childField}
-          />
-        );
-      });
-    }
-
     return null;
   };
 

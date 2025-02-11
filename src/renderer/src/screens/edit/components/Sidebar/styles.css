@@ -128,6 +128,19 @@
       }
     }
 
+    &.file {
+      display: flex;
+      justify-content: space-between;
+
+      & .delete-wrapper {
+        display: none}
+      }
+
+      &:hover > .delete-wrapper {
+        display: inline-block;
+        cursor: pointer;
+      }
+
     &.open > ul {
       max-height: 100rem;
     }
