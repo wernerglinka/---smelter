@@ -5,6 +5,8 @@ import { RenderDataFilesTree } from './DataFilesTree';
 import { FolderPlusIcon, FilePlusIcon } from '@components/icons';
 import { StorageOperations } from '@services/storage';
 import { handleNewFileClick } from './click-handlers';
+import { useCreateFile } from './hooks/useCreateFile';
+import { useCreateFolder } from './hooks/useCreateFolder';
 
 // Memoize the Sidebar component to prevent unnecessary re-renders
 const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
@@ -13,6 +15,14 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   const [openFolders, setOpenFolders] = useState(() => new Set());
   const [activeFolder, setActiveFolder] = useState('');
   const [activeFileExtension, setActiveFileExtension] = useState('.md'); // Default to .md
+
+  const handleFileSelect = useCallback((filepath) => {
+    setFileSelected(filepath);
+    onFileSelect(filepath);
+  }, [onFileSelect]);
+
+  const createFile = useCreateFile(handleFileSelect, setFileSelected);
+  const createFolder = useCreateFolder();
 
   const handleFolderToggle = useCallback((folderPath) => {
     setOpenFolders(prevOpenFolders => {
@@ -26,72 +36,12 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
     });
   }, []);
 
-  const handleFileSelect = useCallback((filepath) => {
-    setFileSelected(filepath);
-    onFileSelect(filepath);
-  }, [onFileSelect]);
-
   /**
    * Handles switching between different sidebar panes
    * @param {string} pane - Pane identifier to switch to
    */
   const handleTabClick = (pane) => {
     setActivePane(pane);
-  };
-
-
-
-  /**
-   * Handles the "Add New Folder" click
-   * Opens a dialog for the folder name and creates the folder
-   */
-  const handleNewFolderClick = async () => {
-    if (!activeFolder) return;
-
-    try {
-      // Show dialog to get folder name
-      const { response } = await window.electronAPI.dialog.showCustomMessage({
-        type: 'custom',
-        message: 'Enter folder name:',
-        buttons: ['Create', 'Cancel'],
-        input: true
-      });
-
-      // User cancelled or clicked Cancel
-      if (!response || response.index === 1 || !response.value) return;
-
-      const folderPath = `${activeFolder}/${response.value}`;
-
-      // Check if folder already exists
-      const { status: existsStatus } = await window.electronAPI.directories.exists(folderPath);
-      if (existsStatus === 'success') {
-        await window.electronAPI.dialog.showCustomMessage({
-          type: 'error',
-          message: 'A folder with this name already exists.',
-          buttons: ['OK']
-        });
-        return;
-      }
-
-      // Create folder
-      const result = await window.electronAPI.directories.create(folderPath);
-
-      if (result.status === 'success') {
-        // Notify parent components to refresh their file listings
-        window.dispatchEvent(new CustomEvent('folderCreated', {
-          detail: { path: folderPath }
-        }));
-      } else {
-        throw new Error(`Failed to create folder: ${result.error}`);
-      }
-    } catch (error) {
-      console.error('Error creating folder:', error);
-      await window.electronAPI.dialog.showCustomMessage({
-        type: 'error',
-        message: `Failed to create folder: ${error.message}`,
-        buttons: ['OK']
-      });
-    }
   };
 
   // Add handler to receive active folder updates from FileTreeBase
@@ -155,13 +105,13 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
               <ul className="add-new">
                 <li
                   className={!activeFolder ? 'disabled' : ''}
-                  onClick={activeFolder ? handleNewFolderClick : undefined}
+                  onClick={() => createFolder(activeFolder)}
                 >
                   <FolderPlusIcon />
                 </li>
                 <li
                   className={!activeFolder ? 'disabled' : ''}
-                  onClick={activeFolder ? () => handleNewFileClick(activeFileExtension, activeFolder, handleFileSelect, setFileSelected) : undefined}
+                  onClick={() => createFile(activeFileExtension, activeFolder)}
                 >
                   <FilePlusIcon />
                 </li>

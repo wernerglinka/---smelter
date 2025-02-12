@@ -106,14 +106,19 @@ export const RenderDataFilesTree = ({ path, fileSelected, onFileSelect }) => {
     const handleFileCreated = () => {
       loadFiles();
     };
+    const handleFileDeleted = () => {
+      loadFiles();
+    };
 
     window.addEventListener('fileCreated', handleFileCreated);
+    window.addEventListener('fileDeleted', handleFileDeleted);
     // Initial load of files
     loadFiles();
 
     // Cleanup event listeners on component unmount
     return () => {
       window.removeEventListener('fileCreated', handleFileCreated);
+      window.removeEventListener('fileDeleted', handleFileDeleted);
     };
   }, []);
 

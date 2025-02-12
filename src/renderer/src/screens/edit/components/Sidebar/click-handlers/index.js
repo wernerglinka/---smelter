@@ -1,3 +1,4 @@
 import { handleNewFileClick } from './handleNewFileClick';
+import { handleNewFolderClick } from './handleNewFolderClick';
 
-export { handleNewFileClick };
+export { handleNewFileClick, handleNewFolderClick };

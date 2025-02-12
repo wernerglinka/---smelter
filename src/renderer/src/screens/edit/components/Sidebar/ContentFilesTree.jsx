@@ -120,18 +120,20 @@ export const RenderContentFilesTree = ({
   };
 
   useEffect(() => {
-    // Set up event listeners for file operations
     const handleFileCreated = () => {
+      loadFiles();
+    };
+    const handleFileDeleted = () => {
       loadFiles();
     };
 
     window.addEventListener('fileCreated', handleFileCreated);
-    // Initial load of files
+    window.addEventListener('fileDeleted', handleFileDeleted);
     loadFiles();
 
-    // Cleanup event listeners on component unmount
     return () => {
       window.removeEventListener('fileCreated', handleFileCreated);
+      window.removeEventListener('fileDeleted', handleFileDeleted);
     };
   }, []);
 
