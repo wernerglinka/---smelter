@@ -44,10 +44,6 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
    * @param {string} extension - File extension (.md or .json)
    */
   const handleNewFileClick = async (extension) => {
-    console.log('=== Starting handleNewFileClick ===');
-    console.log('Extension:', extension);
-    console.log('Active folder:', activeFolder);
-
     if (!activeFolder) return;
 
     try {
@@ -56,21 +52,17 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
       if (!projectPath) {
         throw new Error('Project path not found in storage');
       }
-      console.log('Project path:', projectPath);
 
       // Show dialog to get file name
-      console.log('Showing dialog...');
       const { response } = await window.electronAPI.dialog.showCustomMessage({
         type: 'custom',
         message: 'Enter file name:',
         buttons: ['Create', 'Cancel'],
         input: true
       });
-      console.log('Dialog response:', response);
 
       // User cancelled or clicked Cancel
       if (!response || response.index === 1 || !response.value) {
-        console.log('Dialog cancelled or empty value');
         return;
       }
 
@@ -79,30 +71,15 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
       if (!fileName.endsWith(`.${extension}`)) {
         fileName = `${fileName}.${extension}`;
       }
-      console.log('Generated filename:', fileName);
 
       // Create full file path using project path
       const filePath = `${projectPath}/${activeFolder}/${fileName}`;
-      console.log('Full file path:', filePath);
 
       // Check if file already exists
-      console.log('Checking if file exists...');
       const existsResponse = await window.electronAPI.files.exists(filePath);
-      console.log('Exists response:', {
-        raw: existsResponse,
-        type: typeof existsResponse,
-        stringified: JSON.stringify(existsResponse)
-      });
-
-      if (existsResponse && existsResponse.status === 'success') {
-        console.log('File exists check - status success, data:', existsResponse.data);
-      } else {
-        console.log('File exists check - raw value:', existsResponse);
-      }
 
       // If the file exists, show error and return
       if (existsResponse && existsResponse.data === true) {
-        console.log('File already exists, showing error dialog');
         await window.electronAPI.dialog.showCustomMessage({
           type: 'error',
           message: 'A file with this name already exists.',
@@ -112,16 +89,13 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
       }
 
       // Create empty file with appropriate initial content
-      console.log('Creating new file...');
       const initialContent = extension === 'json' ? '{}' : '';
       const writeResult = await window.electronAPI.files.write({
         obj: initialContent,
         path: filePath
       });
-      console.log('Write result:', writeResult);
 
       if (writeResult.status === 'success') {
-        console.log('File created successfully, dispatching event');
         window.dispatchEvent(new CustomEvent('fileCreated', {
           detail: { path: filePath }
         }));
@@ -130,7 +104,6 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
         handleFileSelect(filePath);
         setFileSelected(filePath);
       } else {
-        console.log('File creation failed:', writeResult.error);
         throw new Error(`Failed to create file: ${writeResult.error}`);
       }
     } catch (error) {
@@ -142,7 +115,6 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
         buttons: ['OK']
       });
     }
-    console.log('=== Ending handleNewFileClick ===');
   };
 
   /**

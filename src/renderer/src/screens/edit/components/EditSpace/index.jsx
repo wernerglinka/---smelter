@@ -60,7 +60,7 @@ const EditSpace = ({ fileContent }) => {
       <div id="content-container">
         {fileContent && formFields && (
           <form ref={ formRef } onSubmit={ handleSubmit } className="main-form">
-            <div id="dropzone" class="dropzone js-main-dropzone js-dropzone">
+            <div id="dropzone" className="dropzone js-main-dropzone js-dropzone">
               {formFields.map((field, i) => (
                 <FormField
                   key={`${field.name}${i}`}
@@ -81,4 +81,4 @@ const EditSpace = ({ fileContent }) => {
 
 export default EditSpace;
 
-<div id="dropzone" class="dropzone js-main-dropzone js-dropzone"></div>
+<div id="dropzone" className="dropzone js-main-dropzone js-dropzone"></div>
