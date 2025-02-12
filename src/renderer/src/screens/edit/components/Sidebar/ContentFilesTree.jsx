@@ -12,129 +12,126 @@ import { FileTreeBase } from './FileTree';
  * @param {string} props.fileSelected - Currently selected file path
  * @param {Function} props.onFileSelect - Callback when a file is selected
  */
-export const RenderContentFilesTree = ({ path, fileSelected, onFileSelect }) => {
+export const RenderContentFilesTree = ({
+  path,
+  fileSelected,
+  onFileSelect,
+  onFolderActivate
+}) => {
   // Track the processed file tree structure
   const [fileTree, setFileTree] = useState(null);
   // Track any errors during file operations
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    /**
-     * Loads and processes the content files directory
-     */
-    const loadFiles = async () => {
-      try {
-        // Get the content directory path from storage
-        const contentPath = StorageOperations.getContentPath();
-        if (!contentPath) {
-          throw new Error('Content path not found in storage');
-        }
-
-        // Read the directory structure using electron API
-        const { status, data, error } = await window.electronAPI.directories.read(contentPath);
-
-        if (status === 'failure') {
-          throw new Error(`Failed to read directory: ${error}`);
-        }
-
-        /**
-         * Processes directory data into a structured tree format for markdown files.
-         * Creates a hierarchical object with 'src' as the root, containing folders and files.
-         *
-         * @param {Object} data - Raw directory data from electronAPI.directories.read
-         * @returns {Object} Structured tree with 'src' as root containing markdown files
-         *
-         * Example output:
-         * {
-         *   src: {
-         *     'folder1': {
-         *       'file1.md': '/path/to/file1.md',
-         *       'file2.md': '/path/to/file2.md'
-         *     },
-         *     'file3.md': '/path/to/file3.md'
-         *   }
-         * }
-         */
-        const processFiles = (data) => {
-          // Initialize tree structure with 'src' as root
-          const tree = { src: {} };
-          // Extract the files array from the first property of data object
-          const files = Object.values(data)[0];
-
-          files.forEach((fileObj) => {
-            // Skip arrays (shouldn't occur in normal operation)
-            if (Array.isArray(fileObj)) return;
-
-            // Determine if current item is a folder by checking:
-            // 1. If it's an object
-            // 2. If it's not null
-            // 3. If its first value is either an array or object (indicating nested content)
-            const isFolder = typeof fileObj === 'object' &&
-              fileObj !== null &&
-              (Array.isArray(Object.values(fileObj)[0]) ||
-              typeof Object.values(fileObj)[0] === 'object');
-
-            if (isFolder) {
-              // Process folder contents
-              const folderName = Object.keys(fileObj)[0];
-              const folderContents = fileObj[folderName];
-
-              // Process files within the folder if contents are in array format
-              if (Array.isArray(folderContents)) {
-                folderContents.forEach(file => {
-                  // Each file is an object with one entry: { filename: filepath }
-                  const [filename, filepath] = Object.entries(file)[0];
-                  // Only process markdown files
-                  if (filename.endsWith('.md')) {
-                    // Create folder in tree if it doesn't exist
-                    if (!tree.src[folderName]) {
-                      tree.src[folderName] = {};
-                    }
-                    // Add file to folder in tree
-                    tree.src[folderName][filename] = filepath;
-                  }
-                });
-              }
-              return;
-            }
-
-            // Process files at root level
-            const [filename, filepath] = Object.entries(fileObj)[0];
-            // Only include markdown files
-            if (filename.endsWith('.md')) {
-              tree.src[filename] = filepath;
-            }
-          });
-
-          return tree;
-        };
-
-        const processedTree = processFiles(data);
-        setFileTree(processedTree);
-
-      } catch (err) {
-        setError(err.message);
-        console.error('Error loading files:', err);
+  const loadFiles = async () => {
+    try {
+      // Get the content directory path from storage
+      const contentPath = StorageOperations.getContentPath();
+      if (!contentPath) {
+        throw new Error('Content path not found in storage');
       }
-    };
 
-    /**
-     * Event handler for file deletion.
-     * Reloads the file tree when a file is deleted to reflect the changes.
-     * This is triggered by the FileTreeBase component when a file is successfully deleted.
-     */
-    const handleFileDeleted = () => {
+      // Read the directory structure using electron API
+      const { status, data, error } = await window.electronAPI.directories.read(contentPath);
+
+      if (status === 'failure') {
+        throw new Error(`Failed to read directory: ${error}`);
+      }
+
+      /**
+       * Processes directory data into a structured tree format for markdown files.
+       * Creates a hierarchical object with 'src' as the root, containing folders and files.
+       *
+       * @param {Object} data - Raw directory data from electronAPI.directories.read
+       * @returns {Object} Structured tree with 'src' as root containing markdown files
+       *
+       * Example output:
+       * {
+       *   src: {
+       *     'folder1': {
+       *       'file1.md': '/path/to/file1.md',
+       *       'file2.md': '/path/to/file2.md'
+       *     },
+       *     'file3.md': '/path/to/file3.md'
+       *   }
+       * }
+       */
+      const processFiles = (data) => {
+        // Initialize tree structure with 'src' as root
+        const tree = { src: {} };
+        // Extract the files array from the first property of data object
+        const files = Object.values(data)[0];
+
+        files.forEach((fileObj) => {
+          // Skip arrays (shouldn't occur in normal operation)
+          if (Array.isArray(fileObj)) return;
+
+          // Determine if current item is a folder by checking:
+          // 1. If it's an object
+          // 2. If it's not null
+          // 3. If its first value is either an array or object (indicating nested content)
+          const isFolder = typeof fileObj === 'object' &&
+            fileObj !== null &&
+            (Array.isArray(Object.values(fileObj)[0]) ||
+            typeof Object.values(fileObj)[0] === 'object');
+
+          if (isFolder) {
+            // Process folder contents
+            const folderName = Object.keys(fileObj)[0];
+            const folderContents = fileObj[folderName];
+
+            // Process files within the folder if contents are in array format
+            if (Array.isArray(folderContents)) {
+              folderContents.forEach(file => {
+                // Each file is an object with one entry: { filename: filepath }
+                const [filename, filepath] = Object.entries(file)[0];
+                // Only process markdown files
+                if (filename.endsWith('.md')) {
+                  // Create folder in tree if it doesn't exist
+                  if (!tree.src[folderName]) {
+                    tree.src[folderName] = {};
+                  }
+                  // Add file to folder in tree
+                  tree.src[folderName][filename] = filepath;
+                }
+              });
+            }
+            return;
+          }
+
+          // Process files at root level
+          const [filename, filepath] = Object.entries(fileObj)[0];
+          // Only include markdown files
+          if (filename.endsWith('.md')) {
+            tree.src[filename] = filepath;
+          }
+        });
+
+        return tree;
+      };
+
+      const processedTree = processFiles(data);
+      setFileTree(processedTree);
+
+    } catch (err) {
+      setError(err.message);
+      console.error('Error loading files:', err);
+    }
+  };
+
+  useEffect(() => {
+    // Set up event listeners for file operations
+    const handleFileCreated = () => {
       loadFiles();
     };
 
-    // Set up event listener for file deletion
-    window.addEventListener('fileDeleted', handleFileDeleted);
+    window.addEventListener('fileCreated', handleFileCreated);
     // Initial load of files
     loadFiles();
 
-    // Cleanup event listener on component unmount
+    // Cleanup event listeners on component unmount
     return () => {
-      window.removeEventListener('fileDeleted', handleFileDeleted);
+      window.removeEventListener('fileCreated', handleFileCreated);
     };
   }, []);
 
@@ -149,6 +146,7 @@ export const RenderContentFilesTree = ({ path, fileSelected, onFileSelect }) => 
       onFileClick={onFileSelect}
       fileType="md"
       FileIcon={FileMdIcon}
+      onFolderActivate={onFolderActivate}
     />
   );
 };

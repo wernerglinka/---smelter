@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FolderIcon, MinusIcon } from '@components/icons';
+import { StorageOperations } from '@services/storage';
 
 /**
  * Base component for rendering file tree structures. Used by both ContentFilesTree
@@ -17,10 +18,47 @@ export const FileTreeBase = ({
   fileSelected,
   onFileClick,
   fileType,
-  FileIcon
+  FileIcon,
+  onFolderActivate
 }) => {
   // Track which folders are expanded/collapsed
   const [openFolders, setOpenFolders] = useState(new Set());
+  const [activeFolder, setActiveFolder] = useState(null);
+
+  const getFileExtensionForFolder = (folderPath) => {
+    const contentPath = StorageOperations.getContentPath();
+    const dataPath = StorageOperations.getDataPath();
+
+    if (folderPath.startsWith(contentPath)) {
+      return 'md';
+    }
+    if (folderPath.startsWith(dataPath)) {
+      return 'json';
+    }
+    // Default to current fileType if path doesn't match either
+    return fileType;
+  };
+
+  const handleFolderClick = (folderPath, e) => {
+    // If Control/Command key is pressed, ONLY handle folder activation
+    if (e.ctrlKey || e.metaKey) {
+      setActiveFolder(folderPath);
+      const extension = getFileExtensionForFolder(folderPath);
+      onFolderActivate?.(folderPath, extension);
+      return;
+    }
+
+    // Regular click ONLY handles open/close
+    setOpenFolders(prevOpenFolders => {
+      const newOpenFolders = new Set(prevOpenFolders);
+      if (newOpenFolders.has(folderPath)) {
+        newOpenFolders.delete(folderPath);
+      } else {
+        newOpenFolders.add(folderPath);
+      }
+      return newOpenFolders;
+    });
+  };
 
   /**
    * Handles file deletion with user confirmation
@@ -70,23 +108,6 @@ export const FileTreeBase = ({
         buttons: ['OK']
       });
     }
-  };
-
-  /**
-   * Toggles folder open/closed state
-   *
-   * @param {string} folderPath - Path of folder to toggle
-   */
-  const handleFolderClick = (folderPath) => {
-    setOpenFolders(prevOpenFolders => {
-      const newOpenFolders = new Set(prevOpenFolders);
-      if (newOpenFolders.has(folderPath)) {
-        newOpenFolders.delete(folderPath);
-      } else {
-        newOpenFolders.add(folderPath);
-      }
-      return newOpenFolders;
-    });
   };
 
   /**
@@ -146,10 +167,10 @@ export const FileTreeBase = ({
         const isOpen = openFolders.has(currentPath);
 
         return (
-          <li key={key} className={`folder ${isOpen ? 'open' : ''}`}>
+          <li key={key} className={`folder ${isOpen ? 'open' : ''} ${currentPath === activeFolder ? 'active' : ''}`}>
             <span
               className="folder-name"
-              onClick={() => handleFolderClick(currentPath)}
+              onClick={(e) => handleFolderClick(currentPath, e)}
             >
               <FolderIcon />
               {key}
