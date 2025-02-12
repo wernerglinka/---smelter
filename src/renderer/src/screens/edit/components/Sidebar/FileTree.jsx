@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FolderIcon, MinusIcon } from '@components/icons';
+import React, { useState, useCallback, memo } from 'react';
+import { FolderIcon, FolderOpenIcon, MinusIcon } from '@components/icons';
 import { StorageOperations } from '@services/storage';
 
 /**
@@ -13,39 +13,21 @@ import { StorageOperations } from '@services/storage';
  * @param {string} props.fileType - File extension to filter by (e.g., 'md' or 'json')
  * @param {Component} props.FileIcon - Icon component to display next to files
  */
-export const FileTreeBase = ({
+export const FileTreeBase = memo(({
   fileTree,
   fileSelected,
   onFileClick,
   fileType,
   FileIcon,
-  onFolderActivate
+  onFolderActivate,
+  activeFolder
 }) => {
-  // Track which folders are expanded/collapsed
   const [openFolders, setOpenFolders] = useState(new Set());
-  const [activeFolder, setActiveFolder] = useState(null);
 
-  const getFileExtensionForFolder = (folderPath) => {
-    const contentPath = StorageOperations.getContentPath();
-    const dataPath = StorageOperations.getDataPath();
-
-    if (folderPath.startsWith(contentPath)) {
-      return 'md';
-    }
-    if (folderPath.startsWith(dataPath)) {
-      return 'json';
-    }
-    // Default to current fileType if path doesn't match either
-    return fileType;
-  };
-
-  const handleFolderClick = (folderPath, e) => {
+  const handleFolderClick = useCallback((folderPath, e) => {
     // If Control/Command key is pressed, ONLY handle folder activation
     if (e.ctrlKey || e.metaKey) {
-      // Toggle active state - if clicking the same folder, deactivate it
-      setActiveFolder(folderPath === activeFolder ? null : folderPath);
-      const extension = getFileExtensionForFolder(folderPath);
-      onFolderActivate?.(folderPath === activeFolder ? null : folderPath, extension);
+      onFolderActivate?.(folderPath === activeFolder ? null : folderPath);
       return;
     }
 
@@ -59,7 +41,7 @@ export const FileTreeBase = ({
       }
       return newOpenFolders;
     });
-  };
+  }, [activeFolder, onFolderActivate]);
 
   /**
    * Handles file deletion with user confirmation
@@ -74,27 +56,22 @@ export const FileTreeBase = ({
    *
    * @param {string} filepath - Path of file to delete
    */
-  const handleFileDelete = async (filepath) => {
+  const handleFileDelete = useCallback(async (filepath) => {
     try {
-      // Show confirmation dialog
       const { response } = await window.electronAPI.dialog.showCustomMessage({
         type: 'question',
         message: `Are you sure you want to delete ${filepath}?`,
         buttons: ['Yes', 'No']
       });
 
-      // User cancelled or clicked No
       if (!response || response.index === 1) return;
 
       const result = await window.electronAPI.files.delete(filepath);
 
       if (result.status === 'success') {
-        // If deleted file was selected, clear selection by passing null
         if (fileSelected === filepath) {
           onFileClick(null);
         }
-
-        // Notify parent components to refresh their file listings
         window.dispatchEvent(new CustomEvent('fileDeleted', {
           detail: { path: filepath }
         }));
@@ -109,7 +86,7 @@ export const FileTreeBase = ({
         buttons: ['OK']
       });
     }
-  };
+  }, [fileSelected, onFileClick]);
 
   /**
    * Recursively renders the tree structure
@@ -118,7 +95,7 @@ export const FileTreeBase = ({
    * @param {string} path - Current path in the tree hierarchy
    * @returns {Array} Array of rendered file and folder elements
    */
-  const renderTreeNode = (node, path = '') => {
+  const renderTreeNode = useCallback((node, path = '') => {
     const entries = Object.entries(node);
     // Separate files and folders for ordered rendering
     const files = entries.filter(([_, value]) => typeof value === 'string');
@@ -162,14 +139,15 @@ export const FileTreeBase = ({
       ...folders.map(([key, value]) => {
         const currentPath = path ? `${path}/${key}` : key;
         const isOpen = openFolders.has(currentPath);
+        const isActive = currentPath === activeFolder;  // Make sure this comparison is correct
 
         return (
-          <li key={key} className={`folder ${isOpen ? 'open' : ''} ${currentPath === activeFolder ? 'active' : ''}`}>
+          <li key={key} className={`folder ${isOpen ? 'open' : ''} ${isActive ? 'active' : ''}`}>
             <span
               className="folder-name"
               onClick={(e) => handleFolderClick(currentPath, e)}
             >
-              <FolderIcon />
+              {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
               {key}
             </span>
             <ul className="folder-content">
@@ -179,7 +157,7 @@ export const FileTreeBase = ({
         );
       })
     ].filter(Boolean); // Remove null entries
-  };
+  }, [fileType, fileSelected, onFileClick, handleFileDelete, openFolders, activeFolder, handleFolderClick]);
 
   if (!fileTree) {
     return <div>Loading...</div>;
@@ -187,9 +165,11 @@ export const FileTreeBase = ({
 
   return (
     <div className="file-tree">
-      <ul className="dom-tree js-dom-tree js-files-list">
+      <ul className="dom-tree">
         {renderTreeNode(fileTree)}
       </ul>
     </div>
   );
-};
+});
+
+FileTreeBase.displayName = 'FileTreeBase';

@@ -3,7 +3,15 @@ import { FileJsonIcon } from '@components/icons';
 import { StorageOperations } from '@services/storage';
 import { FileTreeBase } from './FileTree';
 
-export const RenderDataFilesTree = ({ path, fileSelected, onFileSelect }) => {
+export const RenderDataFilesTree = ({
+  path,
+  fileSelected,
+  onFileSelect,
+  onFolderActivate,
+  activeFolder,
+  onFolderToggle,
+  openFolders
+}) => {
   const [fileTree, setFileTree] = useState(null);
   const [error, setError] = useState(null);
 
@@ -132,6 +140,10 @@ export const RenderDataFilesTree = ({ path, fileSelected, onFileSelect }) => {
       onFileClick={onFileSelect}
       fileType="json"
       FileIcon={FileJsonIcon}
+      onFolderActivate={onFolderActivate}
+      activeFolder={activeFolder}
+      onFolderToggle={onFolderToggle}
+      openFolders={openFolders}
     />
   );
 };

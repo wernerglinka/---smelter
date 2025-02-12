@@ -13,13 +13,13 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   const [activePane, setActivePane] = useState('select-file');
   const [fileSelected, setFileSelected] = useState(null);
   const [openFolders, setOpenFolders] = useState(() => new Set());
-  const [activeFolder, setActiveFolder] = useState('');
+  const [activeFolder, setActiveFolder] = useState(null); // Change from '' to null
   const [activeFileExtension, setActiveFileExtension] = useState('.md'); // Default to .md
 
   const handleFileSelect = useCallback((filepath) => {
     setFileSelected(filepath);
     onFileSelect(filepath);
-  }, [onFileSelect]);
+  }, [ onFileSelect ] );
 
   const createFile = useCreateFile(handleFileSelect, setFileSelected);
   const createFolder = useCreateFolder();
@@ -36,6 +36,8 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
     });
   }, []);
 
+
+
   /**
    * Handles switching between different sidebar panes
    * @param {string} pane - Pane identifier to switch to
@@ -45,9 +47,9 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   };
 
   // Add handler to receive active folder updates from FileTreeBase
-  const handleFolderActivate = (folderPath, extension) => {
+  const handleFolderActivate = (folderPath) => {
+    const extension = folderPath ? (folderPath.includes('/data/') ? '.json' : '.md') : null;
     setActiveFolder(folderPath);
-    // Use the extension to determine which new file/folder buttons to enable
     setActiveFileExtension(extension);
   };
 
@@ -125,6 +127,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
                 openFolders={openFolders}
                 onFolderToggle={handleFolderToggle}
                 onFolderActivate={handleFolderActivate}
+                activeFolder={activeFolder}
               />
 
               {/* Data Files Tree */}
@@ -135,6 +138,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
                 openFolders={openFolders}
                 onFolderToggle={handleFolderToggle}
                 onFolderActivate={handleFolderActivate}
+                activeFolder={activeFolder}
               />
             </div>
           </div>

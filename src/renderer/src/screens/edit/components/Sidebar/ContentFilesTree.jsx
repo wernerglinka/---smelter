@@ -16,7 +16,10 @@ export const RenderContentFilesTree = ({
   path,
   fileSelected,
   onFileSelect,
-  onFolderActivate
+  onFolderActivate,
+  activeFolder,  // Add this prop
+  onFolderToggle,
+  openFolders
 }) => {
   // Track the processed file tree structure
   const [fileTree, setFileTree] = useState(null);
@@ -151,6 +154,9 @@ export const RenderContentFilesTree = ({
       fileType="md"
       FileIcon={FileMdIcon}
       onFolderActivate={onFolderActivate}
+      activeFolder={activeFolder}
+      onFolderToggle={onFolderToggle}
+      openFolders={openFolders}
     />
   );
 };
