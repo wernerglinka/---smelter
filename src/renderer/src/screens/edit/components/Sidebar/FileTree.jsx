@@ -42,9 +42,10 @@ export const FileTreeBase = ({
   const handleFolderClick = (folderPath, e) => {
     // If Control/Command key is pressed, ONLY handle folder activation
     if (e.ctrlKey || e.metaKey) {
-      setActiveFolder(folderPath);
+      // Toggle active state - if clicking the same folder, deactivate it
+      setActiveFolder(folderPath === activeFolder ? null : folderPath);
       const extension = getFileExtensionForFolder(folderPath);
-      onFolderActivate?.(folderPath, extension);
+      onFolderActivate?.(folderPath === activeFolder ? null : folderPath, extension);
       return;
     }
 

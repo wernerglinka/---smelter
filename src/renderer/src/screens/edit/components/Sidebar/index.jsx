@@ -125,6 +125,10 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
         window.dispatchEvent(new CustomEvent('fileCreated', {
           detail: { path: filePath }
         }));
+
+        // Select the newly created file
+        handleFileSelect(filePath);
+        setFileSelected(filePath);
       } else {
         console.log('File creation failed:', writeResult.error);
         throw new Error(`Failed to create file: ${writeResult.error}`);
