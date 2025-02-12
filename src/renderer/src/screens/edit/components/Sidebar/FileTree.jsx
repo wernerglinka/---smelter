@@ -158,13 +158,9 @@ export const FileTreeBase = ({
         );
       }),
 
-      // Then render folders
+      // Then render folders (including empty ones)
       ...folders.map(([key, value]) => {
         const currentPath = path ? `${path}/${key}` : key;
-        const hasFiles = Object.keys(value).length > 0;
-        // Don't render empty folders
-        if (!hasFiles) return null;
-
         const isOpen = openFolders.has(currentPath);
 
         return (

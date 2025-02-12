@@ -66,10 +66,7 @@ export const RenderContentFilesTree = ({
           // Skip arrays (shouldn't occur in normal operation)
           if (Array.isArray(fileObj)) return;
 
-          // Determine if current item is a folder by checking:
-          // 1. If it's an object
-          // 2. If it's not null
-          // 3. If its first value is either an array or object (indicating nested content)
+          // Determine if current item is a folder
           const isFolder = typeof fileObj === 'object' &&
             fileObj !== null &&
             (Array.isArray(Object.values(fileObj)[0]) ||
@@ -80,6 +77,11 @@ export const RenderContentFilesTree = ({
             const folderName = Object.keys(fileObj)[0];
             const folderContents = fileObj[folderName];
 
+            // Create folder in tree even if empty
+            if (!tree.src[folderName]) {
+              tree.src[folderName] = {};
+            }
+
             // Process files within the folder if contents are in array format
             if (Array.isArray(folderContents)) {
               folderContents.forEach(file => {
@@ -87,11 +89,6 @@ export const RenderContentFilesTree = ({
                 const [filename, filepath] = Object.entries(file)[0];
                 // Only process markdown files
                 if (filename.endsWith('.md')) {
-                  // Create folder in tree if it doesn't exist
-                  if (!tree.src[folderName]) {
-                    tree.src[folderName] = {};
-                  }
-                  // Add file to folder in tree
                   tree.src[folderName][filename] = filepath;
                 }
               });

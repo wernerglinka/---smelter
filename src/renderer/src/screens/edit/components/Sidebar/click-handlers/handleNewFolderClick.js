@@ -1,5 +1,19 @@
 import { StorageOperations } from '@services/storage';
 
+/**
+ * Handles the creation of a new folder in the project structure
+ *
+ * @param {string} activeFolder - The currently active folder path where the new folder will be created
+ * @returns {Promise<void>}
+ *
+ * The function:
+ * 1. Gets the project root path from storage
+ * 2. Prompts user for folder name via dialog
+ * 3. Creates folder in filesystem
+ * 4. Dispatches 'folderCreated' event to update UI
+ *
+ * @throws {Error} If project path is not found or folder creation fails
+ */
 export const handleNewFolderClick = async (activeFolder) => {
   try {
     // Get project path from storage

@@ -48,10 +48,7 @@ export const RenderDataFilesTree = ({ path, fileSelected, onFileSelect }) => {
           // Skip arrays (shouldn't occur in normal operation)
           if (Array.isArray(fileObj)) return;
 
-          // Determine if current item is a folder by checking:
-          // 1. If it's an object
-          // 2. If it's not null
-          // 3. If its first value is either an array or object (indicating nested content)
+          // Determine if current item is a folder
           const isFolder = typeof fileObj === 'object' &&
             fileObj !== null &&
             (Array.isArray(Object.values(fileObj)[0]) ||
@@ -62,6 +59,11 @@ export const RenderDataFilesTree = ({ path, fileSelected, onFileSelect }) => {
             const folderName = Object.keys(fileObj)[0];
             const folderContents = fileObj[folderName];
 
+            // Create folder in tree even if empty
+            if (!tree.data[folderName]) {
+              tree.data[folderName] = {};
+            }
+
             // Process files within the folder if contents are in array format
             if (Array.isArray(folderContents)) {
               folderContents.forEach(file => {
@@ -69,11 +71,6 @@ export const RenderDataFilesTree = ({ path, fileSelected, onFileSelect }) => {
                 const [filename, filepath] = Object.entries(file)[0];
                 // Only process JSON files
                 if (filename.endsWith('.json')) {
-                  // Create folder in tree if it doesn't exist
-                  if (!tree.data[folderName]) {
-                    tree.data[folderName] = {};
-                  }
-                  // Add file to folder in tree
                   tree.data[folderName][filename] = filepath;
                 }
               });
