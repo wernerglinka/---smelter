@@ -126,14 +126,19 @@ export const RenderContentFilesTree = ({
     const handleFileDeleted = () => {
       loadFiles();
     };
+    const handleFolderCreated = () => {
+      loadFiles();
+    };
 
     window.addEventListener('fileCreated', handleFileCreated);
     window.addEventListener('fileDeleted', handleFileDeleted);
+    window.addEventListener('folderCreated', handleFolderCreated);
     loadFiles();
 
     return () => {
       window.removeEventListener('fileCreated', handleFileCreated);
       window.removeEventListener('fileDeleted', handleFileDeleted);
+      window.removeEventListener('folderCreated', handleFolderCreated);
     };
   }, []);
 

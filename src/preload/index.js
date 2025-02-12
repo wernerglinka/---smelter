@@ -119,25 +119,28 @@ const electronAPI = {
   // Directory operations
   directories: {
     /**
-     *
+     * Read directory contents
      * @param directoryPath
      */
     read: (directoryPath) => ipcRenderer.invoke('readDirectory', directoryPath),
     /**
-     *
-     * @param templatesDirName
-     */
-    getTemplates: (templatesDirName) => ipcRenderer.invoke('getTemplates', templatesDirName),
-    /**
-     *
+     * Check if directory exists
      * @param directoryPath
      */
-    delete: (directoryPath) => ipcRenderer.invoke('deleteDirectory', directoryPath),
+    exists: (directoryPath) => ipcRenderer.invoke('directoryExists', directoryPath),
     /**
-     *
+     * Create new directory
      * @param directoryPath
      */
-    exists: (directoryPath) => ipcRenderer.invoke('directoryExists', directoryPath)
+    create: (directoryPath) => {
+      console.log('Preload: invoking createDirectory with path:', directoryPath);
+      return ipcRenderer.invoke('createDirectory', directoryPath);
+    },
+    /**
+     * Delete directory
+     * @param directoryPath
+     */
+    delete: (directoryPath) => ipcRenderer.invoke('deleteDirectory', directoryPath)
   },
 
   // Markdown operations

@@ -352,6 +352,46 @@ const createIPCHandlers = (window) => {
       const yamlString = yaml.stringify(obj);
       const content = `---\n${yamlString}---\n`;
       return FileSystem.writeFile(filePath, content);
+    },
+
+    /**
+     * Creates a new directory
+     *
+     * @param {Event} event - IPC event object
+     * @param {string} dirPath - Path where to create directory
+     * @returns {object} Operation result
+     */
+    handleCreateDirectory: async (event, dirPath) => {
+      console.log('IPC handler: received createDirectory request for:', dirPath);
+      try {
+        // Check if directory exists
+        const exists = FileSystem.directoryExists(dirPath);
+        console.log('Directory exists check:', exists);
+
+        if (exists) {
+          console.log('Directory already exists, returning failure');
+          return {
+            status: 'failure',
+            error: 'Directory already exists'
+          };
+        }
+
+        // Create directory
+        console.log('Attempting to create directory');
+        await FileSystem.createDirectory(dirPath);
+        console.log('Directory created successfully');
+
+        return {
+          status: 'success',
+          data: 'Directory created successfully'
+        };
+      } catch (error) {
+        console.error('Error in handleCreateDirectory:', error);
+        return {
+          status: 'failure',
+          error: error.message
+        };
+      }
     }
   };
 
@@ -419,6 +459,7 @@ const setupIPC = (window) => {
     status: 'success',
     data: FileSystem.readDirectoryStructure(path)
   }));
+  ipcMain.handle('createDirectory', handlers.handleCreateDirectory);
 
   // Emit ready event after all handlers are registered
   window.webContents.send('app-ready');

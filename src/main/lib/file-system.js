@@ -60,6 +60,23 @@ export const FileSystem = {
   },
 
   /**
+   * Creates a new directory
+   *
+   * @param {string} dirPath - Path where to create directory
+   * @throws {Error} If directory creation fails
+   */
+  createDirectory: (dirPath) => {
+    console.log('FileSystem: creating directory at:', dirPath);
+    try {
+      fs.mkdirSync(dirPath, { recursive: true });
+      console.log('FileSystem: directory created successfully');
+    } catch (error) {
+      console.error('FileSystem: error creating directory:', error);
+      throw error;
+    }
+  },
+
+  /**
    * Delete directory with error handling
    *
    * @param {string} dirPath - Path to directory to delete
