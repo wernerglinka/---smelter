@@ -49,7 +49,7 @@
   --font-size-xxxl: clamp(4.88rem, 3.89vw + 3.33rem, 8rem);
 
   /* Layout */
-  --titlebar-height: 2rem;
+  --titlebar-height: 3rem;
   --body-padding: 3rem 2rem 2rem;
   --element-padding: 0.5rem 2rem;
   --page-background: linear-gradient(

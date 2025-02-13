@@ -71,25 +71,47 @@ export const handleEditProject = async (e) => {
       return;
     }
 
-    // Load config directly from the project folder
-    const config = await ProjectOperations.loadProjectConfig(projectFolder);
+    // First verify this is a valid Metallurgy project
+    const isValid = await ProjectOperations.validateProject(projectFolder);
+    if (!isValid) {
+      await window.electronAPI.dialog.showCustomMessage({
+        type: 'error',
+        message: ERRORS.INVALID_PROJECT,
+        buttons: ['OK']
+      });
+      return;
+    }
 
-    // Create project data object
+    // Load existing config without validation
+    const configPath = `${projectFolder}/.metallurgy/projectData.json`;
+    const { data: config } = await window.electronAPI.files.read(configPath);
+
+    if (!config) {
+      throw new Error('Failed to load project configuration');
+    }
+
+    console.log('Debug paths:', {
+      projectFolder,
+      configPath,
+      loadedConfig: config,
+      contentPath: config.contentPath,
+      dataPath: config.dataPath
+    });
+
     const projectData = {
       projectPath: projectFolder,
       contentPath: config.contentPath,
       dataPath: config.dataPath
     };
 
-    // Set as current project (this will handle both saving and adding to recent projects)
+    // Set as current project and navigate
     StorageOperations.setCurrentProject(projectData);
-
     window.location.hash = '/edit';
   } catch (error) {
     console.error('Error opening project:', error);
     await window.electronAPI.dialog.showCustomMessage({
       type: 'error',
-      message: `${ERRORS.OPEN_FAILED}: ${error.message}`,
+      message: `Failed to open project: ${error.message}`,
       buttons: ['OK']
     });
   }

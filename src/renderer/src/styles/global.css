@@ -16,7 +16,7 @@ body {
   margin: 0;
   min-height: 100vh;
   min-width: 900px;
-  padding: var(--body-padding);
+  padding: 0 var(--body-padding);
   background-image: var(--page-background);
   background-blend-mode: overlay, overlay, overlay, normal;
   background-repeat: no-repeat;
@@ -31,6 +31,7 @@ body {
 
 .titlebar {
   position: fixed;
+  background: #f0f0f0;
   top: 0;
   left: 0;
   z-index: 1;
@@ -38,7 +39,6 @@ body {
   width: 100%;
   -webkit-user-select: none;
   -webkit-app-region: drag;
-  cursor: move;
 }
 
 svg {
