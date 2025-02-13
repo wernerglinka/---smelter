@@ -129,16 +129,27 @@ export const RenderContentFilesTree = ({
     const handleFolderCreated = () => {
       loadFiles();
     };
+    const handleFolderDeleted = (event) => {
+      console.log('Folder deleted event received in ContentFilesTree:', event.detail);
+      // Reload files only if the deleted folder was in our content path
+      const contentPath = StorageOperations.getContentPath();
+      if (event.detail.path.startsWith(contentPath)) {
+        loadFiles();
+      }
+    };
 
     window.addEventListener('fileCreated', handleFileCreated);
     window.addEventListener('fileDeleted', handleFileDeleted);
     window.addEventListener('folderCreated', handleFolderCreated);
+    window.addEventListener('folderDeleted', handleFolderDeleted);
+
     loadFiles();
 
     return () => {
       window.removeEventListener('fileCreated', handleFileCreated);
       window.removeEventListener('fileDeleted', handleFileDeleted);
       window.removeEventListener('folderCreated', handleFolderCreated);
+      window.removeEventListener('folderDeleted', handleFolderDeleted);
     };
   }, []);
 

@@ -5,5 +5,5 @@ export const projectFilesHelpText = `
 3. Click the buttons to add a new folder or file
 
 ## To delete folders and files:
-- **CONTROL + Hover** over the item to reveal the delete button
+- **OPTION + Hover** over the item to reveal the delete button
 `;

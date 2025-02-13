@@ -25,27 +25,31 @@ export const FileTreeBase = memo(({
   const [ openFolders, setOpenFolders ] = useState( new Set() );
 
   // Add this near the top of your FileTreeBase component
-useEffect(() => {
-  const handleKeyDown = (e) => {
-    if (e.ctrlKey || e.metaKey) {
-      document.body.classList.add('control-pressed');
-    }
-  };
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Check for Option key (Alt on Mac) or Alt on Windows
+      if (e.altKey) {
+        console.log('Option/Alt key pressed - showing delete buttons');
+        document.body.classList.add('option-pressed');
+      }
+    };
 
-  const handleKeyUp = (e) => {
-    if (!e.ctrlKey && !e.metaKey) {
-      document.body.classList.remove('control-pressed');
-    }
-  };
+    const handleKeyUp = (e) => {
+      if (!e.altKey) {
+        console.log('Option/Alt key released - hiding delete buttons');
+        document.body.classList.remove('option-pressed');
+      }
+    };
 
-  window.addEventListener('keydown', handleKeyDown);
-  window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
 
-  return () => {
-    window.removeEventListener('keydown', handleKeyDown);
-    window.removeEventListener('keyup', handleKeyUp);
-  };
-}, []);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      document.body.classList.remove('option-pressed');
+    };
+  }, []);
 
   // Get the root folder names from storage, with null check
   const contentRoot = fileTree ? Object.keys(fileTree).find(key =>
@@ -122,42 +126,71 @@ useEffect(() => {
 
   /**
    * Handles folder deletion with user confirmation
-   * When a folder is deleted, the  FileTreeBase component:
-   *  - Handles the deletion via  handleFolderDelete
+   * When a folder is deleted, the FileTreeBase component:
+   *  - Handles the deletion via handleFolderDelete
    *  - Dispatches the 'folderDeleted' event
    *  - The UI updates to remove just the deleted folder, including all its files
    * The folder structure and state (open) is preserved because:
-   *  - The  openFolders state in  FileTreeBase is independent of the file list
+   *  - The openFolders state in FileTreeBase is independent of the file list
    *  - The deletion event only triggers a re-render of the file tree
    *  - Other folders open/closed state aren't affected by the folder deletion
    *
-   * @param {string} filepath - Path of file to delete
+   * @param {string} folderPath - Path of folder to delete
    */
-  const handleFolderDelete = useCallback(async (filepath) => {
+  const handleFolderDelete = useCallback(async (folderPath) => {
+    console.log('handleFolderDelete called with path:', folderPath);
     try {
+      // Get the root path based on whether this is in content or data directory
+      const rootPath = folderPath.startsWith('src')
+        ? StorageOperations.getContentPath()
+        : StorageOperations.getDataPath();
+
+      if (!rootPath) {
+        throw new Error('Could not determine root path for folder');
+      }
+
+      // Remove the 'src/' or 'data/' prefix from the folderPath
+      const relativePath = folderPath.replace(/^(src|data)\//, '');
+
+      // Convert relative path to absolute path
+      const absolutePath = `${rootPath}/${relativePath}`;
+      console.log('Root path:', rootPath);
+      console.log('Relative path:', relativePath);
+      console.log('Absolute path for deletion:', absolutePath);
+
       const { response } = await window.electronAPI.dialog.showCustomMessage({
         type: 'question',
-        message: `Are you sure you want to delete ${filepath}?`,
+        message: `Are you sure you want to delete ${folderPath}?`,
         buttons: ['Yes', 'No']
       });
 
-      if (!response || response.index === 1) return;
+      if (!response || response.index === 1) {
+        console.log('User cancelled deletion');
+        return;
+      }
 
-      // Changed from files.delete to directories.delete
-      const result = await window.electronAPI.directories.delete(filepath);
+      console.log('Attempting to delete folder:', absolutePath);
+      const result = await window.electronAPI.directories.delete(absolutePath);
+      console.log('Delete result:', result);
 
       if (result.status === 'success') {
-        if (fileSelected === filepath) {
+        if (result.data?.includes('does not exist')) {
+          throw new Error('Directory does not exist');
+        }
+
+        console.log('Delete successful, dispatching event');
+        if (fileSelected === folderPath) {
+          console.log('Clearing file selection');
           onFileClick(null);
         }
         window.dispatchEvent(new CustomEvent('folderDeleted', {
-          detail: { path: filepath }
+          detail: { path: absolutePath }
         }));
       } else {
         throw new Error(`Failed to delete folder: ${result.error}`);
       }
     } catch (error) {
-      console.error('Error deleting folder:', error);
+      console.error('Error in handleFolderDelete:', error);
       await window.electronAPI.dialog.showCustomMessage({
         type: 'error',
         message: `Failed to delete folder: ${error.message}`,
@@ -174,7 +207,6 @@ useEffect(() => {
    * @returns {Array} Array of rendered file and folder elements
    */
   const renderTreeNode = useCallback((node, path = '') => {
-    console.log('Current node and path:', { node, path });
     const entries = Object.entries(node);
     // Separate files and folders for ordered rendering
     const files = entries.filter(([_, value]) => typeof value === 'string');
@@ -244,13 +276,14 @@ useEffect(() => {
                 <span
                   onClick={(e) => {
                     e.preventDefault();
-                    handleFolderDelete(value);
+                    console.log('Delete folder button clicked for path:', currentPath);
+                    handleFolderDelete(currentPath);
                   }}
                   className="delete-wrapper"
                 >
                   <MinusIcon />
                 </span>
-              ) }
+              )}
             </span>
             <ul className="folder-content">
               {renderTreeNode(value, currentPath)}
@@ -259,7 +292,7 @@ useEffect(() => {
         );
       })
     ].filter(Boolean); // Remove null entries
-  }, [fileType, fileSelected, onFileClick, handleFileDelete, openFolders, activeFolder, handleFolderClick, contentRoot, dataRoot]);
+  }, [fileType, fileSelected, onFileClick, handleFileDelete, handleFolderDelete, openFolders, activeFolder, handleFolderClick, contentRoot, dataRoot]);
 
   if (!fileTree) {
     return <div>Loading...</div>;
