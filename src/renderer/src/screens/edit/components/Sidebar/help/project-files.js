@@ -1,0 +1,1 @@
+export const projectFilesHelpText = `To add new folders or files, "Command + Click" on the folder you want to add the new folder or file to. This will highlight the folder and enable the "Add Folder" and "Add File" buttons. Click the buttons to add a new folder or file to the highlighted folder.`;

@@ -43,6 +43,21 @@
     display: block;
     margin: 0 0 2rem;
   }
+
+  & .has-help-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    span {
+      cursor: help;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
 }
 
 /**
@@ -148,6 +163,18 @@
     padding: 0.5rem 0;
     font-size: 1.6rem;
     color: var(--text-color);
+
+    &.folder.active {
+
+      & .folder-name {
+        color: red;
+
+        svg g {
+          stroke: red;
+          stroke-width: 2px;
+        }
+      }
+    }
 
     & a {
       display: flex;

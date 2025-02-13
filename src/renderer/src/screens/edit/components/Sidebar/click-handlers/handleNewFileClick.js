@@ -26,17 +26,22 @@ export const handleNewFileClick = async (
 ) => {
   if (!activeFolder) return;
 
+  console.log(activeFolder);
+
   try {
-    // Get project path from storage
+    // Get all required paths from storage
     const projectPath = StorageOperations.getProjectPath();
-    if (!projectPath) {
-      throw new Error('Project path not found in storage');
+    const contentPath = StorageOperations.getContentPath();
+    const dataPath = StorageOperations.getDataPath();
+
+    if (!projectPath || !contentPath || !dataPath) {
+      throw new Error('Required paths not found in storage');
     }
 
     // Show dialog to get file name
     const { response } = await window.electronAPI.dialog.showCustomMessage({
       type: 'custom',
-      message: 'Enter file name:',
+      message: 'Enter file name without extension:',
       buttons: ['Create', 'Cancel'],
       input: true
     });
@@ -44,11 +49,28 @@ export const handleNewFileClick = async (
     // User cancelled or clicked Cancel
     if (!response || response.index === 1 || !response.value) return;
 
-    // Create full file path
-    const fileName = response.value.endsWith(`.${extension}`)
-      ? response.value
-      : `${response.value}.${extension}`;
-    const filePath = `${projectPath}/${activeFolder}/${fileName}`;
+    // clean file name input by discarding any extension that user might have added
+    const fileName = response.value.split('.')[0];
+
+    // Determine the base path and relative path based on the active folder
+    // If we're in the data directory, use dataPath as base
+    // If we're in the content directory, use contentPath as base
+    let basePath;
+    let relativePath;
+
+    if (activeFolder.startsWith('data')) {
+      basePath = dataPath;
+      // Remove 'data' prefix to get relative path
+      relativePath = activeFolder.replace('data', '');
+    } else {
+      basePath = contentPath;
+      // Remove 'src' prefix to get relative path
+      relativePath = activeFolder.replace('src', '');
+    }
+
+    // Create full folder path by combining base path and relative path
+    // Clean up any double slashes that might occur during path combination
+    const filePath = `${basePath}${relativePath}/${fileName}${extension}`.replace(/\/+/g, '/');
 
     // Check if file already exists
     const existsResponse = await window.electronAPI.files.exists(filePath);

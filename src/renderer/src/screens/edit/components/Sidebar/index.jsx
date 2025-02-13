@@ -2,11 +2,16 @@ import React, { useState, useCallback, memo } from 'react';
 import './styles.css';
 import { RenderContentFilesTree } from './ContentFilesTree';
 import { RenderDataFilesTree } from './DataFilesTree';
-import { FolderPlusIcon, FilePlusIcon } from '@components/icons';
+import { FolderPlusIcon, FilePlusIcon, HelpIcon } from '@components/icons';
 import { StorageOperations } from '@services/storage';
 import { handleNewFileClick } from './click-handlers';
 import { useCreateFile } from './hooks/useCreateFile';
 import { useCreateFolder } from './hooks/useCreateFolder';
+import { HelpText } from '@components/HelpText';
+import { projectFilesHelpText } from './help/project-files.js';
+
+// create a help text component
+
 
 // Memoize the Sidebar component to prevent unnecessary re-renders
 const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
@@ -48,7 +53,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
 
   // Add handler to receive active folder updates from FileTreeBase
   const handleFolderActivate = (folderPath) => {
-    const extension = folderPath ? (folderPath.includes('/data/') ? '.json' : '.md') : null;
+    const extension = folderPath ? (folderPath.startsWith('data') ? '.json' : '.md') : null;
     setActiveFolder(folderPath);
     setActiveFileExtension(extension);
   };
@@ -101,7 +106,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
             </div>
             {/* File Tree Container */}
             <div className="container-background">
-              <h3>Project Files</h3>
+              <h3 className="has-help-text">Project Files <HelpText text={projectFilesHelpText} /></h3>
 
               {/* New File/Folder Creation Button */}
               <ul className="add-new">
