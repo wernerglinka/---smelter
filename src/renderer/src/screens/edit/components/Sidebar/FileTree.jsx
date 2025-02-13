@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { FolderIcon, FolderOpenIcon, MinusIcon } from '@components/icons';
 import { StorageOperations } from '@services/storage';
 
@@ -22,7 +22,39 @@ export const FileTreeBase = memo(({
   onFolderActivate,
   activeFolder
 }) => {
-  const [openFolders, setOpenFolders] = useState(new Set());
+  const [ openFolders, setOpenFolders ] = useState( new Set() );
+
+  // Add this near the top of your FileTreeBase component
+useEffect(() => {
+  const handleKeyDown = (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      document.body.classList.add('control-pressed');
+    }
+  };
+
+  const handleKeyUp = (e) => {
+    if (!e.ctrlKey && !e.metaKey) {
+      document.body.classList.remove('control-pressed');
+    }
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keyup', handleKeyUp);
+
+  return () => {
+    window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('keyup', handleKeyUp);
+  };
+}, []);
+
+  // Get the root folder names from storage, with null check
+  const contentRoot = fileTree ? Object.keys(fileTree).find(key =>
+    StorageOperations.getContentPath()?.includes(key)
+  ) : null;
+
+  const dataRoot = fileTree ? Object.keys(fileTree).find(key =>
+    StorageOperations.getDataPath()?.includes(key)
+  ) : null;
 
   const handleFolderClick = useCallback((folderPath, e) => {
     // If Control/Command key is pressed, ONLY handle folder activation
@@ -51,7 +83,7 @@ export const FileTreeBase = memo(({
    *  - The UI updates to remove just the deleted file
    * The folder structure and state (open) is preserved because:
    *  - The  openFolders state in  FileTreeBase is independent of the file list
-   *  - The deletion event only triggers a re-render of the file list
+   *  - The deletion event only triggers a re-render of the file tree
    *  - The folder open/closed state isn't affected by the file deletion
    *
    * @param {string} filepath - Path of file to delete
@@ -86,6 +118,52 @@ export const FileTreeBase = memo(({
         buttons: ['OK']
       });
     }
+  }, [ fileSelected, onFileClick ] );
+
+  /**
+   * Handles folder deletion with user confirmation
+   * When a folder is deleted, the  FileTreeBase component:
+   *  - Handles the deletion via  handleFolderDelete
+   *  - Dispatches the 'folderDeleted' event
+   *  - The UI updates to remove just the deleted folder, including all its files
+   * The folder structure and state (open) is preserved because:
+   *  - The  openFolders state in  FileTreeBase is independent of the file list
+   *  - The deletion event only triggers a re-render of the file tree
+   *  - Other folders open/closed state aren't affected by the folder deletion
+   *
+   * @param {string} filepath - Path of file to delete
+   */
+  const handleFolderDelete = useCallback(async (filepath) => {
+    try {
+      const { response } = await window.electronAPI.dialog.showCustomMessage({
+        type: 'question',
+        message: `Are you sure you want to delete ${filepath}?`,
+        buttons: ['Yes', 'No']
+      });
+
+      if (!response || response.index === 1) return;
+
+      // Changed from files.delete to directories.delete
+      const result = await window.electronAPI.directories.delete(filepath);
+
+      if (result.status === 'success') {
+        if (fileSelected === filepath) {
+          onFileClick(null);
+        }
+        window.dispatchEvent(new CustomEvent('folderDeleted', {
+          detail: { path: filepath }
+        }));
+      } else {
+        throw new Error(`Failed to delete folder: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Error deleting folder:', error);
+      await window.electronAPI.dialog.showCustomMessage({
+        type: 'error',
+        message: `Failed to delete folder: ${error.message}`,
+        buttons: ['OK']
+      });
+    }
   }, [fileSelected, onFileClick]);
 
   /**
@@ -96,6 +174,7 @@ export const FileTreeBase = memo(({
    * @returns {Array} Array of rendered file and folder elements
    */
   const renderTreeNode = useCallback((node, path = '') => {
+    console.log('Current node and path:', { node, path });
     const entries = Object.entries(node);
     // Separate files and folders for ordered rendering
     const files = entries.filter(([_, value]) => typeof value === 'string');
@@ -130,7 +209,8 @@ export const FileTreeBase = memo(({
                 e.preventDefault();
                 handleFileDelete(value)
               }}
-              className="delete-wrapper"><MinusIcon /></span>
+              className="delete-wrapper"><MinusIcon />
+            </span>
           </li>
         );
       }),
@@ -139,16 +219,38 @@ export const FileTreeBase = memo(({
       ...folders.map(([key, value]) => {
         const currentPath = path ? `${path}/${key}` : key;
         const isOpen = openFolders.has(currentPath);
-        const isActive = currentPath === activeFolder;  // Make sure this comparison is correct
+        const isActive = currentPath === activeFolder;
+
+        // Only show delete icon for folders INSIDE content or data roots, not the root folders themselves
+        const showDelete = path && (
+          (contentRoot && path.startsWith(contentRoot)) ||
+          (dataRoot && path.startsWith(dataRoot))
+        );
 
         return (
-          <li key={key} className={`folder ${isOpen ? 'open' : ''} ${isActive ? 'active' : ''}`}>
-            <span
-              className="folder-name"
-              onClick={(e) => handleFolderClick(currentPath, e)}
-            >
-              {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
-              {key}
+          <li key={ key } className={ `folder ${ isOpen ? 'open' : '' } ${ isActive ? 'active' : '' }` }>
+            <span className="folder-name-wrapper">
+              <a
+                className="folder-name"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleFolderClick(currentPath, e);
+                }}
+              >
+                {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
+                {key}
+              </a>
+              {showDelete && (
+                <span
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleFolderDelete(value);
+                  }}
+                  className="delete-wrapper"
+                >
+                  <MinusIcon />
+                </span>
+              ) }
             </span>
             <ul className="folder-content">
               {renderTreeNode(value, currentPath)}
@@ -157,7 +259,7 @@ export const FileTreeBase = memo(({
         );
       })
     ].filter(Boolean); // Remove null entries
-  }, [fileType, fileSelected, onFileClick, handleFileDelete, openFolders, activeFolder, handleFolderClick]);
+  }, [fileType, fileSelected, onFileClick, handleFileDelete, openFolders, activeFolder, handleFolderClick, contentRoot, dataRoot]);
 
   if (!fileTree) {
     return <div>Loading...</div>;

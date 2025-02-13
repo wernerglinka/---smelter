@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
+import ReactMarkdown from 'react-markdown';
 import { HelpIcon } from '@components/icons';
 
 /**
@@ -9,7 +10,9 @@ import { HelpIcon } from '@components/icons';
  * @returns {JSX.Element} Rendered component
  */
 
-export const HelpText = ( { text } ) => {
+
+
+export const HelpText = ({ text }) => {
   const [show, setShow] = useState(false);
 
   const toggleHelp = () => {
@@ -18,13 +21,15 @@ export const HelpText = ( { text } ) => {
 
   return (
     <div className="help-text">
-      <span onClick={ toggleHelp }>
+      <span onClick={toggleHelp}>
         <HelpIcon />
       </span>
       {show && createPortal(
         <>
           <div className="help-text-backdrop" onClick={toggleHelp} />
-          <p className="help-text-overlay">{text}</p>
+          <div className="help-text-overlay">
+            <ReactMarkdown>{text}</ReactMarkdown>
+          </div>
         </>,
         document.body
       )}

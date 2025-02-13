@@ -207,26 +207,43 @@
         display: none}
       }
 
-      &:hover > .delete-wrapper {
-        display: inline-block;
-        cursor: pointer;
-      }
-
     &.open > ul {
       max-height: 100rem;
     }
   }
 }
 
-.folder span {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  cursor: pointer;
+.folder {
+  & .folder-name-wrapper {
+    display: flex;
+    justify-content: space-between;
 
-  & svg {
-    margin-right: 1rem;
+    & .delete-wrapper {
+      display: none;
+    }
   }
+
+  & a {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    cursor: pointer;
+
+    & svg {
+      margin-right: 1rem;
+    }
+  }
+}
+
+/* show delete file when CONTROL is pressed and Hover */
+.control-pressed .dom-tree ul li:hover > .delete-wrapper {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.control-pressed .folder .folder-name-wrapper:hover > .delete-wrapper {
+  display: inline-block;
+  cursor: pointer;
 }
 
 /* Add styles for active folder state */
