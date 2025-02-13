@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { FolderIcon, FolderOpenIcon, MinusIcon } from '@components/icons';
 import { StorageOperations } from '@services/storage';
+import { handleFileDelete } from './click-handlers/handleFileDelete';
+import { handleFolderDelete } from './click-handlers/handleFolderDelete';
 
 /**
  * Base component for rendering file tree structures. Used by both ContentFilesTree
@@ -29,14 +31,12 @@ export const FileTreeBase = memo(({
     const handleKeyDown = (e) => {
       // Check for Option key (Alt on Mac) or Alt on Windows
       if (e.altKey) {
-        console.log('Option/Alt key pressed - showing delete buttons');
         document.body.classList.add('option-pressed');
       }
     };
 
     const handleKeyUp = (e) => {
       if (!e.altKey) {
-        console.log('Option/Alt key released - hiding delete buttons');
         document.body.classList.remove('option-pressed');
       }
     };
@@ -80,126 +80,6 @@ export const FileTreeBase = memo(({
   }, [activeFolder, onFolderActivate]);
 
   /**
-   * Handles file deletion with user confirmation
-   * When a file is deleted, the  FileTreeBase component:
-   *  - Handles the deletion via  handleFileDelete
-   *  - Dispatches the 'fileDeleted' event
-   *  - The UI updates to remove just the deleted file
-   * The folder structure and state (open) is preserved because:
-   *  - The  openFolders state in  FileTreeBase is independent of the file list
-   *  - The deletion event only triggers a re-render of the file tree
-   *  - The folder open/closed state isn't affected by the file deletion
-   *
-   * @param {string} filepath - Path of file to delete
-   */
-  const handleFileDelete = useCallback(async (filepath) => {
-    try {
-      const { response } = await window.electronAPI.dialog.showCustomMessage({
-        type: 'question',
-        message: `Are you sure you want to delete ${filepath}?`,
-        buttons: ['Yes', 'No']
-      });
-
-      if (!response || response.index === 1) return;
-
-      const result = await window.electronAPI.files.delete(filepath);
-
-      if (result.status === 'success') {
-        if (fileSelected === filepath) {
-          onFileClick(null);
-        }
-        window.dispatchEvent(new CustomEvent('fileDeleted', {
-          detail: { path: filepath }
-        }));
-      } else {
-        throw new Error(`Failed to delete file: ${result.error}`);
-      }
-    } catch (error) {
-      console.error('Error deleting file:', error);
-      await window.electronAPI.dialog.showCustomMessage({
-        type: 'error',
-        message: `Failed to delete file: ${error.message}`,
-        buttons: ['OK']
-      });
-    }
-  }, [ fileSelected, onFileClick ] );
-
-  /**
-   * Handles folder deletion with user confirmation
-   * When a folder is deleted, the FileTreeBase component:
-   *  - Handles the deletion via handleFolderDelete
-   *  - Dispatches the 'folderDeleted' event
-   *  - The UI updates to remove just the deleted folder, including all its files
-   * The folder structure and state (open) is preserved because:
-   *  - The openFolders state in FileTreeBase is independent of the file list
-   *  - The deletion event only triggers a re-render of the file tree
-   *  - Other folders open/closed state aren't affected by the folder deletion
-   *
-   * @param {string} folderPath - Path of folder to delete
-   */
-  const handleFolderDelete = useCallback(async (folderPath) => {
-    console.log('handleFolderDelete called with path:', folderPath);
-    try {
-      // Get the root path based on whether this is in content or data directory
-      const rootPath = folderPath.startsWith('src')
-        ? StorageOperations.getContentPath()
-        : StorageOperations.getDataPath();
-
-      if (!rootPath) {
-        throw new Error('Could not determine root path for folder');
-      }
-
-      // Remove the 'src/' or 'data/' prefix from the folderPath
-      const relativePath = folderPath.replace(/^(src|data)\//, '');
-
-      // Convert relative path to absolute path
-      const absolutePath = `${rootPath}/${relativePath}`;
-      console.log('Root path:', rootPath);
-      console.log('Relative path:', relativePath);
-      console.log('Absolute path for deletion:', absolutePath);
-
-      const { response } = await window.electronAPI.dialog.showCustomMessage({
-        type: 'question',
-        message: `Are you sure you want to delete ${folderPath}?`,
-        buttons: ['Yes', 'No']
-      });
-
-      if (!response || response.index === 1) {
-        console.log('User cancelled deletion');
-        return;
-      }
-
-      console.log('Attempting to delete folder:', absolutePath);
-      const result = await window.electronAPI.directories.delete(absolutePath);
-      console.log('Delete result:', result);
-
-      if (result.status === 'success') {
-        if (result.data?.includes('does not exist')) {
-          throw new Error('Directory does not exist');
-        }
-
-        console.log('Delete successful, dispatching event');
-        if (fileSelected === folderPath) {
-          console.log('Clearing file selection');
-          onFileClick(null);
-        }
-        window.dispatchEvent(new CustomEvent('folderDeleted', {
-          detail: { path: absolutePath }
-        }));
-      } else {
-        throw new Error(`Failed to delete folder: ${result.error}`);
-      }
-    } catch (error) {
-      console.error('Error in handleFolderDelete:', error);
-      await window.electronAPI.dialog.showCustomMessage({
-        type: 'error',
-        message: `Failed to delete folder: ${error.message}`,
-        buttons: ['OK']
-      });
-    }
-  }, [fileSelected, onFileClick]);
-
-  /**
    * Recursively renders the tree structure
    *
    * @param {Object} node - Current node in the file tree
@@ -239,7 +119,7 @@ export const FileTreeBase = memo(({
             <span
               onClick={(e) => {
                 e.preventDefault();
-                handleFileDelete(value)
+                handleFileDelete(value, fileSelected, onFileClick);
               }}
               className="delete-wrapper"><MinusIcon />
             </span>
@@ -276,8 +156,7 @@ export const FileTreeBase = memo(({
                 <span
                   onClick={(e) => {
                     e.preventDefault();
-                    console.log('Delete folder button clicked for path:', currentPath);
-                    handleFolderDelete(currentPath);
+                    handleFolderDelete(currentPath, fileSelected, onFileClick);
                   }}
                   className="delete-wrapper"
                 >
