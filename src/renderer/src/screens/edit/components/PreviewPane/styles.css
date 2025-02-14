@@ -1,6 +1,4 @@
-import styled from 'styled-components';
-
-export const PreviewContainer = styled.div`
+preview-container {
   padding: 0;
   flex: 0 0 0;
   overflow: hidden;
@@ -17,4 +15,4 @@ export const PreviewContainer = styled.div`
     flex: 0 0 20%;
     min-width: 30rem;
   }
-`;
+}

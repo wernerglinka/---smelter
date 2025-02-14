@@ -1,13 +1,12 @@
 import React from 'react';
-import { PreviewContainer } from './styles';
+import './styles.css';
 
 const PreviewPane = () => {
   return (
-    <PreviewContainer className="js-preview-pane">
+    <div className="preview-container">
       <div className="preview-content">
-        <div className="js-preview-content"></div>
       </div>
-    </PreviewContainer>
+    </div>
   );
 };
 

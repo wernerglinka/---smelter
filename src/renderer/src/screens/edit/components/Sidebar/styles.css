@@ -108,12 +108,18 @@
  */
  .add-new {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 4rem;
   list-style: none;
-  padding: 0 0 1rem;
-  margin: 0 0 2rem;
-  border-bottom: 1px dashed var(--border-color);
+  overflow: hidden;
+  height: 4rem;
+  transition: height 0.5s ease-in-out;
+
+  &.hidden {
+    height: 0;
+  }
+
+
 
   & li {
     display: flex;
@@ -122,14 +128,7 @@
     cursor: pointer;
     transition: all 0.3s ease-in-out;
 
-    &.disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    /* Optional hover effect for enabled icons */
-    &:not(.disabled):hover {
+    &:hover {
       transform: scale(1.1);
       opacity: 0.8;
     }

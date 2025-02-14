@@ -139,15 +139,14 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
               </h3>
 
               {/* File/Folder Creation Controls */}
-              <ul className="add-new">
+              <ul className={ `add-new ${ !activeFolder ? 'hidden' : '' }` }>
+                <li>Add...</li>
                 <li
-                  className={!activeFolder ? 'disabled' : ''}
                   onClick={() => createFolder(activeFolder)}
                 >
                   <FolderPlusIcon />
                 </li>
                 <li
-                  className={!activeFolder ? 'disabled' : ''}
                   onClick={() => createFile(activeFileExtension, activeFolder)}
                 >
                   <FilePlusIcon />
