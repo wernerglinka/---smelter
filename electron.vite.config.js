@@ -20,6 +20,7 @@ export default defineConfig({
   renderer: {
     resolve: {
       alias: {
+        '@src': resolve(__dirname, 'src/renderer/src'),
         '@components': resolve(__dirname, 'src/renderer/src/components'),
         '@hooks': resolve(__dirname, 'src/renderer/src/hooks'),
         '@services': resolve(__dirname, 'src/renderer/src/lib/utilities/services'),

@@ -9,11 +9,9 @@ import { useCreateFile } from './hooks/useCreateFile';
 import { useCreateFolder } from './hooks/useCreateFolder';
 import { HelpText } from '@components/HelpText';
 import { projectFilesHelpText } from './help/project-files.js';
+import { baseFields } from '@src/baseFields';
 
-// create a help text component
-
-
-// Memoize the Sidebar component to prevent unnecessary re-renders
+/// Memoize the Sidebar component to prevent unnecessary re-renders
 const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   const [activePane, setActivePane] = useState('select-file');
   const [fileSelected, setFileSelected] = useState(null);
@@ -100,7 +98,6 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
         {/* File Selection Pane */}
         {activePane === 'select-file' && (
           <div className="sidebar-pane active">
-            {/* Hint text shown when no file is selected */}
             <div className="sidebar-hint container-background">
               <p>Select a file to start editing...</p>
             </div>
@@ -147,7 +144,47 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
               />
             </div>
           </div>
+        ) }
+
+        {/* AddField pane */ }
+        {activePane === 'add-field' && (
+          <div className="sidebar-pane active">
+            <div class="sidebar-hint container-background">
+              <p>Drag a field into the editor...</p>
+            </div>
+
+            <div class="container-background">
+              <h3>Empty Fields</h3>
+
+              { baseFields.map( field => (
+                <div
+                  key={field.name}
+                  className="component-selection draggable"
+                  draggable="true"
+                  data-component={field.name}
+                >
+                  {field.name}
+                </div>
+              )) }
+
+            </div>
+          </div>
         )}
+
+        {/* AddTemplate pane */ }
+        {activePane === 'add-template' && (
+          <div className="sidebar-pane active">
+            <div class="sidebar-hint container-background">
+              <p>Drag a template into the editor...</p>
+            </div>
+            <div class="container-background">
+              <h3>Templates</h3>
+              <p>Templates are not yet implemented.</p>
+            </div>
+          </div>
+        )}
+
+
         {/* Note: Add Field and Add Template panes are conditionally rendered
             based on activePane state but not implemented in this excerpt */}
       </div>
