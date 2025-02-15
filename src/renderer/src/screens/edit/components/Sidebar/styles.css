@@ -286,3 +286,10 @@
   max-height: calc(100vh - 20rem);  /* Adjust value based on your header height */
   overflow-y: auto;
 }
+
+/* base fields */
+.base-fields-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}

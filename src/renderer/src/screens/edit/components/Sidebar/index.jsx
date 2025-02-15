@@ -88,6 +88,20 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
     setActiveFileExtension(extension);
   };
 
+  const handleDragStart = (e, field) => {
+    // Add a visual drag effect
+    e.currentTarget.classList.add('dragging');
+
+    // Set the drag data
+    e.dataTransfer.setData('application/json', JSON.stringify(field));
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+
+  const handleDragEnd = (e) => {
+    // Remove the visual drag effect
+    e.currentTarget.classList.remove('dragging');
+  };
+
   return (
     <div className={`sidebar ${className}`}>
       {/* Navigation Tabs */}
@@ -184,16 +198,20 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
             </div>
             <div className="container-background">
               <h3>Empty Fields</h3>
-              {baseFields.map(field => (
-                <div
-                  key={field.name}
-                  className="component-selection draggable"
-                  draggable="true"
-                  data-component={field.name}
-                >
-                  {field.name}
-                </div>
-              ))}
+
+              <ul className="base-fields-list">
+                {baseFields.map(field => (
+                  <li
+                    key={field.name}
+                    className="component-selection"
+                    draggable="true"
+                    onDragStart={(e) => handleDragStart(e, field)}
+                    onDragEnd={handleDragEnd}
+                  >
+                    {field.name}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         )}

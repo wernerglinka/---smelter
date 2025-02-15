@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { FormField } from '@lib/form-generation/components/FormField';
 import { processFrontmatter } from '@lib/form-generation/processors/frontmatter-processor';
 import { handleFormSubmission } from '@lib/form-submission/submit-handler';
@@ -39,6 +39,35 @@ const EditSpace = ({ fileContent }) => {
     processContent();
   }, [fileContent]);
 
+  // Add drag and drop handlers
+  const handleDragOver = useCallback((e) => {
+    e.preventDefault();
+    e.currentTarget.classList.add('dropzone-highlight');
+  }, []);
+
+  const handleDragLeave = useCallback((e) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dropzone-highlight');
+  }, []);
+
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dropzone-highlight');
+
+    try {
+      const fieldData = JSON.parse(e.dataTransfer.getData('application/json'));
+
+      // Add the new field to existing formFields
+      setFormFields(prevFields => {
+        if (!prevFields) return [fieldData];
+        return [...prevFields, fieldData];
+      });
+
+    } catch (error) {
+      console.error('Error processing dropped field:', error);
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(formRef.current);
@@ -60,7 +89,13 @@ const EditSpace = ({ fileContent }) => {
       <div id="content-container">
         {fileContent && formFields && (
           <form ref={ formRef } onSubmit={ handleSubmit } className="main-form">
-            <div id="dropzone" className="dropzone js-main-dropzone js-dropzone">
+            <div
+              id="dropzone"
+              className="dropzone js-main-dropzone js-dropzone"
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
               {formFields.map((field, i) => (
                 <FormField
                   key={`${field.name}${i}`}
