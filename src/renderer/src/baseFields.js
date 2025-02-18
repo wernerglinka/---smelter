@@ -1,34 +1,64 @@
 export const baseFields = [
   {
-    name: 'array',
-    component: 'array'
+    type: 'text',
+    name: 'text_field',
+    label: 'Text Field',
+    value: '',
+    placeholder: 'Enter text'
   },
   {
-    name: 'checkbox',
-    component: 'checkbox'
+    type: 'textarea',
+    name: 'textarea_field',
+    label: 'Text Area',
+    value: '',
+    placeholder: 'Enter long text'
   },
   {
-    name: 'date',
-    component: 'date'
+    type: 'number',
+    name: 'number_field',
+    label: 'Number Field',
+    value: '',
+    placeholder: 'Enter a number'
   },
   {
-    name: 'number',
-    component: 'number'
+    type: 'checkbox',
+    name: 'checkbox_field',
+    label: 'Checkbox Field',
+    value: false
   },
   {
-    name: 'object',
-    component: 'object'
+    type: 'select',
+    name: 'select_field',
+    label: 'Select Field',
+    value: '',
+    options: [
+      { label: 'Option 1', value: 'option1' },
+      { label: 'Option 2', value: 'option2' }
+    ]
   },
   {
-    name: 'list',
-    component: 'list'
+    type: 'url',
+    name: 'url_field',
+    label: 'URL Field',
+    value: '',
+    placeholder: 'Enter URL'
   },
   {
-    name: 'text',
-    component: 'text'
+    type: 'object',
+    name: 'object_field',
+    label: 'Object Field',
+    fields: []
   },
   {
-    name: 'textarea',
-    component: 'textarea'
+    type: 'array',
+    name: 'array_field',
+    label: 'Array Field',
+    value: []
+  },
+  {
+    type: 'list',
+    name: 'list_field',
+    label: 'List Field',
+    value: []
   }
 ];

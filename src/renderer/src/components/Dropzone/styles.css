@@ -1,0 +1,161 @@
+
+.dropzone {
+  position: relative;
+  min-height: 2rem;
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  border-radius: var(--default-radius);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Main dropzone styles */
+#dropzone {
+  min-height: 10rem;
+  padding: 1rem 1rem 3rem;
+  margin-bottom: 2rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--default-radius);
+}
+
+/* Highlight states */
+.dropzone-highlight {
+  background-color: var(--dropzone-background-highlight-color);
+}
+
+/* Specific dropzone types */
+.object-dropzone,
+.array-dropzone,
+.block-fields-container,
+.list-dropzone {
+  min-height: 5rem;
+  border: 1px dotted var(--border-color);
+  border-radius: var(--default-radius);
+  padding: 0.5rem;
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hover states for dropzones */
+.object-dropzone:hover,
+.array-dropzone:hover,
+.block-fields-container:hover,
+.list-dropzone:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Collapsed state */
+.is-collapsed {
+  max-height: 0 !important;
+  min-height: 0;
+  padding: 0 !important;
+  overflow: hidden;
+  opacity: 0;
+}
+
+/* Draggable element transition */
+.draggable-transition {
+  transition: transform 0.2s ease-out;
+}
+
+/* Ghost element styles - will be used later */
+.ghost-element {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.8;
+  z-index: 1000;
+}
+
+/* Insertion point indicator - will be used later */
+.insertion-point {
+  position: absolute;
+  height: 2px;
+  background-color: var(--attention-color);
+  left: 0;
+  right: 0;
+  transform: scaleY(0);
+  transition: transform 0.2s ease-out;
+}
+
+.insertion-point.active {
+  transform: scaleY(1);
+}
+.dropzone {
+  position: relative;
+  min-height: 2rem;
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  border-radius: var(--default-radius);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Main dropzone styles */
+#dropzone {
+  min-height: 10rem;
+  padding: 1rem 1rem 3rem;
+  margin-bottom: 2rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--default-radius);
+}
+
+/* Highlight states */
+.dropzone-highlight {
+  background-color: var(--dropzone-background-highlight-color);
+}
+
+/* Specific dropzone types */
+.object-dropzone,
+.array-dropzone,
+.block-fields-container,
+.list-dropzone {
+  min-height: 5rem;
+  border: 1px dotted var(--border-color);
+  border-radius: var(--default-radius);
+  padding: 0.5rem;
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hover states for dropzones */
+.object-dropzone:hover,
+.array-dropzone:hover,
+.block-fields-container:hover,
+.list-dropzone:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Collapsed state */
+.is-collapsed {
+  max-height: 0 !important;
+  min-height: 0;
+  padding: 0 !important;
+  overflow: hidden;
+  opacity: 0;
+}
+
+/* Draggable element transition */
+.draggable-transition {
+  transition: transform 0.2s ease-out;
+}
+
+/* Ghost element styles - will be used later */
+.ghost-element {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.8;
+  z-index: 1000;
+}
+
+/* Insertion point indicator - will be used later */
+.insertion-point {
+  position: absolute;
+  height: 2px;
+  background-color: var(--attention-color);
+  left: 0;
+  right: 0;
+  transform: scaleY(0);
+  transition: transform 0.2s ease-out;
+}
+
+.insertion-point.active {
+  transform: scaleY(1);
+}

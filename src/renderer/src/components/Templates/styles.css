@@ -1,0 +1,51 @@
+.templates-container {
+  padding: 0.5rem;
+}
+
+.templates-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.template-item {
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  background-color: var(--background-color-light);
+  border-radius: var(--default-radius);
+  cursor: move;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.template-item:hover {
+  background-color: var(--background-color-lighter);
+}
+
+.template-item.dragging {
+  opacity: 0.5;
+  background-color: var(--background-color-lighter);
+}
+
+.drag-image {
+  position: fixed;
+  top: -1000px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Template type indicators */
+.template-item[data-type="block"]::before {
+  content: "□";
+  margin-right: 0.5rem;
+}
+
+.template-item[data-type="section"]::before {
+  content: "▤";
+  margin-right: 0.5rem;
+}
+
+.template-item[data-type="page"]::before {
+  content: "⊞";
+  margin-right: 0.5rem;
+}

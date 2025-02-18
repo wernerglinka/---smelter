@@ -1,31 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { FormField } from '../FormField';
 import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '@components/icons';
+import Dropzone from '@components/Dropzone';
 
-export const ObjectField = ({ field }) => {
+export const ObjectField = ({ field, onUpdate, index }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const handleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  const handleCollapse = () => setIsCollapsed(!isCollapsed);
 
-  // Process the object's value to ensure we have proper field definitions
-  const renderFields = () => {
-    // If we already have field definitions, use them
-    if (field.fields) {
-      return field.fields.map((childField, index) => (
-        <FormField
-          key={`${field.name}-${childField.name}-${index}`}
-          field={childField}
-        />
-      ));
+  const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
+    console.log('ObjectField handleDropzoneEvent:', { type, data, position });
+    if (!data) return;
+
+    switch (type) {
+      case 'sidebar': {
+        console.log('ObjectField sidebar case - incoming data:', data);
+        const fieldData = data.field || data;
+        const currentFields = field.fields || [];
+        console.log('ObjectField current fields:', currentFields);
+
+        // Initialize the field properly
+        const newField = {
+          ...fieldData,
+          id: fieldData.id || `${field.id}_field_${currentFields.length}`,
+          fields: fieldData.fields || []
+        };
+        console.log('ObjectField newField created:', newField);
+
+        // Add new field at specified position or end
+        const updatedFields = [...currentFields];
+        if (typeof position.targetIndex === 'number') {
+          updatedFields.splice(position.targetIndex, 0, newField);
+        } else {
+          updatedFields.push(newField);
+        }
+        console.log('ObjectField updatedFields:', updatedFields);
+
+        onUpdate(field.id, {
+          ...field,
+          fields: updatedFields
+        });
+        console.log('ObjectField after update:', field.id, updatedFields);
+        break;
+      }
+
+      case 'reorder': {
+        console.log('ObjectField reorder case:', position);
+        const { sourceIndex, targetIndex } = position;
+        if (field.fields) {
+          const newFields = [...field.fields];
+          const [movedField] = newFields.splice(sourceIndex, 1);
+          newFields.splice(targetIndex, 0, movedField);
+          onUpdate(field.id, { ...field, fields: newFields });
+          console.log('ObjectField after reorder:', newFields);
+        }
+        break;
+      }
     }
+  }, [field, onUpdate]);
 
-    return null;
-  };
+  const handleDragStart = useCallback((e) => {
+    console.log('ObjectField handleDragStart:', field);
+    e.dataTransfer.setData('origin', 'dropzone');
+    e.dataTransfer.setData('application/json', JSON.stringify(field));
+  }, [field]);
 
   return (
-    <div className="form-element is-object">
+    <div
+      className="form-element is-object"
+      draggable="true"
+      onDragStart={handleDragStart}
+    >
       <span className="sort-handle">
         <DragHandleIcon />
       </span>
@@ -35,16 +80,34 @@ export const ObjectField = ({ field }) => {
           type="text"
           className="element-label"
           placeholder="Object Name"
-          value={field.label}
+          defaultValue={field.label}
           readOnly
         />
         <span className="collapse-icon" onClick={handleCollapse}>
           {isCollapsed ? <CollapsedIcon /> : <CollapseIcon />}
         </span>
       </label>
-      <div className={`object-dropzone dropzone js-dropzone ${isCollapsed ? 'is-collapsed' : ''}`}>
-        {renderFields()}
-      </div>
+      <Dropzone
+        className={`object-dropzone dropzone js-dropzone ${isCollapsed ? 'is-collapsed' : ''}`}
+        data-wrapper="is-object"
+        onDrop={handleDropzoneEvent}
+      >
+        {field.fields?.map((fieldItem, fieldIndex) => (
+          <FormField
+            key={`${fieldItem.id || fieldItem.name}-${fieldIndex}`}
+            field={fieldItem}
+            onUpdate={(fieldId, newValue) =>
+              onUpdate(field.id, {
+                ...field,
+                fields: field.fields.map(f =>
+                  f.id === fieldId ? { ...f, ...newValue } : f
+                )
+              })
+            }
+            index={fieldIndex}
+          />
+        ))}
+      </Dropzone>
     </div>
   );
 };

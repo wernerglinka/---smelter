@@ -88,17 +88,37 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
     setActiveFileExtension(extension);
   };
 
-  const handleDragStart = (e, field) => {
-    // Add a visual drag effect
-    e.currentTarget.classList.add('dragging');
+  const handleDragStart = (e, fieldType) => {
+    // Find the base field configuration
+    const fieldConfig = baseFields.find(f => f.type === fieldType);
 
-    // Set the drag data
-    e.dataTransfer.setData('application/json', JSON.stringify(field));
+    if (!fieldConfig) {
+      console.warn(`No configuration found for field type: ${fieldType}`);
+      return;
+    }
+
+    // Create a new field instance
+    const newField = {
+      ...fieldConfig,
+      id: `field-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: `${fieldConfig.type}_${Date.now()}`,
+      label: `New ${fieldConfig.type} Field`
+    };
+
+    // Set the transfer data
+    e.dataTransfer.setData('origin', 'sidebar');
+    e.dataTransfer.setData('application/json', JSON.stringify({
+      field: newField
+    }));
+
+    // Set drag effect
     e.dataTransfer.effectAllowed = 'copy';
+
+    // Add dragging class for visual feedback
+    e.currentTarget.classList.add('dragging');
   };
 
   const handleDragEnd = (e) => {
-    // Remove the visual drag effect
     e.currentTarget.classList.remove('dragging');
   };
 
@@ -153,16 +173,12 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
               </h3>
 
               {/* File/Folder Creation Controls */}
-              <ul className={ `add-new ${ !activeFolder ? 'hidden' : '' }` }>
+              <ul className={`add-new ${!activeFolder ? 'hidden' : ''}`}>
                 <li>Add...</li>
-                <li
-                  onClick={() => createFolder(activeFolder)}
-                >
+                <li onClick={() => createFolder(activeFolder)}>
                   <FolderPlusIcon />
                 </li>
-                <li
-                  onClick={() => createFile(activeFileExtension, activeFolder)}
-                >
+                <li onClick={() => createFile(activeFileExtension, activeFolder)}>
                   <FilePlusIcon />
                 </li>
               </ul>
@@ -205,7 +221,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
                     key={field.name}
                     className="component-selection"
                     draggable="true"
-                    onDragStart={(e) => handleDragStart(e, field)}
+                    onDragStart={(e) => handleDragStart(e, field.type)}
                     onDragEnd={handleDragEnd}
                   >
                     {field.name}
@@ -224,7 +240,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
             </div>
             <div className="container-background">
               <h3>Templates</h3>
-              <p>Templates are not yet implemented.</p>
+              <Templates category="blocks" />
             </div>
           </div>
         )}
