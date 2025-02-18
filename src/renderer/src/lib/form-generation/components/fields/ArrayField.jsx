@@ -40,46 +40,18 @@ export const ArrayField = ({ field, onUpdate, index }) => {
         const fieldData = data.field || data;
         const currentValue = Array.isArray(field.value) ? field.value : [];
 
-        // If an object is placed in an array dropzone, hide the label input
-        // since the object will not need a name
-        if (fieldData.type === 'object') {
-          // Generate a unique name for the object in array
-          const objectsInArray = currentValue.length;
-          const objectName = `neverMind${objectsInArray + 1}`;
+        // Create new item based on field type
+        const newItem = {
+          ...fieldData,
+          id: `${field.id}_item_${currentValue.length}`,
+        };
 
-          const newItem = {
-            ...fieldData,
-            id: `${field.id}_item_${currentValue.length}`,
-            label: objectName,
-            name: objectName,
-            fields: []
-          };
+        const updatePayload = {
+          ...field,
+          value: [...currentValue, newItem]
+        };
 
-          const updatePayload = {
-            ...field,
-            value: [...currentValue, newItem]
-          };
-
-          onUpdate(field.id, updatePayload);
-        } else {
-          // For non-object fields
-          const newItem = {
-            id: `${field.id}_item_${currentValue.length}`,
-            name: `Item ${currentValue.length + 1}`,
-            fields: [{
-              ...fieldData,
-              id: `${field.id}_${fieldData.type}_${Date.now()}`,
-              fields: fieldData.fields || []
-            }]
-          };
-
-          const updatePayload = {
-            ...field,
-            value: [...currentValue, newItem]
-          };
-
-          onUpdate(field.id, updatePayload);
-        }
+        onUpdate(field.id, updatePayload);
         break;
       }
 
@@ -151,48 +123,18 @@ export const ArrayField = ({ field, onUpdate, index }) => {
         data-wrapper="is-array"
         onDrop={handleDropzoneEvent}
       >
-        {(field.value || []).map((item, arrayIndex) => {
-          const itemPath = `${field.id}_item_${arrayIndex}`;
-          const isItemCollapsed = collapsedFields.has(itemPath);
-
-          return (
-            <div key={arrayIndex} className="form-element is-object label-exists no-drop" draggable="true">
-              <span className="sort-handle">
-                <DragHandleIcon />
-              </span>
-              <label className="object-name label-wrapper label-exists">
-                <span>{item.name || `Item ${arrayIndex + 1}`}</span>
-                <input
-                  type="text"
-                  className="element-label"
-                  defaultValue={item.name || `Item ${arrayIndex + 1}`}
-                  readOnly
-                />
-                <span className="collapse-icon" onClick={() => handleFieldCollapse(itemPath)}>
-                  {isItemCollapsed ? <CollapsedIcon /> : <CollapseIcon />}
-                </span>
-              </label>
-              <Dropzone
-                className={`object-dropzone dropzone js-dropzone ${isItemCollapsed ? 'is-collapsed' : ''}`}
-                data-wrapper="is-object"
-                onDrop={(event) => handleDropzoneEvent({
-                  ...event,
-                  position: { ...event.position, arrayIndex }
-                })}
-              >
-                {item.fields?.map((fieldItem, fieldIndex) => (
-                  <FormField
-                    key={`${fieldItem.id || fieldItem.name}-${fieldIndex}`}
-                    field={fieldItem}
-                    onUpdate={(fieldId, newValue) => handleNestedUpdate(arrayIndex, fieldId, newValue)}
-                    draggable
-                    index={fieldIndex}
-                  />
-                ))}
-              </Dropzone>
-            </div>
-          );
-        })}
+        {(field.value || []).map((item, index) => (
+          <FormField
+            key={item.id || index}
+            field={item}
+            onUpdate={(fieldId, newValue) => {
+              const newValues = [...field.value];
+              newValues[index] = { ...newValues[index], ...newValue };
+              onUpdate(field.id, { ...field, value: newValues });
+            }}
+            index={index}
+          />
+        ))}
       </Dropzone>
     </div>
   );
