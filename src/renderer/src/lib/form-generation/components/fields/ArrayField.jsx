@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { FormField } from '../FormField';
-import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '@components/icons';
+import { DragHandleIcon, CollapsedIcon, CollapseIcon, AddIcon, DeleteIcon } from '@components/icons';
 import Dropzone from '@components/Dropzone';
 
 export const ArrayField = ({ field, onUpdate, index }) => {
@@ -33,82 +33,63 @@ export const ArrayField = ({ field, onUpdate, index }) => {
   }, [field, onUpdate]);
 
   const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
-    // Get the actual dropzone where the drop occurred
-    const dropzone = position.target?.closest('.dropzone');
-    if (!dropzone) return;
-
-    console.log('ArrayField handleDropzoneEvent:', { type, data, position });
     if (!data) return;
 
     switch (type) {
       case 'sidebar': {
-        console.log('ArrayField sidebar case - incoming data:', data);
         const fieldData = data.field || data;
-        const newValue = [...(field.value || [])];
-        console.log('ArrayField current value:', newValue);
+        const currentValue = Array.isArray(field.value) ? field.value : [];
 
-        // If dropping into an object dropzone within an array item
-        if (dropzone.matches('.object-dropzone')) {
-          const arrayItem = dropzone.closest('.form-element.is-object');
-          if (!arrayItem) return;
+        // If an object is placed in an array dropzone, hide the label input
+        // since the object will not need a name
+        if (fieldData.type === 'object') {
+          // Generate a unique name for the object in array
+          const objectsInArray = currentValue.length;
+          const objectName = `neverMind${objectsInArray + 1}`;
 
-          const arrayIndex = Array.from(arrayItem.parentNode.children)
-            .filter(el => el.matches('.form-element.is-object'))
-            .indexOf(arrayItem);
-
-          console.log('ArrayField dropping into array item:', arrayIndex);
-          const updatedFields = [...(newValue[arrayIndex].fields || [])];
-
-          // Get insertion point
-          const { closest, position: insertPosition } = getInsertionPoint(dropzone, position.y);
-          if (closest) {
-            const targetIndex = Array.from(dropzone.children)
-              .filter(el => el.matches('.form-element'))
-              .indexOf(closest);
-            updatedFields.splice(targetIndex, 0, fieldData);
-          } else {
-            updatedFields.push(fieldData);
-          }
-
-          newValue[arrayIndex] = {
-            ...newValue[arrayIndex],
-            fields: updatedFields
-          };
-        }
-        // If dropping directly into the array dropzone
-        else if (dropzone.matches('.array-dropzone')) {
-          console.log('ArrayField dropping new array item');
           const newItem = {
-            id: `${field.id}_item_${newValue.length}`,
-            name: `Item ${newValue.length + 1}`,
-            fields: [fieldData]
+            ...fieldData,
+            id: `${field.id}_item_${currentValue.length}`,
+            label: objectName,
+            name: objectName,
+            fields: []
           };
-          console.log('ArrayField new item created:', newItem);
 
-          // Get insertion point
-          const { closest, position: insertPosition } = getInsertionPoint(dropzone, position.y);
-          if (closest) {
-            const targetIndex = Array.from(dropzone.children)
-              .filter(el => el.matches('.form-element'))
-              .indexOf(closest);
-            newValue.splice(targetIndex, 0, newItem);
-          } else {
-            newValue.push(newItem);
-          }
+          const updatePayload = {
+            ...field,
+            value: [...currentValue, newItem]
+          };
+
+          onUpdate(field.id, updatePayload);
+        } else {
+          // For non-object fields
+          const newItem = {
+            id: `${field.id}_item_${currentValue.length}`,
+            name: `Item ${currentValue.length + 1}`,
+            fields: [{
+              ...fieldData,
+              id: `${field.id}_${fieldData.type}_${Date.now()}`,
+              fields: fieldData.fields || []
+            }]
+          };
+
+          const updatePayload = {
+            ...field,
+            value: [...currentValue, newItem]
+          };
+
+          onUpdate(field.id, updatePayload);
         }
-
-        onUpdate(field.id, newValue);
-        console.log('ArrayField after update:', field.id, newValue);
         break;
       }
 
       case 'reorder': {
-        console.log('ArrayField reorder case:', position);
+        const { sourceIndex, targetIndex } = position;
         if (field.value) {
           const newValue = [...field.value];
           const [movedItem] = newValue.splice(sourceIndex, 1);
           newValue.splice(targetIndex, 0, movedItem);
-          onUpdate(field.id, newValue);
+          onUpdate(field.id, { ...field, value: newValue });
         }
         break;
       }

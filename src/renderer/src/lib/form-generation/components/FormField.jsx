@@ -10,20 +10,20 @@ import { ArrayField } from './fields/ArrayField';
 import { ListField } from './fields/ListField';
 
 export const FormField = ({ field, onUpdate }) => {
-  // Add more detailed validation
-  if (!field) {
-    console.warn('FormField received null or undefined field', new Error().stack);
-    return null;
-  }
-
-  if (!field.type) {
-    console.warn('Field is missing required type property:', field);
-    return null;
-  }
+  const wrappedOnUpdate = (id, value) => {
+    console.log('FormField wrappedOnUpdate called:', {
+      id,
+      value,
+      fieldId: field.id,
+      // Add stack trace to see where the update is coming from
+      stack: new Error().stack
+    });
+    onUpdate(id, value);
+  };
 
   // Handle objects
   if (field.type === 'object') {
-    return <ObjectField field={field} onUpdate={onUpdate} />;
+    return <ObjectField field={field} onUpdate={wrappedOnUpdate} />;
   }
 
   // Handle arrays and lists

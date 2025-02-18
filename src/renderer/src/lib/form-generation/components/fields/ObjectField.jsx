@@ -1,10 +1,16 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { FormField } from '../FormField';
 import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '@components/icons';
 import Dropzone from '@components/Dropzone';
 
 export const ObjectField = ({ field, onUpdate, index }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Add useEffect to monitor field changes
+  useEffect(() => {
+    console.log('ObjectField rendered with field:', field);
+    console.log('ObjectField fields array:', field.fields);
+  }, [field]);
 
   const handleCollapse = () => setIsCollapsed(!isCollapsed);
 
@@ -36,10 +42,14 @@ export const ObjectField = ({ field, onUpdate, index }) => {
         }
         console.log('ObjectField updatedFields:', updatedFields);
 
-        onUpdate(field.id, {
+        // Log the update payload
+        const updatePayload = {
           ...field,
           fields: updatedFields
-        });
+        };
+        console.log('ObjectField update payload:', updatePayload);
+
+        onUpdate(field.id, updatePayload);
         console.log('ObjectField after update:', field.id, updatedFields);
         break;
       }
@@ -64,6 +74,8 @@ export const ObjectField = ({ field, onUpdate, index }) => {
     e.dataTransfer.setData('origin', 'dropzone');
     e.dataTransfer.setData('application/json', JSON.stringify(field));
   }, [field]);
+
+  console.log('ObjectField rendering with fields:', field.fields);
 
   return (
     <div
@@ -92,21 +104,24 @@ export const ObjectField = ({ field, onUpdate, index }) => {
         data-wrapper="is-object"
         onDrop={handleDropzoneEvent}
       >
-        {field.fields?.map((fieldItem, fieldIndex) => (
-          <FormField
-            key={`${fieldItem.id || fieldItem.name}-${fieldIndex}`}
-            field={fieldItem}
-            onUpdate={(fieldId, newValue) =>
-              onUpdate(field.id, {
-                ...field,
-                fields: field.fields.map(f =>
-                  f.id === fieldId ? { ...f, ...newValue } : f
-                )
-              })
-            }
-            index={fieldIndex}
-          />
-        ))}
+        {field.fields?.map((fieldItem, fieldIndex) => {
+          console.log('Mapping field item:', fieldItem);
+          return (
+            <FormField
+              key={`${fieldItem.id || fieldItem.name}-${fieldIndex}`}
+              field={fieldItem}
+              onUpdate={(fieldId, newValue) =>
+                onUpdate(field.id, {
+                  ...field,
+                  fields: field.fields.map(f =>
+                    f.id === fieldId ? { ...f, ...newValue } : f
+                  )
+                })
+              }
+              index={fieldIndex}
+            />
+          );
+        })}
       </Dropzone>
     </div>
   );

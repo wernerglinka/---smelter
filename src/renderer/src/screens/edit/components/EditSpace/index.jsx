@@ -58,6 +58,11 @@ const EditSpace = ({ fileContent, $expanded }) => {
     setFormFields(prevFields => {
       return prevFields.map(field => {
         if (field.id === fieldId) {
+          // For object fields, we need to preserve the entire field structure
+          if (typeof newValue === 'object' && newValue !== null) {
+            return { ...field, ...newValue };
+          }
+          // For primitive values
           return { ...field, value: newValue };
         }
         return field;
