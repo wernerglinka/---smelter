@@ -4,26 +4,12 @@
  */
 
 /**
- * Checks if value is a sections array
- * @param {*} value - The array to check
- * @param {string} key - The field key
- * @returns {boolean} True if value is a sections array
- */
-export function isSectionsArray(value, key) {
-  return Array.isArray(value) && key === 'sections';
-}
-
-/**
  * Checks if value is an array containing only strings
  * @param {*} value - Value to check
  * @param {string} key - The field key
  * @returns {boolean} True if value is array of strings
  */
 export const isSimpleList = (value, key) => {
-  // Don't treat sections array as a simple list
-  if (isSectionsArray(value, key)) {
-    return false;
-  }
   return Array.isArray(value) && value.every((item) => typeof item === 'string');
 };
 
@@ -51,7 +37,6 @@ export const isDateObject = (input) => input instanceof Date;
  * @returns {string} Field type identifier
  */
 export const getFieldType = (value, key) => {
-  if (isSectionsArray(value, key)) return 'sections-array';
   if (isSimpleList(value, key)) return 'list';
   if (isDateObject(value)) return 'date';
   if (Array.isArray(value)) return 'array';

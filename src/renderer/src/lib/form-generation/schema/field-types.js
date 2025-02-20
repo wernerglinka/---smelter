@@ -60,7 +60,7 @@ export const FIELD_TYPES = {
     type: 'array',
     default: [],
     canHaveLabel: true,
-    isDropzone: false // Regular arrays are not dropzones
+    isDropzone: true
   },
   SECTIONS_ARRAY: {
     type: 'array',

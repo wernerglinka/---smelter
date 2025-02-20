@@ -8,12 +8,16 @@ This directory contains tests for the form generation processors, which are resp
 
 ### `frontmatter-processor.test.js`
 
-Tests the conversion of YAML frontmatter into form configurations. Covers:
+Tests the conversion of YAML frontmatter into form configurations. Currently covers:
 
 - Simple frontmatter with primitive values
 - Nested objects
 - Arrays of primitives
-- Complex nested structures (arrays of objects with nested arrays)
+- Complex nested structures
+- Empty frontmatter handling
+- Null value processing
+- Schema integration
+- Real-world metalsmith page structures
 
 ## Test Structure
 
@@ -35,17 +39,24 @@ schema/convert-js-to-schema
   - convertToSchemaObject() → Converts frontmatter to schema
 ```
 
-### Helper Functions
+### Project Functions Used
 
-#### `convertValueToField(value, label)`
+#### Form Generation
+- `createField(key, value)`: Creates field configurations for the form UI
+- `inferType(value)`: Determines appropriate field type from value
+- `processChildren(value)`: Handles nested array and object structures
+- `validateSchema(schema)`: Validates schema structure and types
 
-Recursively converts values into form field configurations:
+#### Form Submission
+- `transformFormDataToObject(formData)`: Converts form data back to object structure
+- `validateSubmission(data)`: Validates form submission data
+- `handleFileOperations(data, filePath)`: Manages file updates
 
-- **Arrays**: Converted to dropzone fields with mapped items
-- **Objects**: Converted to object fields with nested field structures
-- **Primitives**: Converted to appropriate field types (text, number, checkbox)
+#### Type Validation
+- `isSimpleList(value)`: Checks for simple array types
+- `isDateObject(value)`: Validates date field structures
 
-## Test Cases
+## Current Test Coverage
 
 1. **Simple Frontmatter**
    - Tests basic key-value pairs
@@ -65,7 +76,7 @@ Recursively converts values into form field configurations:
 4. **Complex Structures**
    - Tests nested arrays within objects
    - Verifies deep structure conversion
-   - Example: 
+   - Example:
      ```javascript
      {
        sections: [
@@ -80,6 +91,32 @@ Recursively converts values into form field configurations:
        ]
      }
      ```
+
+## Planned Test Additions
+
+### Drag and Drop Integration Tests
+
+Once drag and drop functionality issues are resolved, we will add tests for:
+
+1. **Ghost Element Behavior**
+   - Positioning accuracy
+   - Visibility states
+   - Cleanup on drop/cancel
+
+2. **Dropzone Validation**
+   - Nested dropzone handling
+   - Valid/invalid target detection
+   - Block and section restrictions
+
+3. **Element Reordering**
+   - Array item reordering
+   - Object field reordering
+   - Drag handle interactions
+
+4. **Edge Cases**
+   - Cancel operations
+   - Invalid drops
+   - Nested structure preservation
 
 ## Running Tests
 
@@ -99,3 +136,4 @@ npm test -- --coverage
 - [YAML to Form Conversion](../../../../dev-notes/technical/yaml-to-form.md)
 - [Form to Object Transformation](../../../../dev-notes/technical/form-to-object.md)
 - [Edit Form Components](../../../../dev-notes/components/edit-form.md)
+- [Drag and Drop Implementation](../../../../dev-notes/Drag-and-drop.md)
