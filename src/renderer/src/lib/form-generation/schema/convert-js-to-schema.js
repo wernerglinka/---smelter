@@ -7,10 +7,9 @@ import {
 /**
  * Infers the field type from a value
  * @param {*} value - The value to analyze
- * @param {string} key - The field key
  * @returns {string} The inferred field type
  */
-const inferFieldType = (value, key) => {
+const inferType = (value) => {
   if (typeof value === 'boolean') return 'checkbox';
   if (typeof value === 'number') return 'number';
   if (Array.isArray(value)) return 'array';
@@ -19,77 +18,84 @@ const inferFieldType = (value, key) => {
 };
 
 /**
- * Creates a field definition from a key-value pair
- * @param {string} key - The field key
- * @param {*} value - The field value
- * @param {Object} explicitSchema - Schema from fields.json
- * @returns {Object} The field definition with immutable type
+ * Processes child elements of arrays and objects
+ * @param {*} value - The value to process
+ * @returns {Array|Object} Processed children
  */
-function processChildren(value, explicitSchema) {
+function processChildren(value) {
   if (Array.isArray(value)) {
-    return value.map((item) => {
-      if (typeof item === 'object' && item !== null) {
-        return Object.entries(item).map(([childKey, childValue]) =>
-          createField(childKey, childValue, explicitSchema)
-        );
+    return value.map((item, index) => {
+      // Handle primitive values in arrays
+      if (typeof item !== 'object' || item === null) {
+        return {
+          type: inferType(item),
+          label: `Item ${index + 1}`,
+          value: item
+        };
       }
-      return item;
+
+      // Handle objects in arrays
+      return {
+        type: 'object',
+        label: `Item ${index + 1}`,
+        value: item,
+        fields: Object.entries(item).map(([childKey, childValue]) =>
+          createField(childKey, childValue)
+        )
+      };
     });
   }
 
   if (typeof value === 'object' && value !== null) {
-    return Object.entries(value).map(([childKey, childValue]) =>
-      createField(childKey, childValue, explicitSchema)
-    );
+    return Object.entries(value).map(([childKey, childValue]) => createField(childKey, childValue));
   }
 
   return value;
 }
 
-function createField(key, value, explicitSchema) {
-  const schemaField = explicitSchema?.find((field) => field.name === key);
-  const inferredType = inferFieldType(value, key);
-
-  // Start with base field properties
+/**
+ * Creates a field definition from a key-value pair
+ * @param {string} key - The field key
+ * @param {*} value - The field value
+ * @returns {Object} The field definition
+ */
+function createField(key, value) {
+  const type = inferType(value);
   const baseField = {
-    label: schemaField?.label || key,
-    name: key,
-    value: value,
-    type: schemaField?.type || inferredType,
-    placeholder: schemaField?.placeholder || `Add ${key}`
+    label: key,
+    type,
+    value,
+    placeholder: `Add ${key}`
   };
 
-  // Merge schema properties if they exist
-  if (schemaField) {
-    Object.assign(baseField, {
-      ...schemaField,
-      value: value // Preserve the current value
-    });
+  if (type === 'array') {
+    return {
+      ...baseField,
+      type: 'array',
+      isDropzone: true,
+      dropzoneType: 'sections',
+      value: processChildren(value)
+    };
   }
 
-  // Process children recursively for both objects and arrays
-  if (typeof value === 'object' && value !== null) {
-    baseField.fields = processChildren(value, explicitSchema);
+  if (type === 'object') {
+    return {
+      ...baseField,
+      fields: processChildren(value),
+      value: value
+    };
   }
 
-  // Make type immutable
-  return Object.defineProperty(baseField, 'type', {
-    value: baseField.type,
-    writable: false,
-    configurable: false
-  });
+  return baseField;
 }
 
 /**
  * Converts JSON to schema object
  * @param {Object} json - The JSON to convert
- * @param {Object} explicitSchema - Schema from fields.json
- * @returns {Object} The schema object with immutable field types
+ * @returns {Object} The schema object
  */
-export const convertToSchemaObject = async (frontmatter, explicitSchema) => {
-  const fields = Object.entries(frontmatter).map(([key, value]) =>
-    createField(key, value, explicitSchema)
-  );
-
-  return { fields };
-};
+export async function convertToSchemaObject(json) {
+  return {
+    fields: Object.entries(json).map(([key, value]) => createField(key, value))
+  };
+}

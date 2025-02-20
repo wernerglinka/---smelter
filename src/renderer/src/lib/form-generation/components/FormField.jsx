@@ -10,20 +10,16 @@ import { ArrayField } from './fields/ArrayField';
 import { ListField } from './fields/ListField';
 
 export const FormField = ({ field, onUpdate }) => {
-  const wrappedOnUpdate = (id, value) => {
-    console.log('FormField wrappedOnUpdate called:', {
-      id,
-      value,
-      fieldId: field.id,
-      // Add stack trace to see where the update is coming from
-      stack: new Error().stack
-    });
-    onUpdate(id, value);
-  };
+  console.log('FormField received:', JSON.stringify(field, null, 2));
+
+  if (!field || !field.type) {
+    console.error('FormField received invalid field:', field);
+    return null;
+  }
 
   // Handle objects
   if (field.type === 'object') {
-    return <ObjectField field={field} onUpdate={wrappedOnUpdate} />;
+    return <ObjectField field={field} onUpdate={onUpdate} />;
   }
 
   // Handle arrays and lists
@@ -36,7 +32,10 @@ export const FormField = ({ field, onUpdate }) => {
   }
 
   // Handle simple field types
-  switch (field.type.toLowerCase()) {
+  const fieldType = field.type.toLowerCase();
+  console.log('Field type:', fieldType);
+
+  switch (fieldType) {
     case 'textarea':
       return <TextArea field={field} onUpdate={onUpdate} />;
     case 'number':

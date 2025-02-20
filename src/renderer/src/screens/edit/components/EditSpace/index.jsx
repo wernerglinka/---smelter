@@ -23,11 +23,21 @@ const EditSpace = ({ fileContent, $expanded }) => {
   useEffect(() => {
     const processContent = async () => {
       if (fileContent?.data?.frontmatter) {
+        console.log( 'Processing frontmatter:', fileContent.data.frontmatter );
+
+        // Add debugging to see the structure as json
+        console.log('Frontmatter as JSON:', JSON.stringify(fileContent.data.frontmatter, null, 2));
+
         const processedData = await processFrontmatter(
           fileContent.data.frontmatter,
           fileContent.data.content
         );
+        console.log('Processed data:', processedData);
         setFormFields(processedData.fields);
+
+        // Add debugging to see the structure
+        console.log('Setting form fields:', processedData.fields);
+        console.log('Sections array:', processedData.fields.find(f => f.name === 'sections'));
 
         // set active file path
         const path = fileContent.path;
@@ -72,6 +82,12 @@ const EditSpace = ({ fileContent, $expanded }) => {
 
   // Dropzone event handler
   const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
+    console.log('EditSpace received drop event:', {
+      type,
+      data,
+      position
+    });
+
     if (!data) {
       console.warn('Drop event received without data');
       return;
@@ -96,6 +112,7 @@ const EditSpace = ({ fileContent, $expanded }) => {
         try {
           // Ensure we're working with the field data, not the wrapper
           const fieldData = data.field || data;
+          console.log('Processing sidebar field data:', fieldData);
 
           // Validate field data
           if (!fieldData.type || !fieldData.name) {

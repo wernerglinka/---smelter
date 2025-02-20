@@ -27,6 +27,12 @@ export const Dropzone = ({ children, className = '', onDrop, type = 'main' }) =>
       let data;
       try {
         data = JSON.parse(e.dataTransfer.getData('application/json'));
+        console.log('Dropzone received data:', {
+          origin,
+          data,
+          dropzoneClass: e.currentTarget.className,
+          targetElement: e.target.className
+        });
       } catch (err) {
         data = e.dataTransfer.getData('text/plain');
       }

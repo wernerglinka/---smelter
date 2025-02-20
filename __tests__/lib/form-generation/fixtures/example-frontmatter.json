@@ -1,0 +1,41 @@
+{
+  "layout": "sections.njk",
+  "draft": false,
+  "navLabel": "Home",
+  "bodyClasses": "home-page",
+  "access": {
+    "noIndex": false,
+    "noFollow": false
+  },
+  "seo": {
+    "title": "Metalsmith First starter",
+    "description": "Metalsmith First starter to build a static site with structured content",
+    "socialImage": "path to social image",
+    "canonicalOverwrite": ""
+  },
+  "sections": [
+    {
+      "container": "section",
+      "name": "text",
+      "containerFields": {
+        "isDisabled": false,
+        "isAnimated": false,
+        "containerId": "",
+        "containerClass": "",
+        "inContainer": true,
+        "isNarrow": true,
+        "background": {
+          "color": "",
+          "image": "",
+          "isDark": false
+        }
+      },
+      "text": {
+        "prefix": "",
+        "title": "Metalsmith First",
+        "header": "h1",
+        "subtitle": "The only starter you'll need"
+      }
+    }
+  ]
+}
