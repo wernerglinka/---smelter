@@ -6,6 +6,8 @@ import { useProject } from '@hooks/useProject';
 import EditSpace from './components/EditSpace';
 import PreviewPane from './components/PreviewPane';
 import { FileLoaderService } from '@services/file-loader';
+import { DragStateProvider } from '@lib/drag-drop/DragStateContext';
+import { GhostElement } from '@lib/drag-drop/GhostElement';
 
 import './styles.css';
 
@@ -63,33 +65,36 @@ export default function EditPage() {
   };
 
   return (
-    <main className="edit-container">
-      <div className="titlebar" />
+    <DragStateProvider>
+      <main className="edit-container">
+        <div className="titlebar" />
 
-      <h1 className="page-title">
-        {projectName}
-        <Link className="btn" to="/">
-          Start Over
-        </Link>
-      </h1>
+        <h1 className="page-title">
+          {projectName}
+          <Link className="btn" to="/">
+            Start Over
+          </Link>
+        </h1>
 
-      <div className="sidebar-toggle" onClick={toggleSidebarView} role="button" tabIndex={0}>
-        {isSidebarVisible ? <SidebarHideIcon /> : <SidebarShowIcon />}
-      </div>
+        <div className="sidebar-toggle" onClick={toggleSidebarView} role="button" tabIndex={0}>
+          {isSidebarVisible ? <SidebarHideIcon /> : <SidebarShowIcon />}
+        </div>
 
-      <div className="edit-pane">
-        <Sidebar
-          path={projectPath}
-          className={!isSidebarVisible ? 'hidden' : ''}
-          onFileSelect={ handleFileSelect }
-        />
-        <EditSpace
-          $expanded={ !isSidebarVisible }
-          fileContent={ fileContent }
-          filePath={ selectedFile }
-        />
-        <PreviewPane />
-      </div>
-    </main>
+        <div className="edit-pane">
+          <Sidebar
+            path={projectPath}
+            className={!isSidebarVisible ? 'hidden' : ''}
+            onFileSelect={handleFileSelect}
+          />
+          <EditSpace
+            $expanded={!isSidebarVisible}
+            fileContent={fileContent}
+            filePath={selectedFile}
+          />
+          <PreviewPane />
+        </div>
+        <GhostElement />
+      </main>
+    </DragStateProvider>
   );
 }

@@ -3,6 +3,7 @@ import { BaseField } from './BaseField';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const SelectField = ({ field }) => {
+  const label = field.label || field.name || '';
   const options = field.options || [];
 
   return (
@@ -11,19 +12,19 @@ export const SelectField = ({ field }) => {
       allowDeletion={!field?.noDeletion}
     >
       <label className="label-wrapper">
-        <span>{toTitleCase(field.label)}</span>
+        <span>{toTitleCase(label) || 'Label'}</span>
         <div>
           <input
             type="text"
             className="element-label"
             placeholder="Label Placeholder"
-            defaultValue={field.label || ''}
-            readOnly
+            defaultValue={label}
+            readOnly={!!label}
           />
         </div>
       </label>
       <label className="content-wrapper">
-        <span className="hint">Select for {field.label}</span>
+        <span className="hint">Select for {label}</span>
         <div>
           <select
             name={field.name}

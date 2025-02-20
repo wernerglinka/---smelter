@@ -3,33 +3,30 @@ import React, { createContext, useContext, useReducer } from 'react';
 const DragStateContext = createContext();
 const DragStateDispatchContext = createContext();
 
-const initialDragState = {
+const initialState = {
   isDragging: false,
+  currentDropzone: null,
   position: null,
   insertionPoint: null,
-  ghostElement: null,
-  currentDropzone: null,
-  draggedElement: null,
-  lastUpdate: 0
+  ghostElement: null
 };
 
 function dragStateReducer(state, action) {
-  switch (action.type) {
-    case 'START_DRAG':
-      return {
-        ...state,
-        isDragging: true,
-        draggedElement: action.payload
-      };
+  // Only log non-UPDATE_DRAG_STATE actions and only log CLEAR_DRAG_STATE once
+  if (action.type !== 'UPDATE_DRAG_STATE' &&
+      !(action.type === 'CLEAR_DRAG_STATE' && state.isDragging === false)) {
+    console.log('[DragState]', action.type, action.payload);
+  }
 
+  switch (action.type) {
     case 'UPDATE_DRAG_STATE':
       return {
         ...state,
         ...action.payload,
-        lastUpdate: Date.now()
+        isDragging: true
       };
 
-    case 'SET_DROPZONE':
+    case 'SET_CURRENT_DROPZONE':
       return {
         ...state,
         currentDropzone: action.payload
@@ -41,11 +38,10 @@ function dragStateReducer(state, action) {
         ghostElement: action.payload
       };
 
-    case 'RESET':
-      return {
-        ...initialDragState,
-        lastUpdate: Date.now()
-      };
+    case 'CLEAR_DRAG_STATE':
+      // Only clear if we're actually dragging
+      if (!state.isDragging) return state;
+      return initialState;
 
     default:
       return state;
@@ -53,7 +49,7 @@ function dragStateReducer(state, action) {
 }
 
 export function DragStateProvider({ children }) {
-  const [state, dispatch] = useReducer(dragStateReducer, initialDragState);
+  const [state, dispatch] = useReducer(dragStateReducer, initialState);
 
   return (
     <DragStateContext.Provider value={state}>

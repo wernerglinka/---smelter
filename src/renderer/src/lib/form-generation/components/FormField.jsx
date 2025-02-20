@@ -10,7 +10,6 @@ import { ArrayField } from './fields/ArrayField';
 import { ListField } from './fields/ListField';
 
 export const FormField = ({ field, onUpdate }) => {
-  console.log('FormField received:', JSON.stringify(field, null, 2));
 
   if (!field || !field.type) {
     console.error('FormField received invalid field:', field);
@@ -33,7 +32,6 @@ export const FormField = ({ field, onUpdate }) => {
 
   // Handle simple field types
   const fieldType = field.type.toLowerCase();
-  console.log('Field type:', fieldType);
 
   switch (fieldType) {
     case 'textarea':

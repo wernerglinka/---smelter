@@ -89,32 +89,14 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   };
 
   const handleDragStart = (e, fieldType) => {
-    // Find the base field configuration
-    const fieldConfig = baseFields.find(f => f.type === fieldType);
+    console.log('Drag start - field type:', fieldType);
+    const data = { type: fieldType };
+    console.log('Setting drag data:', data);
 
-    if (!fieldConfig) {
-      console.warn(`No configuration found for field type: ${fieldType}`);
-      return;
-    }
-
-    // Create a new field instance
-    const newField = {
-      ...fieldConfig,
-      id: `field-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      name: `${fieldConfig.type}_${Date.now()}`,
-      label: `New ${fieldConfig.type} Field`
-    };
-
-    // Set the transfer data
     e.dataTransfer.setData('origin', 'sidebar');
-    e.dataTransfer.setData('application/json', JSON.stringify({
-      field: newField
-    }));
+    e.dataTransfer.setData('application/json', JSON.stringify(data));
 
-    // Set drag effect
     e.dataTransfer.effectAllowed = 'copy';
-
-    // Add dragging class for visual feedback
     e.currentTarget.classList.add('dragging');
   };
 
@@ -221,10 +203,11 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
                     key={field.name}
                     className="component-selection"
                     draggable="true"
+                    data-field-type={field.type}
                     onDragStart={(e) => handleDragStart(e, field.type)}
                     onDragEnd={handleDragEnd}
                   >
-                    {field.name}
+                    {field.type}
                   </li>
                 ))}
               </ul>

@@ -5,7 +5,28 @@ import { FormField } from '@lib/form-generation/components/FormField';
 import { processFrontmatter } from '@lib/form-generation/processors/frontmatter-processor';
 import { handleFormSubmission } from '@lib/form-submission/submit-handler';
 import { PreviewShowIcon } from '@components/icons';
+import { FIELD_TYPES } from '@lib/form-generation/schema/field-types';
 import './styles.css';
+
+const createFieldFromTemplate = (template) => {
+  if (!template || typeof template !== 'object') {
+    throw new Error('Invalid template: must be an object');
+  }
+
+  const type = (template.type || 'text').toUpperCase();
+  const fieldType = FIELD_TYPES[type];
+
+  if (!fieldType) {
+    throw new Error(`Invalid field type: ${type}`);
+  }
+
+  return {
+    ...template,
+    id: `field-${Date.now()}`,
+    type: fieldType.type,
+    value: template.value || fieldType.default
+  };
+};
 
 /**
  * Main editing space component that handles file content processing and form rendering
@@ -23,21 +44,15 @@ const EditSpace = ({ fileContent, $expanded }) => {
   useEffect(() => {
     const processContent = async () => {
       if (fileContent?.data?.frontmatter) {
-        console.log( 'Processing frontmatter:', fileContent.data.frontmatter );
 
         // Add debugging to see the structure as json
-        console.log('Frontmatter as JSON:', JSON.stringify(fileContent.data.frontmatter, null, 2));
+        //console.log('Frontmatter as JSON:', JSON.stringify(fileContent.data.frontmatter, null, 2));
 
         const processedData = await processFrontmatter(
           fileContent.data.frontmatter,
           fileContent.data.content
         );
-        console.log('Processed data:', processedData);
         setFormFields(processedData.fields);
-
-        // Add debugging to see the structure
-        console.log('Setting form fields:', processedData.fields);
-        console.log('Sections array:', processedData.fields.find(f => f.name === 'sections'));
 
         // set active file path
         const path = fileContent.path;
@@ -81,72 +96,62 @@ const EditSpace = ({ fileContent, $expanded }) => {
   }, []);
 
   // Dropzone event handler
-  const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
-    console.log('EditSpace received drop event:', {
-      type,
-      data,
-      position
-    });
+  const handleDropzoneEvent = useCallback(({ type, data, position }) => {
+    console.log('Dropzone event - type:', type, 'data:', data, 'position:', position);
 
-    if (!data) {
-      console.warn('Drop event received without data');
-      return;
-    }
+    if (!data) return;
 
     switch (type) {
-      case 'templates': {
-        try {
-          // Process template data and add to form fields
-          const templateData = await processTemplate(data);
-          setFormFields(prevFields => {
-            if (!prevFields) return [templateData];
-            return [...prevFields, templateData];
-          });
-        } catch (error) {
-          console.error('Error processing template:', error);
-        }
-        break;
-      }
-
       case 'sidebar': {
         try {
-          // Ensure we're working with the field data, not the wrapper
-          const fieldData = data.field || data;
-          console.log('Processing sidebar field data:', fieldData);
-
-          // Validate field data
-          if (!fieldData.type || !fieldData.name) {
-            console.warn('Invalid field data received:', fieldData);
-            return;
-          }
-
-          // Add new field at the specified position or at the end
           setFormFields(prevFields => {
-            const newFields = prevFields ? [...prevFields] : [];
-            if (typeof position === 'number' && position >= 0) {
-              newFields.splice(position, 0, fieldData);
-            } else {
-              newFields.push(fieldData);
+            const fieldType = data.type;
+            console.log('Creating field of type:', fieldType);
+
+            const fieldConfig = FIELD_TYPES[fieldType.toUpperCase()];
+            console.log('Field config:', fieldConfig);
+
+            if (!fieldConfig) {
+              console.warn(`No configuration found for field type: ${fieldType}`);
+              return prevFields;
             }
+
+            const newField = {
+              ...fieldConfig,
+              id: `field-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              type: fieldType,
+              label: '',
+              value: ''
+            };
+            console.log('Created new field:', newField);
+
+            const newFields = [...prevFields];
+            if (typeof position.targetIndex === 'number' && position.targetIndex >= 0) {
+              newFields.splice(position.targetIndex, 0, newField);
+            } else {
+              newFields.push(newField);
+            }
+
             return newFields;
           });
         } catch (error) {
-          console.error('Error processing field data:', error);
+          console.error('Failed to create field:', error);
         }
         break;
       }
 
-      case 'reorder': {
+      case 'dropzone': {
         try {
-          const { sourceIndex, targetIndex } = position;
-          if (typeof sourceIndex !== 'number' || typeof targetIndex !== 'number') {
-            console.warn('Invalid reorder position data:', position);
-            return;
-          }
-
           setFormFields(prevFields => {
             const newFields = [...prevFields];
+            const sourceIndex = newFields.findIndex(f => f.id === data.id);
+            if (sourceIndex === -1) return prevFields;
+
             const [movedField] = newFields.splice(sourceIndex, 1);
+            const targetIndex = typeof position.targetIndex === 'number' && position.targetIndex >= 0
+              ? position.targetIndex
+              : newFields.length;
+
             newFields.splice(targetIndex, 0, movedField);
             return newFields;
           });
@@ -168,54 +173,44 @@ const EditSpace = ({ fileContent, $expanded }) => {
   }, []);
 
   return (
-    <DragStateProvider>
-      <main className={`edit-container container-background ${$expanded ? 'expanded' : ''}`}>
-        <h2 id="file-name">
-          {fileName}
-          <span id="preview-button" className="btn" role="button" title="Open preview pane">
-            <PreviewShowIcon />
-          </span>
-        </h2>
-        <div id="content-container">
-          {fileContent && (
-            <form ref={formRef} onSubmit={handleSubmit} className="main-form">
-              <Dropzone
-                id="dropzone"
-                type="main"
-                className="dropzone js-main-dropzone js-dropzone"
-                onDrop={handleDropzoneEvent}
-              >
-                {formFields?.map((field, index) => (
-                  <FormField
-                    key={`${field.id || field.name}-${index}`}
-                    field={field}
-                    onUpdate={handleFieldUpdate}
-                    draggable
-                    index={index}
-                  />
-                ))}
-              </Dropzone>
-              <div className="button-wrapper">
-                <button
-                  type="submit"
-                  id="submit-primary"
-                  className="btn primary"
-                >
-                  Submit
-                </button>
-                <button
-                  className="btn"
-                  id="clear-dropzone"
-                  onClick={handleClearDropzone}
-                >
-                  Clear Dropzone
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
-      </main>
-    </DragStateProvider>
+    <main className={`edit-container container-background ${$expanded ? 'expanded' : ''}`}>
+      <h2 id="file-name">
+        {fileName}
+        <span id="preview-button" className="btn" role="button" title="Open preview pane">
+          <PreviewShowIcon />
+        </span>
+      </h2>
+      <div id="content-container">
+        {fileContent && (
+          <form ref={formRef} onSubmit={handleSubmit} className="main-form">
+            <Dropzone
+              id="dropzone"
+              type="main"
+              className="dropzone js-main-dropzone js-dropzone"
+              onDrop={handleDropzoneEvent}
+            >
+              {formFields?.map((field, index) => (
+                <FormField
+                  key={`${field.id || field.name}-${index}`}
+                  field={field}
+                  onUpdate={handleFieldUpdate}
+                  draggable
+                  index={index}
+                />
+              ))}
+            </Dropzone>
+            <div className="button-wrapper">
+              <button type="submit" id="submit-primary" className="btn primary">
+                Submit
+              </button>
+              <button className="btn" id="clear-dropzone" onClick={handleClearDropzone}>
+                Clear Dropzone
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </main>
   );
 };
 

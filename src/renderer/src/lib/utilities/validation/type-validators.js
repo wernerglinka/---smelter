@@ -42,5 +42,7 @@ export const getFieldType = (value, key) => {
   if (Array.isArray(value)) return 'array';
   if (value === null) return 'null';
 
+  console.log('Getting field type for Value:', value, 'Type:', typeof value);
+
   return typeof value;
 };
