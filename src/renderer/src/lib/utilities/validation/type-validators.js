@@ -4,31 +4,52 @@
  */
 
 /**
- * Checks if value is an array containing only strings
+ * Checks if value is an array containing only strings or only numbers
  * @param {*} value - Value to check
- * @param {string} key - The field key
- * @returns {boolean} True if value is array of strings
+ * @returns {boolean} True if value is array of strings or numbers
  */
-export const isSimpleList = (value, key) => {
-  return Array.isArray(value) && value.every((item) => typeof item === 'string');
+export const isSimpleList = (value) => {
+  if (!Array.isArray(value) || value.length === 0) return false;
+  const firstType = typeof value[0];
+  return value.every(
+    (item) => typeof item === firstType && (firstType === 'string' || firstType === 'number')
+  );
 };
 
 /**
- * Validates if input can be parsed as a valid date
- * @param {string} input - Date string to validate
- * @returns {boolean} True if input is valid date string
- */
-export const isDateString = (input) => {
-  const parsedDate = new Date(input);
-  return !isNaN(parsedDate.getTime());
-};
-
-/**
- * Checks if input is a Date object
+ * Checks if input is a Date object or can be parsed as a valid date
  * @param {*} input - Value to check
- * @returns {boolean} True if input is Date instance
+ * @returns {boolean} True if input is Date instance or valid date string
  */
-export const isDateObject = (input) => input instanceof Date;
+export const isDateObject = (input) => {
+  if (input instanceof Date) return true;
+  if (typeof input !== 'string') return false;
+  const date = new Date(input);
+  return !isNaN(date.getTime());
+};
+
+/**
+ * Validates if a Date object represents a valid date
+ * @param {*} input - Value to check
+ * @returns {boolean} True if input is valid Date
+ */
+export const isValidDate = (input) => {
+  return input instanceof Date && !isNaN(input.getTime());
+};
+
+/**
+ * Checks if value is a complex object (has nested objects, arrays, or dates)
+ * @param {*} value - Value to check
+ * @returns {boolean} True if value is a complex object
+ */
+export const isComplexObject = (value) => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  if (Object.keys(value).length === 0) return false;
+
+  return Object.values(value).some(
+    (v) => v instanceof Date || Array.isArray(v) || (typeof v === 'object' && v !== null)
+  );
+};
 
 /**
  * Determines value type for form field generation
@@ -41,8 +62,6 @@ export const getFieldType = (value, key) => {
   if (isDateObject(value)) return 'date';
   if (Array.isArray(value)) return 'array';
   if (value === null) return 'null';
-
-  console.log('Getting field type for Value:', value, 'Type:', typeof value);
 
   return typeof value;
 };

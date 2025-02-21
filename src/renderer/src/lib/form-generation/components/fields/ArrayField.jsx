@@ -25,36 +25,6 @@ export const ArrayField = ({ field, onUpdate, index }) => {
   }, []);
 
   /**
-   * Toggles the collapsed state of individual fields
-   * @param {string} fieldPath - Unique identifier for the field
-   */
-  const handleFieldCollapse = useCallback((fieldPath) => {
-    setCollapsedFields(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(fieldPath)) {
-        newSet.delete(fieldPath);
-      } else {
-        newSet.add(fieldPath);
-      }
-      return newSet;
-    });
-  }, []);
-
-  /**
-   * Handles updates to nested fields within array items
-   */
-  const handleNestedUpdate = useCallback((arrayIndex, fieldId, newValue) => {
-    const updatedValue = [...(field.value || [])];
-    updatedValue[arrayIndex] = {
-      ...updatedValue[arrayIndex],
-      fields: updatedValue[arrayIndex].fields.map(f =>
-        f.id === fieldId ? { ...f, ...newValue } : f
-      )
-    };
-    onUpdate(field.id, updatedValue);
-  }, [field, onUpdate]);
-
-  /**
    * Handles drag and drop events for array items
    */
   const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {

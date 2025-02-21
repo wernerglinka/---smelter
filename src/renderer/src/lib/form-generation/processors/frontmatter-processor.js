@@ -13,16 +13,16 @@ export const processFrontmatter = async (frontmatter, content) => {
     const explicitSchema = await getExplicitSchema();
 
     // show frontmatter as json object
-    console.log('Frontmatter as JSON:', JSON.stringify(frontmatter, null, 2));
+    //console.log('Frontmatter as JSON:', JSON.stringify(frontmatter, null, 2));
 
     //show explicit schema as json object
-    console.log('Explicit Schema as JSON:', JSON.stringify(explicitSchema, null, 2));
+    //console.log('Explicit Schema as JSON:', JSON.stringify(explicitSchema, null, 2));
 
     const schema = await convertToSchemaObject(frontmatter, explicitSchema);
     validateSchema(schema);
 
     // console log log the schema object
-    console.log('Schema:', schema);
+    //console.log('Schema:', schema);
 
     return schema;
   } catch (error) {

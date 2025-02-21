@@ -8,6 +8,7 @@ import { UrlField } from './fields/UrlField';
 import { ObjectField } from './fields/ObjectField';
 import { ArrayField } from './fields/ArrayField';
 import { ListField } from './fields/ListField';
+import { DateField } from './fields/DateField';
 
 export const FormField = ({ field, onUpdate }) => {
 
@@ -43,7 +44,9 @@ export const FormField = ({ field, onUpdate }) => {
     case 'select':
       return <SelectField field={field} onUpdate={onUpdate} />;
     case 'url':
-      return <UrlField field={field} onUpdate={onUpdate} />;
+      return <UrlField field={ field } onUpdate={ onUpdate } />;
+    case 'date':
+      return <DateField field={ field } onUpdate={ onUpdate } />;
     default:
       return <TextField field={field} onUpdate={onUpdate} />;
   }

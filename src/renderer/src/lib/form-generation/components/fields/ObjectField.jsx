@@ -10,9 +10,8 @@ import Dropzone from '@components/Dropzone';
  * @param {Object} props - Component props
  * @param {Object} props.field - Field configuration object
  * @param {Function} props.onUpdate - Callback for field updates
- * @param {number} props.index - Field index in parent array
  */
-export const ObjectField = ({ field, onUpdate, index }) => {
+export const ObjectField = ({ field, onUpdate }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   /**

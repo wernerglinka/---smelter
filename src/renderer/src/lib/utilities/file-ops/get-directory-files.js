@@ -4,11 +4,10 @@ import { createDomTree } from '../../../screens/lib/page-elements/create-dom-tre
 /**
  * Gets directory files and renders a DOM tree representation
  * @param {string} directoryKey - Key to fetch directory path from storage
- * @param {string} type - File type filter
  * @returns {Promise<void>}
  * @throws {Error} If directory read fails or DOM elements not found
  */
-export const getDirectoryFiles = async (directoryKey, type) => {
+export const getDirectoryFiles = async (directoryKey) => {
   try {
     // Get folder path
     const folderPath =
@@ -29,7 +28,7 @@ export const getDirectoryFiles = async (directoryKey, type) => {
     }
 
     // Create the dom tree from the directory file list
-    const domTree = createDomTree(data, type);
+    const domTree = createDomTree(data);
     domTree.classList.add('dom-tree', 'js-dom-tree', 'js-files-list');
 
     // Add the dom tree to the folder ui

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1740165941933" clover="3.2.0">
+  <project timestamp="1740165941933" name="All files">
+    <metrics statements="57" coveredstatements="57" conditionals="73" coveredconditionals="71" methods="17" coveredmethods="17" elements="147" coveredelements="145" complexity="0" loc="57" ncloc="57" packages="3" files="3" classes="3"/>
+    <package name="form-generation.processors">
+      <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="frontmatter-processor.js" path="/Users/wernerglinka/Documents/Projects/+++smelter/src/renderer/src/lib/form-generation/processors/frontmatter-processor.js">
+        <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="12" count="7" type="stmt"/>
+        <line num="13" count="7" type="stmt"/>
+        <line num="21" count="7" type="stmt"/>
+        <line num="22" count="7" type="stmt"/>
+        <line num="27" count="6" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="form-generation.schema">
+      <metrics statements="26" coveredstatements="26" conditionals="41" coveredconditionals="39" methods="9" coveredmethods="9"/>
+      <file name="convert-js-to-schema.js" path="/Users/wernerglinka/Documents/Projects/+++smelter/src/renderer/src/lib/form-generation/schema/convert-js-to-schema.js">
+        <metrics statements="26" coveredstatements="26" conditionals="41" coveredconditionals="39" methods="9" coveredmethods="9"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="9" count="68" type="cond" truecount="2" falsecount="0"/>
+        <line num="10" count="63" type="cond" truecount="2" falsecount="0"/>
+        <line num="11" count="56" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="49" type="stmt"/>
+        <line num="14" count="49" type="cond" truecount="4" falsecount="0"/>
+        <line num="15" count="24" type="cond" truecount="4" falsecount="0"/>
+        <line num="17" count="16" type="cond" truecount="4" falsecount="0"/>
+        <line num="27" count="68" type="stmt"/>
+        <line num="38" count="68" type="stmt"/>
+        <line num="39" count="68" type="stmt"/>
+        <line num="40" count="68" type="stmt"/>
+        <line num="43" count="68" type="stmt"/>
+        <line num="53" count="68" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="68" type="cond" truecount="4" falsecount="0"/>
+        <line num="57" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="62" count="13" type="cond" truecount="4" falsecount="0"/>
+        <line num="63" count="7" type="stmt"/>
+        <line num="68" count="13" type="stmt"/>
+        <line num="71" count="6" type="stmt"/>
+        <line num="73" count="16" type="stmt"/>
+        <line num="75" count="15" type="stmt"/>
+        <line num="89" count="53" type="stmt"/>
+        <line num="105" count="22" type="stmt"/>
+        <line num="106" count="33" type="stmt"/>
+      </file>
+    </package>
+    <package name="utilities.validation">
+      <metrics statements="23" coveredstatements="23" conditionals="32" coveredconditionals="32" methods="7" coveredmethods="7"/>
+      <file name="type-validators.js" path="/Users/wernerglinka/Documents/Projects/+++smelter/src/renderer/src/lib/utilities/validation/type-validators.js">
+        <metrics statements="23" coveredstatements="23" conditionals="32" coveredconditionals="32" methods="7" coveredmethods="7"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="12" count="93" type="cond" truecount="4" falsecount="0"/>
+        <line num="13" count="19" type="stmt"/>
+        <line num="14" count="19" type="stmt"/>
+        <line num="15" count="35" type="cond" truecount="3" falsecount="0"/>
+        <line num="24" count="3" type="stmt"/>
+        <line num="25" count="86" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="83" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="37" type="stmt"/>
+        <line num="28" count="37" type="stmt"/>
+        <line num="36" count="3" type="stmt"/>
+        <line num="37" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="3" type="stmt"/>
+        <line num="46" count="11" type="cond" truecount="5" falsecount="0"/>
+        <line num="47" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="5" type="stmt"/>
+        <line num="50" count="7" type="cond" truecount="4" falsecount="0"/>
+        <line num="60" count="3" type="stmt"/>
+        <line num="61" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="62" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="63" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="64" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="8" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
