@@ -1,16 +1,34 @@
 import { useState, useCallback } from 'react';
 import { FormField } from '../FormField';
-import { DragHandleIcon, CollapsedIcon, CollapseIcon, AddIcon, DeleteIcon } from '@components/icons';
+import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '@components/icons';
 import Dropzone from '@components/Dropzone';
 import { ensureFieldStructure } from '../../utilities/field-structure';
 
+/**
+ * Renders an array field that can contain multiple items of the same type
+ * Supports drag and drop reordering and nested field structures
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.field - Field configuration object
+ * @param {Function} props.onUpdate - Callback for field updates
+ * @param {number} props.index - Field index in parent array
+ */
 export const ArrayField = ({ field, onUpdate, index }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [collapsedFields, setCollapsedFields] = useState(new Set());
 
-  const handleCollapse = () => setIsCollapsed(!isCollapsed);
+  /**
+   * Toggles the collapsed state of the array container
+   */
+  const handleCollapse = useCallback(() => {
+    setIsCollapsed(prev => !prev);
+  }, []);
 
-  const handleFieldCollapse = (fieldPath) => {
+  /**
+   * Toggles the collapsed state of individual fields
+   * @param {string} fieldPath - Unique identifier for the field
+   */
+  const handleFieldCollapse = useCallback((fieldPath) => {
     setCollapsedFields(prev => {
       const newSet = new Set(prev);
       if (newSet.has(fieldPath)) {
@@ -20,8 +38,11 @@ export const ArrayField = ({ field, onUpdate, index }) => {
       }
       return newSet;
     });
-  };
+  }, []);
 
+  /**
+   * Handles updates to nested fields within array items
+   */
   const handleNestedUpdate = useCallback((arrayIndex, fieldId, newValue) => {
     const updatedValue = [...(field.value || [])];
     updatedValue[arrayIndex] = {
@@ -33,6 +54,9 @@ export const ArrayField = ({ field, onUpdate, index }) => {
     onUpdate(field.id, updatedValue);
   }, [field, onUpdate]);
 
+  /**
+   * Handles drag and drop events for array items
+   */
   const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
     if (!data) return;
 
@@ -40,18 +64,15 @@ export const ArrayField = ({ field, onUpdate, index }) => {
       case 'sidebar': {
         const fieldData = data.field || data;
         const currentValue = Array.isArray(field.value) ? field.value : [];
-
         const newItem = ensureFieldStructure({
           ...fieldData,
           id: `${field.id}_item_${currentValue.length}`
         }, field.id);
 
-        const updatePayload = {
+        onUpdate(field.id, {
           ...field,
           value: [...currentValue, newItem]
-        };
-
-        onUpdate(field.id, updatePayload);
+        });
         break;
       }
 
@@ -68,40 +89,47 @@ export const ArrayField = ({ field, onUpdate, index }) => {
     }
   }, [field, onUpdate]);
 
+  /**
+   * Handles drag start event for the array container
+   */
   const handleDragStart = useCallback((e) => {
-    console.log('ArrayField handleDragStart:', field);
     e.dataTransfer.setData('origin', 'dropzone');
     e.dataTransfer.setData('application/json', JSON.stringify(field));
   }, [field]);
 
-  // Helper function from example.js
-  const getInsertionPoint = (container, clientY) => {
-    const children = Array.from(container.children)
-      .filter(el => el.matches('.form-element'));
+  /**
+   * Processes an array item for rendering
+   * @param {any} item - Array item to process
+   * @param {number} index - Item index
+   * @returns {Object} Processed field configuration
+   */
+  const processArrayItem = useCallback((item, index) => {
+    if (item.type) return item;
 
-    if (!children.length) return { closest: null, position: 'empty' };
+    if (typeof item === 'object' && item !== null) {
+      return {
+        type: 'object',
+        label: `Item ${index + 1}`,
+        id: `${field.id}_item_${index}`,
+        fields: Object.entries(item).map(([key, value]) => ({
+          type: typeof value === 'object' ? 'object' : 'text',
+          label: key,
+          id: `${field.id}_item_${index}_${key}`,
+          value: value
+        }))
+      };
+    }
 
-    let closestElement = null;
-    let closestDistance = Infinity;
-    let position = 'after';
-
-    children.forEach(child => {
-      const rect = child.getBoundingClientRect();
-      const childMiddle = rect.top + rect.height / 2;
-      const distance = Math.abs(clientY - childMiddle);
-
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestElement = child;
-        position = clientY < childMiddle ? 'before' : 'after';
-      }
-    });
-
-    return { closest: closestElement, position };
-  };
+    return {
+      type: 'text',
+      label: `Item ${index + 1}`,
+      id: `${field.id}_item_${index}`,
+      value: item
+    };
+  }, [field.id]);
 
   return (
-    <div className={`form-element is-array no-drop label-exists`} draggable="true" onDragStart={handleDragStart}>
+    <div className="form-element is-array no-drop label-exists" draggable="true" onDragStart={handleDragStart}>
       <span className="sort-handle">
         <DragHandleIcon />
       </span>
@@ -123,39 +151,18 @@ export const ArrayField = ({ field, onUpdate, index }) => {
         data-wrapper="is-array"
         onDrop={handleDropzoneEvent}
       >
-        {(field.value || []).map((item, index) => {
-          // If it's already a field structure or a primitive value, don't wrap it
-          const itemField = item.type ? item :
-            (typeof item === 'object' && item !== null) ? {
-              type: 'object',
-              label: `Item ${index + 1}`,
-              id: `${field.id}_item_${index}`,
-              fields: Object.entries(item).map(([key, value]) => ({
-                type: typeof value === 'object' ? 'object' : 'text',
-                label: key,
-                id: `${field.id}_item_${index}_${key}`,
-                value: value
-              }))
-            } : {
-              type: 'text',
-              label: `Item ${index + 1}`,
-              id: `${field.id}_item_${index}`,
-              value: item
-            };
-
-          return (
-            <FormField
-              key={itemField.id || index}
-              field={ensureFieldStructure(itemField, field.id)}
-              onUpdate={(fieldId, newValue) => {
-                const newValues = [...field.value];
-                newValues[index] = ensureFieldStructure({ ...newValues[index], ...newValue }, field.id);
-                onUpdate(field.id, { ...field, value: newValues });
-              }}
-              index={index}
-            />
-          );
-        })}
+        {(field.value || []).map((item, index) => (
+          <FormField
+            key={item.id || index}
+            field={ensureFieldStructure(processArrayItem(item, index), field.id)}
+            onUpdate={(fieldId, newValue) => {
+              const newValues = [...field.value];
+              newValues[index] = ensureFieldStructure({ ...newValues[index], ...newValue }, field.id);
+              onUpdate(field.id, { ...field, value: newValues });
+            }}
+            index={index}
+          />
+        ))}
       </Dropzone>
     </div>
   );

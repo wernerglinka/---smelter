@@ -1,13 +1,30 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { FormField } from '../FormField';
 import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '@components/icons';
 import Dropzone from '@components/Dropzone';
 
+/**
+ * Renders an object field that can contain multiple fields of different types
+ * Supports drag and drop reordering and nested field structures
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.field - Field configuration object
+ * @param {Function} props.onUpdate - Callback for field updates
+ * @param {number} props.index - Field index in parent array
+ */
 export const ObjectField = ({ field, onUpdate, index }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const handleCollapse = () => setIsCollapsed(!isCollapsed);
+  /**
+   * Toggles the collapsed state of the object container
+   */
+  const handleCollapse = useCallback(() => {
+    setIsCollapsed(prev => !prev);
+  }, []);
 
+  /**
+   * Handles drag and drop events for object fields
+   */
   const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
     if (!data) return;
 
@@ -16,14 +33,14 @@ export const ObjectField = ({ field, onUpdate, index }) => {
         const fieldData = data.field || data;
         const currentFields = field.fields || [];
 
-        // Initialize the field properly
+        // Initialize the new field
         const newField = {
           ...fieldData,
           id: fieldData.id || `${field.id}_field_${currentFields.length}`,
           fields: fieldData.fields || []
         };
 
-        // Add new field at specified position or end
+        // Add field at specified position or end
         const updatedFields = [...currentFields];
         if (typeof position.targetIndex === 'number') {
           updatedFields.splice(position.targetIndex, 0, newField);
@@ -31,13 +48,10 @@ export const ObjectField = ({ field, onUpdate, index }) => {
           updatedFields.push(newField);
         }
 
-        // Log the update payload
-        const updatePayload = {
+        onUpdate(field.id, {
           ...field,
           fields: updatedFields
-        };
-
-        onUpdate(field.id, updatePayload);
+        });
         break;
       }
 
@@ -54,11 +68,13 @@ export const ObjectField = ({ field, onUpdate, index }) => {
     }
   }, [field, onUpdate]);
 
+  /**
+   * Handles drag start event for the object container
+   */
   const handleDragStart = useCallback((e) => {
     e.dataTransfer.setData('origin', 'dropzone');
     e.dataTransfer.setData('application/json', JSON.stringify(field));
   }, [field]);
-
 
   return (
     <div
@@ -87,23 +103,21 @@ export const ObjectField = ({ field, onUpdate, index }) => {
         data-wrapper="is-object"
         onDrop={handleDropzoneEvent}
       >
-        {field.fields?.map((fieldItem, fieldIndex) => {
-          return (
-            <FormField
-              key={`${fieldItem.id || fieldItem.name}-${fieldIndex}`}
-              field={fieldItem}
-              onUpdate={(fieldId, newValue) =>
-                onUpdate(field.id, {
-                  ...field,
-                  fields: field.fields.map(f =>
-                    f.id === fieldId ? { ...f, ...newValue } : f
-                  )
-                })
-              }
-              index={fieldIndex}
-            />
-          );
-        })}
+        {field.fields?.map((fieldItem, fieldIndex) => (
+          <FormField
+            key={`${fieldItem.id || fieldItem.name}-${fieldIndex}`}
+            field={fieldItem}
+            onUpdate={(fieldId, newValue) =>
+              onUpdate(field.id, {
+                ...field,
+                fields: field.fields.map(f =>
+                  f.id === fieldId ? { ...f, ...newValue } : f
+                )
+              })
+            }
+            index={fieldIndex}
+          />
+        ))}
       </Dropzone>
     </div>
   );
