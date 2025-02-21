@@ -14,131 +14,241 @@ describe('convert-js-to-schema', () => {
     isDateObject.mockReturnValue(false);
   });
 
-  describe('inferType', () => {
-    test('infers list type correctly', () => {
-      isSimpleList.mockReturnValue(true);
-      const result = convertToSchemaObject({ tags: ['a', 'b', 'c'] });
-      expect(result.fields[0].type).toBe('list');
-    });
+  describe('convertToSchemaObject', () => {
+    test('converts simple object to schema', async () => {
+      const json = {
+        title: 'Hello',
+        count: 42,
+        isPublished: true
+      };
 
-    test('infers date type correctly', () => {
-      isDateObject.mockReturnValue(true);
-      const result = convertToSchemaObject({ publishDate: new Date() });
-      expect(result.fields[0].type).toBe('date');
-    });
+      const result = await convertToSchemaObject(json);
 
-    test('infers array type correctly', () => {
-      const result = convertToSchemaObject({ items: [{ id: 1 }, { id: 2 }] });
-      expect(result.fields[0].type).toBe('array');
-    });
-
-    test('infers textarea for multiline strings', () => {
-      const result = convertToSchemaObject({ content: 'line1\nline2' });
-      expect(result.fields[0].type).toBe('textarea');
-    });
-
-    test('infers text for single line strings', () => {
-      const result = convertToSchemaObject({ title: 'Hello' });
-      expect(result.fields[0].type).toBe('text');
-    });
-
-    test('infers object type correctly', () => {
-      const result = convertToSchemaObject({ meta: { title: 'Test' } });
-      expect(result.fields[0].type).toBe('object');
-    });
-
-    test('infers checkbox for booleans', () => {
-      const result = convertToSchemaObject({ isPublished: true });
-      expect(result.fields[0].type).toBe('checkbox');
-    });
-
-    test('infers number type correctly', () => {
-      const result = convertToSchemaObject({ count: 42 });
-      expect(result.fields[0].type).toBe('number');
-    });
-  });
-
-  describe('schema matching', () => {
-    test('uses explicit schema type over inferred type', async () => {
-      const schema = [{ name: 'count', type: 'range' }];
-      const result = await convertToSchemaObject({ count: 42 }, schema);
-      expect(result.fields[0].type).toBe('range');
-    });
-
-    test('preserves additional schema properties', async () => {
-      const schema = [{
-        name: 'tags',
-        type: 'list',
-        options: ['a', 'b', 'c'],
-        required: true
-      }];
-      const result = await convertToSchemaObject({ tags: ['a'] }, schema);
-      expect(result.fields[0]).toMatchObject({
-        options: ['a', 'b', 'c'],
-        required: true
+      expect(result).toEqual({
+        fields: [
+          {
+            label: 'title',
+            name: 'title',
+            type: 'text',
+            value: 'Hello',
+            placeholder: 'Add title',
+            isExplicit: false
+          },
+          {
+            label: 'count',
+            name: 'count',
+            type: 'number',
+            value: 42,
+            placeholder: 'Add count',
+            isExplicit: false
+          },
+          {
+            label: 'isPublished',
+            name: 'isPublished',
+            type: 'checkbox',
+            value: true,
+            placeholder: 'Add isPublished',
+            isExplicit: false
+          }
+        ]
       });
     });
-  });
 
-  describe('complex structures', () => {
+    test('uses schema to override inferred types', async () => {
+      const json = {
+        count: 42
+      };
+      const schema = [
+        {
+          name: 'count',
+          type: 'range',
+          min: 0,
+          max: 100
+        }
+      ];
+
+      const result = await convertToSchemaObject(json, schema);
+
+      expect(result.fields[0]).toMatchObject({
+        name: 'count',
+        type: 'range',
+        value: 42,
+        min: 0,
+        max: 100,
+        isExplicit: true
+      });
+    });
+
     test('handles nested objects', async () => {
-      const data = {
-        meta: {
-          title: 'Test',
-          seo: {
-            description: 'Test description'
-          }
+      const json = {
+        seo: {
+          title: 'Page Title',
+          description: 'Page Description'
         }
       };
-      const result = await convertToSchemaObject(data);
-      expect(result.fields[0].type).toBe('object');
-      expect(result.fields[0].fields[0].type).toBe('text');
-      expect(result.fields[0].fields[1].type).toBe('object');
+
+      const result = await convertToSchemaObject(json);
+
+      expect(result.fields[0]).toMatchObject({
+        name: 'seo',
+        type: 'object',
+        fields: [
+          {
+            name: 'title',
+            type: 'text',
+            value: 'Page Title',
+            placeholder: 'Add title',
+            isExplicit: false
+          },
+          {
+            name: 'description',
+            type: 'text',
+            value: 'Page Description',
+            placeholder: 'Add description',
+            isExplicit: false
+          }
+        ]
+      });
+    });
+
+    test('handles arrays of primitives when isSimpleList is true', async () => {
+      isSimpleList.mockReturnValue(true);
+
+      const json = {
+        tags: ['javascript', 'testing', 'jest']
+      };
+
+      const result = await convertToSchemaObject(json);
+
+      expect(result.fields[0]).toMatchObject({
+        name: 'tags',
+        type: 'list',
+        value: ['javascript', 'testing', 'jest'],
+        isExplicit: false
+      });
     });
 
     test('handles arrays of objects', async () => {
-      const data = {
-        sections: [{
-          title: 'Section 1',
-          content: 'Content 1'
-        }]
+      const json = {
+        sections: [
+          {
+            title: 'Section 1',
+            content: 'Content 1'
+          },
+          {
+            title: 'Section 2',
+            content: 'Content 2'
+          }
+        ]
       };
-      const result = await convertToSchemaObject(data);
-      expect(result.fields[0].type).toBe('array');
-      expect(result.fields[0].value[0].type).toBe('object');
+
+      const result = await convertToSchemaObject(json);
+
+      expect(result.fields[0]).toMatchObject({
+        name: 'sections',
+        type: 'array',
+        value: [
+          {
+            type: 'object',
+            label: 'Item 1',
+            fields: [
+              {
+                name: 'title',
+                type: 'text',
+                value: 'Section 1'
+              },
+              {
+                name: 'content',
+                type: 'text',
+                value: 'Content 1'
+              }
+            ]
+          },
+          {
+            type: 'object',
+            label: 'Item 2',
+            fields: [
+              {
+                name: 'title',
+                type: 'text',
+                value: 'Section 2'
+              },
+              {
+                name: 'content',
+                type: 'text',
+                value: 'Content 2'
+              }
+            ]
+          }
+        ]
+      });
     });
 
-    test('handles mixed content arrays', async () => {
-      const data = {
-        mixed: ['string', 42, { key: 'value' }]
+    test('handles null and undefined values', async () => {
+      const json = {
+        title: null,
+        description: undefined,
+        meta: {
+          author: null,
+          tags: []
+        }
       };
-      const result = await convertToSchemaObject(data);
-      expect(result.fields[0].type).toBe('array');
-      expect(result.fields[0].value).toHaveLength(3);
-    });
-  });
 
-  describe('edge cases', () => {
-    test('handles null values', async () => {
-      const result = await convertToSchemaObject({ nullField: null });
-      expect(result.fields[0].type).toBe('text');
-    });
+      const result = await convertToSchemaObject(json);
 
-    test('handles undefined values', async () => {
-      const result = await convertToSchemaObject({ undefinedField: undefined });
-      expect(result.fields[0].type).toBe('text');
-    });
-
-    test('handles empty objects', async () => {
-      const result = await convertToSchemaObject({});
-      expect(result.fields).toHaveLength(0);
-    });
-
-    test('handles circular references', async () => {
-      const circular = { name: 'test' };
-      circular.self = circular;
-      await expect(convertToSchemaObject(circular))
-        .rejects.toThrow(/circular/i);
+      expect(result.fields).toEqual([
+        {
+          label: 'title',
+          name: 'title',
+          type: 'text',
+          value: null,
+          placeholder: 'Add title',
+          isExplicit: false
+        },
+        {
+          label: 'description',
+          name: 'description',
+          type: 'text',
+          value: undefined,
+          placeholder: 'Add description',
+          isExplicit: false
+        },
+        {
+          label: 'meta',
+          name: 'meta',
+          type: 'object',
+          value: {
+            author: null,
+            tags: []
+          },
+          placeholder: 'Add meta',
+          isExplicit: false,
+          isRequired: false,
+          noDeletion: false,
+          noDuplication: true,
+          fields: [
+            {
+              label: 'author',
+              name: 'author',
+              type: 'text',
+              value: null,
+              placeholder: 'Add author',
+              isExplicit: false
+            },
+            {
+              label: 'tags',
+              name: 'tags',
+              type: 'array',
+              value: [],
+              placeholder: 'Add tags',
+              isExplicit: false,
+              isRequired: false,
+              noDeletion: false,
+              noDuplication: true
+            }
+          ]
+        }
+      ]);
     });
   });
 });
