@@ -123,18 +123,39 @@ export const ArrayField = ({ field, onUpdate, index }) => {
         data-wrapper="is-array"
         onDrop={handleDropzoneEvent}
       >
-        {(field.value || []).map((item, index) => (
-          <FormField
-            key={item.id || index}
-            field={ensureFieldStructure(item, field.id)}
-            onUpdate={(fieldId, newValue) => {
-              const newValues = [...field.value];
-              newValues[index] = ensureFieldStructure({ ...newValues[index], ...newValue }, field.id);
-              onUpdate(field.id, { ...field, value: newValues });
-            }}
-            index={index}
-          />
-        ))}
+        {(field.value || []).map((item, index) => {
+          // If it's already a field structure or a primitive value, don't wrap it
+          const itemField = item.type ? item :
+            (typeof item === 'object' && item !== null) ? {
+              type: 'object',
+              label: `Item ${index + 1}`,
+              id: `${field.id}_item_${index}`,
+              fields: Object.entries(item).map(([key, value]) => ({
+                type: typeof value === 'object' ? 'object' : 'text',
+                label: key,
+                id: `${field.id}_item_${index}_${key}`,
+                value: value
+              }))
+            } : {
+              type: 'text',
+              label: `Item ${index + 1}`,
+              id: `${field.id}_item_${index}`,
+              value: item
+            };
+
+          return (
+            <FormField
+              key={itemField.id || index}
+              field={ensureFieldStructure(itemField, field.id)}
+              onUpdate={(fieldId, newValue) => {
+                const newValues = [...field.value];
+                newValues[index] = ensureFieldStructure({ ...newValues[index], ...newValue }, field.id);
+                onUpdate(field.id, { ...field, value: newValues });
+              }}
+              index={index}
+            />
+          );
+        })}
       </Dropzone>
     </div>
   );

@@ -11,7 +11,21 @@ export const ensureFieldStructure = (item, parentId) => {
 
   // Handle arrays
   if (Array.isArray(item)) {
-    return item.map((subItem) => ensureFieldStructure(subItem, parentId));
+    return item.map((arrayItem, index) => {
+      // If array item is an object, wrap it properly
+      if (typeof arrayItem === 'object' && !Array.isArray(arrayItem)) {
+        return ensureFieldStructure(
+          {
+            type: 'object',
+            label: `Item ${index + 1}`,
+            value: arrayItem,
+            id: `${parentId}_item_${index}`
+          },
+          parentId
+        );
+      }
+      return ensureFieldStructure(arrayItem, parentId);
+    });
   }
 
   // Base field properties

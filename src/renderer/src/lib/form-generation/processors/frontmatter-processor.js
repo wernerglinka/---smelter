@@ -11,8 +11,19 @@ import { getExplicitSchema } from '../schema/schema-handler';
 export const processFrontmatter = async (frontmatter, content) => {
   try {
     const explicitSchema = await getExplicitSchema();
+
+    // show frontmatter as json object
+    console.log('Frontmatter as JSON:', JSON.stringify(frontmatter, null, 2));
+
+    //show explicit schema as json object
+    console.log('Explicit Schema as JSON:', JSON.stringify(explicitSchema, null, 2));
+
     const schema = await convertToSchemaObject(frontmatter, explicitSchema);
     validateSchema(schema);
+
+    // console log log the schema object
+    console.log('Schema:', schema);
+
     return schema;
   } catch (error) {
     console.error('Error processing frontmatter:', error);

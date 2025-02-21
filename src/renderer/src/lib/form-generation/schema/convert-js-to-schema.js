@@ -13,7 +13,7 @@ const inferType = (value) => {
 };
 
 function matchSchemaField(key, schema = []) {
-  return schema.find((field) => field.label === key || field.name === key);
+  return schema.find((field) => field.name === key);
 }
 
 function createField(key, value, schema = []) {
@@ -27,30 +27,33 @@ function createField(key, value, schema = []) {
     type: schemaField?.type || inferredType,
     value,
     placeholder: `Add ${key}`,
-    isExplicit // Flag to indicate if field is explicitly defined in schema
+    isExplicit
   };
 
   const field = schemaField ? { ...baseField, ...schemaField, value } : baseField;
 
   if (inferredType === 'array' || inferredType === 'object') {
-    const childSchema = schemaField?.fields || [];
+    const childSchema = schemaField?.fields || schema; // Use root schema if no fields defined
 
     const children = Array.isArray(value)
-      ? value
-          .map((item) => {
-            if (typeof item === 'object' && item !== null) {
-              return Object.entries(item).map(([k, v]) => createField(k, v, childSchema));
-            }
-            return createField(`item`, item, childSchema);
-          })
-          .flat()
+      ? value.map((item, index) => {
+          if (typeof item === 'object' && item !== null) {
+            return {
+              type: 'object',
+              label: `Item ${index + 1}`,
+              id: `${field.id}_${index}`,
+              value: item,
+              fields: Object.entries(item).map(([k, v]) => createField(k, v, schema)) // Use root schema here
+            };
+          }
+          return createField(`item`, item, childSchema);
+        })
       : Object.entries(value).map(([k, v]) => createField(k, v, childSchema));
 
     return {
       ...field,
       type: inferredType,
       [inferredType === 'array' ? 'value' : 'fields']: children,
-      // Only apply these defaults for implicit fields
       ...(isExplicit
         ? {}
         : {
