@@ -3,11 +3,12 @@ import { BaseField } from './BaseField';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const SelectField = ({ field }) => {
-  const label = field.label || field.name || '';
+  const label = field.label || '';
   const options = field.options || [];
 
   return (
     <BaseField
+      field={field}
       allowDuplication={!field?.noDuplication}
       allowDeletion={!field?.noDeletion}
     >
@@ -27,7 +28,6 @@ export const SelectField = ({ field }) => {
         <span className="hint">Select for {label}</span>
         <div>
           <select
-            name={field.name}
             defaultValue={field.value || field?.default || ''}
           >
             {options.map((option, index) => (

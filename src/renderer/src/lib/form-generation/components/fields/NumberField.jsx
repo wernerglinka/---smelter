@@ -3,10 +3,11 @@ import { BaseField } from './BaseField';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const NumberField = ({ field }) => {
-  const label = field.label || field.name || '';
+  const label = field.label || '';
 
   return (
     <BaseField
+      field={field}
       allowDuplication={!field?.noDuplication}
       allowDeletion={!field?.noDeletion}
     >
@@ -27,7 +28,6 @@ export const NumberField = ({ field }) => {
         <div>
           <input
             type="number"
-            name={field.name}
             defaultValue={field.value || ''}
             placeholder={`Enter ${label || 'number'}`}
           />

@@ -18,6 +18,8 @@ Tests the conversion of YAML frontmatter into form configurations. Currently cov
 - Null value processing
 - Schema integration
 - Real-world metalsmith page structures
+- Explicit schema preservation
+- Object field generation
 
 ## Test Structure
 
@@ -32,11 +34,15 @@ The tests use several mocks to isolate the processor functionality:
 
 // Schema handler mock
 schema/schema-handler
-  - getExplicitSchema() → Returns empty schema object
+  - getExplicitSchema() → Returns schema configuration
 
 // Schema conversion mock
 schema/convert-js-to-schema
   - convertToSchemaObject() → Converts frontmatter to schema
+
+// Schema validation mock
+schema/validate-schema
+  - validateSchema() → Validates schema structure
 ```
 
 ### Project Functions Used
@@ -66,6 +72,7 @@ schema/convert-js-to-schema
 2. **Nested Objects**
    - Tests object hierarchy preservation
    - Verifies nested field structure
+   - Ensures fields property generation
    - Example: `{ seo: { title: 'SEO Title', description: 'Description' } }`
 
 3. **Array Handling**
@@ -76,47 +83,51 @@ schema/convert-js-to-schema
 4. **Complex Structures**
    - Tests nested arrays within objects
    - Verifies deep structure conversion
+   - Validates form metadata generation
+   - Ensures value preservation
    - Example:
      ```javascript
      {
        sections: [
          {
-           name: 'intro',
-           content: 'Introduction section'
-         },
-         {
-           name: 'features',
-           items: ['Feature 1', 'Feature 2']
+           container: 'section',
+           containerFields: {
+             isDisabled: false,
+             background: {
+               color: '',
+               isDark: false
+             }
+           }
          }
        ]
      }
      ```
 
-## Planned Test Additions
+5. **Explicit Schema Integration**
+   - Tests preservation of explicit schema definitions
+   - Verifies field generation for undefined schema fields
+   - Handles schema validation
+   - Example:
+     ```javascript
+     {
+       seo: {
+         title: 'Test Page',
+         description: 'A test page',
+         socialImage: ''
+       }
+     }
+     ```
 
-### Drag and Drop Integration Tests
+## Field Structure
 
-Once drag and drop functionality issues are resolved, we will add tests for:
-
-1. **Ghost Element Behavior**
-   - Positioning accuracy
-   - Visibility states
-   - Cleanup on drop/cancel
-
-2. **Dropzone Validation**
-   - Nested dropzone handling
-   - Valid/invalid target detection
-   - Block and section restrictions
-
-3. **Element Reordering**
-   - Array item reordering
-   - Object field reordering
-   - Drag handle interactions
-
-4. **Edge Cases**
-   - Cancel operations
-   - Invalid drops
-   - Nested structure preservation
+Each generated field includes:
+- `label`: Human-readable field name
+- `type`: Field type (text, checkbox, array, object, etc.)
+- `placeholder`: Helper text for empty fields
+- `value`: Original data value
+- Additional type-specific properties:
+  - Arrays: `isDropzone`, `dropzoneType`
+  - Objects: `fields` array for nested elements
 
 ## Running Tests
 
@@ -136,4 +147,3 @@ npm test -- --coverage
 - [YAML to Form Conversion](../../../../dev-notes/technical/yaml-to-form.md)
 - [Form to Object Transformation](../../../../dev-notes/technical/form-to-object.md)
 - [Edit Form Components](../../../../dev-notes/components/edit-form.md)
-- [Drag and Drop Implementation](../../../../dev-notes/Drag-and-drop.md)

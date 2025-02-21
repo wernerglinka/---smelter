@@ -3,7 +3,7 @@ import { BaseField } from './BaseField';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const CheckboxField = ({ field }) => {
-  const label = field.label || field.name || '';
+  const label = field.label || '';
 
   return (
     <BaseField
@@ -29,7 +29,6 @@ export const CheckboxField = ({ field }) => {
           <input
             type="checkbox"
             role="switch"
-            name={field.name}
             className="checkbox-input"
             defaultChecked={field.value || false}
           />

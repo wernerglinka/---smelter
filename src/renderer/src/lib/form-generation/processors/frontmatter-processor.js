@@ -10,13 +10,9 @@ import { getExplicitSchema } from '../schema/schema-handler';
  */
 export const processFrontmatter = async (frontmatter, content) => {
   try {
-    // Get explicit schema definitions first
     const explicitSchema = await getExplicitSchema();
-
-    // Convert frontmatter to schema with explicit definitions
     const schema = await convertToSchemaObject(frontmatter, explicitSchema);
     validateSchema(schema);
-
     return schema;
   } catch (error) {
     console.error('Error processing frontmatter:', error);

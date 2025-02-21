@@ -3,10 +3,11 @@ import { BaseField } from './BaseField';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const TextField = ({ field }) => {
-  const label = field.label || field.name || '';
+  const label = field.label || '';
 
   return (
     <BaseField
+      field={field}
       allowDuplication={!field?.noDuplication}
       allowDeletion={!field?.noDeletion}
     >
@@ -27,10 +28,9 @@ export const TextField = ({ field }) => {
         <div>
           <input
             type="text"
-            name={field.name}
             className="element-value"
             defaultValue={field.value}
-            placeholder={field.placeholder || `Add ${label || 'text'}`}
+            placeholder={`Add ${label || 'text'}`}
           />
         </div>
       </label>

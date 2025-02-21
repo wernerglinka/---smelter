@@ -3,10 +3,11 @@ import { BaseField } from './BaseField';
 import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 export const UrlField = ({ field }) => {
-  const label = field.label || field.name || '';
+  const label = field.label|| '';
 
   return (
     <BaseField
+      field={field}
       allowDuplication={!field?.noDuplication}
       allowDeletion={!field?.noDeletion}
     >
@@ -28,7 +29,6 @@ export const UrlField = ({ field }) => {
           <input
             type="url"
             name={field.name}
-            defaultValue={field.value || ''}
             placeholder={`Enter ${label || 'URL'}`}
           />
         </div>

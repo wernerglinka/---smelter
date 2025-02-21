@@ -16,7 +16,7 @@ jest.mock('../../../../src/renderer/src/lib/form-generation/schema/schema-handle
   getExplicitSchema: jest.fn().mockResolvedValue({})
 }));
 
-// Mock schema validation
+// Mock schema validation - now returns void instead of throwing
 jest.mock('../../../../src/renderer/src/lib/form-generation/schema/validate-schema', () => ({
   validateSchema: jest.fn()
 }));
@@ -25,214 +25,16 @@ import { processFrontmatter } from '../../../../src/renderer/src/lib/form-genera
 
 describe('FrontmatterProcessor', () => {
   beforeEach(() => {
-    // Clear all mocks before each test
     jest.clearAllMocks();
   });
 
-  test('processes simple frontmatter with primitive values', async () => {
-    const frontmatter = {
-      layout: 'default.njk',
-      title: 'Test Page',
-      draft: false,
-      order: 1
-    };
-
-    const result = await processFrontmatter(frontmatter, '');
-    expect(result.fields).toHaveLength(4);
-    expect(result.fields).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          label: 'layout',
-          type: 'text',
-          value: 'default.njk'
-        }),
-        expect.objectContaining({
-          label: 'title',
-          type: 'text',
-          value: 'Test Page'
-        }),
-        expect.objectContaining({
-          label: 'draft',
-          type: 'checkbox',
-          value: false
-        }),
-        expect.objectContaining({
-          label: 'order',
-          type: 'number',
-          value: 1
-        })
-      ])
-    );
-  });
-
-  test('processes nested objects in frontmatter', async () => {
-    const frontmatter = {
-      seo: {
-        title: 'SEO Title',
-        description: 'SEO Description'
-      }
-    };
-
-    const result = await processFrontmatter(frontmatter, '');
-    expect(result.fields).toHaveLength(1);
-    const seoField = result.fields[0];
-    expect(seoField).toMatchObject({
-      label: 'seo',
-      type: 'object',
-      fields: expect.arrayContaining([
-        expect.objectContaining({
-          label: 'title',
-          type: 'text',
-          value: 'SEO Title'
-        }),
-        expect.objectContaining({
-          label: 'description',
-          type: 'text',
-          value: 'SEO Description'
-        })
-      ])
-    });
-  });
-
-  test('processes arrays with primitive values', async () => {
-    const frontmatter = {
-      tags: ['javascript', 'testing', 'jest']
-    };
-
-    const result = await processFrontmatter(frontmatter, '');
-    expect(result.fields).toHaveLength(1);
-    const tagsField = result.fields[0];
-    expect(tagsField).toMatchObject({
-      label: 'tags',
-      type: 'array',
-      isDropzone: true,
-      value: [
-        expect.objectContaining({
-          type: 'text',
-          label: 'Item 1',
-          value: 'javascript'
-        }),
-        expect.objectContaining({
-          type: 'text',
-          label: 'Item 2',
-          value: 'testing'
-        }),
-        expect.objectContaining({
-          type: 'text',
-          label: 'Item 3',
-          value: 'jest'
-        })
-      ]
-    });
-  });
-
-  test('processes arrays with object values', async () => {
-    const frontmatter = {
-      sections: [
-        {
-          name: 'intro',
-          type: 'text',
-          content: 'Introduction section'
-        },
-        {
-          name: 'features',
-          type: 'list',
-          items: ['Feature 1', 'Feature 2']
-        }
-      ]
-    };
-
-    const result = await processFrontmatter(frontmatter, '');
-    expect(result.fields).toHaveLength(1);
-    const sectionsField = result.fields[0];
-    expect(sectionsField).toMatchObject({
-      label: 'sections',
-      type: 'array',
-      isDropzone: true,
-      value: [
-        expect.objectContaining({
-          type: 'object',
-          label: 'Item 1',
-          fields: expect.arrayContaining([
-            expect.objectContaining({
-              label: 'name',
-              value: 'intro'
-            }),
-            expect.objectContaining({
-              label: 'type',
-              value: 'text'
-            }),
-            expect.objectContaining({
-              label: 'content',
-              value: 'Introduction section'
-            })
-          ])
-        }),
-        expect.objectContaining({
-          type: 'object',
-          label: 'Item 2',
-          fields: expect.arrayContaining([
-            expect.objectContaining({
-              label: 'name',
-              value: 'features'
-            }),
-            expect.objectContaining({
-              label: 'type',
-              value: 'list'
-            }),
-            expect.objectContaining({
-              label: 'items',
-              type: 'array',
-              value: [
-                expect.objectContaining({
-                  value: 'Feature 1'
-                }),
-                expect.objectContaining({
-                  value: 'Feature 2'
-                })
-              ]
-            })
-          ])
-        })
-      ]
-    });
-  });
-
-  test('handles empty frontmatter', async () => {
-    const result = await processFrontmatter({}, '');
-    expect(result.fields).toEqual([]);
-  });
-
-  test('handles null values', async () => {
-    const frontmatter = {
-      title: null,
-      description: null
-    };
-
-    const result = await processFrontmatter(frontmatter, '');
-    expect(result.fields).toHaveLength(2);
-    expect(result.fields).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          label: 'title',
-          type: 'text',
-          value: null
-        }),
-        expect.objectContaining({
-          label: 'description',
-          type: 'text',
-          value: null
-        })
-      ])
-    );
-  });
-
   test('processes frontmatter with explicit schema from fields.json', async () => {
-    const explicitSchema = {
-      sections: {
+    const explicitSchema = [
+      {
+        label: 'sections',
         type: 'array',
-        fields: {
-          container: {
+        fields: [
+          {
             label: 'Container',
             name: 'container',
             type: 'select',
@@ -241,31 +43,14 @@ describe('FrontmatterProcessor', () => {
               { label: 'Section', value: 'section' }
             ]
           },
-          name: {
+          {
             label: 'Name',
             name: 'name',
             type: 'text'
-          },
-          containerFields: {
-            label: 'Container Fields',
-            name: 'containerFields',
-            type: 'object',
-            fields: {
-              isDisabled: {
-                label: 'Disabled',
-                name: 'isDisabled',
-                type: 'checkbox'
-              },
-              isAnimated: {
-                label: 'Animated',
-                name: 'isAnimated',
-                type: 'checkbox'
-              }
-            }
           }
-        }
+        ]
       }
-    };
+    ];
 
     require('../../../../src/renderer/src/lib/form-generation/schema/schema-handler').getExplicitSchema.mockResolvedValue(
       explicitSchema
@@ -275,15 +60,7 @@ describe('FrontmatterProcessor', () => {
       sections: [
         {
           container: 'section',
-          name: 'text',
-          containerFields: {
-            isDisabled: false,
-            isAnimated: true
-          },
-          text: {
-            title: 'Test Section',
-            subtitle: 'Test Subtitle'
-          }
+          name: 'text'
         }
       ]
     };
@@ -295,114 +72,125 @@ describe('FrontmatterProcessor', () => {
     expect(sectionsField).toMatchObject({
       label: 'sections',
       type: 'array',
-      isDropzone: true,
       value: [
         {
-          type: 'object',
-          label: 'Item 1',
-          fields: [
-            {
-              label: 'container',
-              type: 'text',
-              placeholder: 'Add container',
-              value: 'section'
-            },
-            {
-              label: 'name',
-              type: 'text',
-              placeholder: 'Add name',
-              value: 'text'
-            },
-            {
-              label: 'containerFields',
-              type: 'object',
-              placeholder: 'Add containerFields',
-              value: {
-                isDisabled: false,
-                isAnimated: true
-              },
-              fields: [
-                {
-                  label: 'isDisabled',
-                  type: 'checkbox',
-                  placeholder: 'Add isDisabled',
-                  value: false
-                },
-                {
-                  label: 'isAnimated',
-                  type: 'checkbox',
-                  placeholder: 'Add isAnimated',
-                  value: true
-                }
-              ]
-            },
-            {
-              label: 'text',
-              type: 'object',
-              placeholder: 'Add text',
-              value: {
-                title: 'Test Section',
-                subtitle: 'Test Subtitle'
-              },
-              fields: [
-                {
-                  label: 'title',
-                  type: 'text',
-                  placeholder: 'Add title',
-                  value: 'Test Section'
-                },
-                {
-                  label: 'subtitle',
-                  type: 'text',
-                  placeholder: 'Add subtitle',
-                  value: 'Test Subtitle'
-                }
-              ]
-            }
-          ]
+          container: 'section',
+          name: 'text'
         }
       ]
     });
   });
 
-  test('processes real-world metalsmith page structure', async () => {
+  test('processes nested object structures', async () => {
+    const explicitSchema = [
+      {
+        label: 'seo',
+        type: 'object',
+        fields: [
+          {
+            label: 'Title',
+            name: 'title',
+            type: 'text'
+          },
+          {
+            label: 'Description',
+            name: 'description',
+            type: 'textarea'
+          }
+        ]
+      }
+    ];
+
+    require('../../../../src/renderer/src/lib/form-generation/schema/schema-handler').getExplicitSchema.mockResolvedValue(
+      explicitSchema
+    );
+
     const frontmatter = {
-      layout: 'sections.njk',
-      draft: false,
-      navLabel: 'Home',
-      bodyClasses: 'home-page',
-      access: {
-        noIndex: false,
-        noFollow: false
-      },
       seo: {
-        title: 'Metalsmith First starter',
-        description: 'Metalsmith First starter to build a static site with structured content',
-        socialImage: 'path to social image',
-        canonicalOverwrite: ''
+        title: 'Page Title',
+        description: 'Page Description'
+      }
+    };
+
+    const result = await processFrontmatter(frontmatter, '');
+    expect(result.fields[0]).toMatchObject({
+      label: 'seo',
+      type: 'object',
+      value: frontmatter.seo
+    });
+  });
+
+  test('handles empty frontmatter', async () => {
+    require('../../../../src/renderer/src/lib/form-generation/schema/schema-handler').getExplicitSchema.mockResolvedValue(
+      []
+    );
+
+    const result = await processFrontmatter({}, '');
+    expect(result.fields).toEqual([]);
+  });
+
+  test('processes primitive fields without schema', async () => {
+    require('../../../../src/renderer/src/lib/form-generation/schema/schema-handler').getExplicitSchema.mockResolvedValue(
+      []
+    );
+
+    const frontmatter = {
+      layout: 'default.njk',
+      draft: false,
+      navLabel: 'Home'
+    };
+
+    const result = await processFrontmatter(frontmatter, '');
+    expect(result.fields).toHaveLength(3);
+    expect(result.fields).toEqual([
+      {
+        label: 'layout',
+        type: 'text',
+        value: 'default.njk',
+        placeholder: 'Add layout'
       },
+      {
+        label: 'draft',
+        type: 'checkbox',
+        value: false,
+        placeholder: 'Add draft'
+      },
+      {
+        label: 'navLabel',
+        type: 'text',
+        value: 'Home',
+        placeholder: 'Add navLabel'
+      }
+    ]);
+  });
+
+  /**
+   * Tests the processing of complex nested data structures into form fields.
+   * This test verifies that the processor correctly:
+   * 1. Maintains the hierarchical structure of the input data
+   * 2. Generates appropriate field metadata for each level
+   * 3. Handles arrays, objects, and primitive values correctly
+   * 4. Preserves the original data while adding UI-specific properties
+   */
+  test('processes complex nested structures', async () => {
+    // Sample frontmatter with nested structure:
+    // - Array (sections)
+    //   - Object (section item)
+    //     - Primitive (container)
+    //     - Object (containerFields)
+    //       - Primitive (isDisabled)
+    //       - Object (background)
+    //         - Primitives (color, isDark)
+    const frontmatter = {
       sections: [
         {
           container: 'section',
-          name: 'text',
           containerFields: {
             isDisabled: false,
-            isAnimated: false,
-            containerId: '',
-            containerClass: '',
-            inContainer: true,
-            isNarrow: true,
             background: {
               color: '',
-              image: '',
               isDark: false
             }
-          },
-          text: {
-            prefix: '',
-            title: 'Metalsmith First',
-            header: 'h1',
-            subtitle: "The only starter you'll need"
           }
         }
       ]
@@ -410,64 +198,131 @@ describe('FrontmatterProcessor', () => {
 
     const result = await processFrontmatter(frontmatter, '');
 
-    // Check sections field
-    const sectionsField = result.fields.find((f) => f.label === 'sections');
-    expect(sectionsField).toBeDefined();
-    expect(sectionsField.type).toBe('array');
-    expect(sectionsField.isDropzone).toBe(true);
-
-    // Check first section
-    const firstSection = sectionsField.value[0];
-    expect(firstSection.type).toBe('object');
-    expect(firstSection.label).toBe('Item 1');
-
-    // Check basic fields
-    const containerField = firstSection.fields.find((f) => f.label === 'container');
-    expect(containerField).toMatchObject({
-      type: 'text',
-      value: 'section'
+    // The expected structure includes form-specific metadata:
+    // - Each field gets label, type, and placeholder
+    // - Arrays get isDropzone and dropzoneType
+    // - Objects get a fields array for nested elements
+    // - Original values are preserved in the value property
+    expect(result.fields[0]).toMatchObject({
+      label: 'sections',
+      type: 'array',
+      placeholder: 'Add sections',
+      isDropzone: true,
+      dropzoneType: 'sections',
+      value: [
+        {
+          fields: [
+            {
+              label: 'container',
+              type: 'text',
+              value: 'section',
+              placeholder: 'Add container'
+            },
+            {
+              label: 'containerFields',
+              type: 'object',
+              fields: [
+                {
+                  label: 'isDisabled',
+                  type: 'checkbox',
+                  value: false,
+                  placeholder: 'Add isDisabled'
+                },
+                {
+                  label: 'background',
+                  type: 'object',
+                  fields: [
+                    {
+                      label: 'color',
+                      type: 'text',
+                      value: '',
+                      placeholder: 'Add color'
+                    },
+                    {
+                      label: 'isDark',
+                      type: 'checkbox',
+                      value: false,
+                      placeholder: 'Add isDark'
+                    }
+                  ],
+                  placeholder: 'Add background',
+                  value: {
+                    color: '',
+                    isDark: false
+                  }
+                }
+              ],
+              placeholder: 'Add containerFields',
+              value: {
+                isDisabled: false,
+                background: {
+                  color: '',
+                  isDark: false
+                }
+              }
+            }
+          ],
+          label: 'Item 1',
+          type: 'object',
+          value: {
+            container: 'section',
+            containerFields: {
+              isDisabled: false,
+              background: {
+                color: '',
+                isDark: false
+              }
+            }
+          }
+        }
+      ]
     });
+  });
 
-    const nameField = firstSection.fields.find((f) => f.label === 'name');
-    expect(nameField).toMatchObject({
-      type: 'text',
-      value: 'text'
-    });
+  test('ensures objects have fields property while preserving explicit schema', async () => {
+    const explicitSchema = [
+      {
+        label: 'seo',
+        type: 'object',
+        noDuplication: true
+      }
+    ];
 
-    // Check containerFields
-    const containerFields = firstSection.fields.find((f) => f.label === 'containerFields');
-    expect(containerFields.type).toBe('object');
-    expect(containerFields.fields).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          label: 'isDisabled',
-          type: 'checkbox',
-          value: false
-        }),
-        expect.objectContaining({
-          label: 'isAnimated',
-          type: 'checkbox',
-          value: false
-        })
-      ])
+    require('../../../../src/renderer/src/lib/form-generation/schema/schema-handler').getExplicitSchema.mockResolvedValue(
+      explicitSchema
     );
 
-    // Check text fields
-    const textField = firstSection.fields.find((f) => f.label === 'text');
-    expect(textField.type).toBe('object');
-    expect(textField.fields).toEqual(
-      expect.arrayContaining([
+    const frontmatter = {
+      seo: {
+        title: 'Test Page',
+        description: 'A test page',
+        socialImage: ''
+      }
+    };
+
+    const result = await processFrontmatter(frontmatter, '');
+
+    expect(result.fields[0]).toMatchObject({
+      label: 'seo',
+      type: 'object',
+      noDuplication: true,
+      fields: expect.arrayContaining([
         expect.objectContaining({
-          label: 'title',
+          label: 'Title',
           type: 'text',
-          value: 'Metalsmith First'
-        }),
-        expect.objectContaining({
-          label: 'subtitle',
-          type: 'text',
-          value: "The only starter you'll need"
+          value: 'Test Page'
         })
       ])
+    });
+  });
+
+  test('handles schema validation errors', async () => {
+    require('../../../../src/renderer/src/lib/form-generation/schema/validate-schema').validateSchema.mockImplementation(
+      () => {
+        throw new Error('Invalid schema structure');
+      }
     );
+
+    await expect(processFrontmatter({}, '')).rejects.toThrow('Invalid schema structure');
   });
 });

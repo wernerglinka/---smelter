@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { FormField } from '../FormField';
 import { DragHandleIcon, CollapsedIcon, CollapseIcon, AddIcon, DeleteIcon } from '@components/icons';
 import Dropzone from '@components/Dropzone';
+import { ensureFieldStructure } from '../../utilities/field-structure';
 
 export const ArrayField = ({ field, onUpdate, index }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -40,11 +41,10 @@ export const ArrayField = ({ field, onUpdate, index }) => {
         const fieldData = data.field || data;
         const currentValue = Array.isArray(field.value) ? field.value : [];
 
-        // Create new item based on field type
-        const newItem = {
+        const newItem = ensureFieldStructure({
           ...fieldData,
-          id: `${field.id}_item_${currentValue.length}`,
-        };
+          id: `${field.id}_item_${currentValue.length}`
+        }, field.id);
 
         const updatePayload = {
           ...field,
@@ -101,7 +101,7 @@ export const ArrayField = ({ field, onUpdate, index }) => {
   };
 
   return (
-    <div className="form-element is-array" draggable="true" onDragStart={handleDragStart}>
+    <div className={`form-element is-array no-drop label-exists`} draggable="true" onDragStart={handleDragStart}>
       <span className="sort-handle">
         <DragHandleIcon />
       </span>
@@ -126,10 +126,10 @@ export const ArrayField = ({ field, onUpdate, index }) => {
         {(field.value || []).map((item, index) => (
           <FormField
             key={item.id || index}
-            field={item}
+            field={ensureFieldStructure(item, field.id)}
             onUpdate={(fieldId, newValue) => {
               const newValues = [...field.value];
-              newValues[index] = { ...newValues[index], ...newValue };
+              newValues[index] = ensureFieldStructure({ ...newValues[index], ...newValue }, field.id);
               onUpdate(field.id, { ...field, value: newValues });
             }}
             index={index}
