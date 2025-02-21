@@ -11,15 +11,12 @@ import Dropzone from '@components/Dropzone';
  * @param {Object} props.field - Field configuration object
  * @param {Function} props.onUpdate - Callback for field updates
  */
-export const ObjectField = ({ field, onUpdate }) => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+export const ObjectField = ({ field, onUpdate, index }) => {
+  const [isCollapsed, setIsCollapsed] = useState(true); // Changed to true
 
-  /**
-   * Toggles the collapsed state of the object container
-   */
-  const handleCollapse = useCallback(() => {
-    setIsCollapsed(prev => !prev);
-  }, []);
+  const handleCollapse = () => setIsCollapsed(!isCollapsed);
+
+  const displayLabel = field.fields?.find(f => f.name === 'sectionDescription')?.value || field.label;
 
   /**
    * Handles drag and drop events for object fields
@@ -77,20 +74,20 @@ export const ObjectField = ({ field, onUpdate }) => {
 
   return (
     <div
-      className="form-element is-object"
+      className="form-element is-object no-drop label-exists"
       draggable="true"
       onDragStart={handleDragStart}
     >
       <span className="sort-handle">
         <DragHandleIcon />
       </span>
-      <label className="object-name label-wrapper">
-        <span>{field.label}</span>
+      <label className="object-name label-wrapper label-exists">
+        <span>{field.label}<sup>*</sup></span>
         <input
           type="text"
           className="element-label"
           placeholder="Object Name"
-          defaultValue={field.label}
+          defaultValue={displayLabel}
           readOnly
         />
         <span className="collapse-icon" onClick={handleCollapse}>

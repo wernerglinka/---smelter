@@ -340,10 +340,11 @@ fieldset {
       }
     }
 
-    &.object-name > input {
-      font-size: 1.5rem;
+    &.object-name > input,
+    &.array-name > input {
+      font-size: 1.3rem;
       font-weight: 600;
-      font-style: italic;
+      text-transform: uppercase;
     }
 
     & textarea {

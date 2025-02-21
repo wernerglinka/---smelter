@@ -18,13 +18,22 @@ const inferType = (value) => {
 };
 
 /**
- * Finds a matching field definition in the schema
- * @param {string} key - The field name to match
- * @param {Array} schema - Array of field definitions
- * @returns {Object|undefined} Matching schema field or undefined
+ * Matches a field key with its schema definition
+ * @param {string} key - The field key to match
+ * @param {Array} schema - The schema array to search
+ * @returns {Object|undefined} The matching schema field or undefined
  */
 function matchSchemaField(key, schema = []) {
-  return schema.find((field) => field.name === key);
+  if (!Array.isArray(schema)) {
+    return undefined;
+  }
+
+  return schema
+    .filter(
+      (field) =>
+        field && typeof field === 'object' && field.name !== undefined && field.name !== null
+    )
+    .find((field) => field.name === key);
 }
 
 /**
@@ -101,8 +110,20 @@ function createField(key, value, schema = []) {
  * const result = await convertToSchemaObject(json, schema);
  * // Returns: { fields: [{ name: "name", type: "text", ... }, { name: "age", type: "number", ... }] }
  */
-export async function convertToSchemaObject(json, schema = []) {
+export const convertToSchemaObject = async (json, schema = []) => {
+  // Handle null, undefined, non-object inputs
+  if (!json || typeof json !== 'object' || Array.isArray(json)) {
+    return { fields: [] };
+  }
+
+  // Now we can safely use Object.entries since we've validated the input
   return {
     fields: Object.entries(json).map(([key, value]) => createField(key, value, schema))
   };
-}
+};
+
+// Export internal functions for testing
+export const __test__ = {
+  matchSchemaField,
+  createField
+};
