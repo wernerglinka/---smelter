@@ -28,7 +28,7 @@ export const FormField = ({ field, onUpdate }) => {
   }
 
   if (field.type === 'list') {
-    return <ListField field={field} onUpdate={onUpdate} />;
+    return <ListField field={field} />;
   }
 
   // Handle simple field types
@@ -36,18 +36,18 @@ export const FormField = ({ field, onUpdate }) => {
 
   switch (fieldType) {
     case 'textarea':
-      return <TextArea field={field} onUpdate={onUpdate} />;
+      return <TextArea field={field} />;
     case 'number':
-      return <NumberField field={field} onUpdate={onUpdate} />;
+      return <NumberField field={field} />;
     case 'checkbox':
-      return <CheckboxField field={field} onUpdate={onUpdate} />;
+      return <CheckboxField field={field} />;
     case 'select':
-      return <SelectField field={field} onUpdate={onUpdate} />;
+      return <SelectField field={field} />;
     case 'url':
-      return <UrlField field={ field } onUpdate={ onUpdate } />;
+      return <UrlField field={ field } />;
     case 'date':
-      return <DateField field={ field } onUpdate={ onUpdate } />;
+      return <DateField field={ field } />;
     default:
-      return <TextField field={field} onUpdate={onUpdate} />;
+      return <TextField field={field} />;
   }
 };

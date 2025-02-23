@@ -11,8 +11,9 @@ import Dropzone from '@components/Dropzone';
  * @param {Object} props.field - Field configuration object
  * @param {Function} props.onUpdate - Callback for field updates
  */
-export const ObjectField = ({ field, onUpdate, index }) => {
-  const [isCollapsed, setIsCollapsed] = useState(true); // Changed to true
+export const ObjectField = ({ field }) => {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [fields, setFields] = useState(field.fields || []);
 
   const handleCollapse = () => setIsCollapsed(!isCollapsed);
 
@@ -27,42 +28,36 @@ export const ObjectField = ({ field, onUpdate, index }) => {
     switch (type) {
       case 'sidebar': {
         const fieldData = data.field || data;
-        const currentFields = field.fields || [];
-
-        // Initialize the new field
         const newField = {
           ...fieldData,
-          id: fieldData.id || `${field.id}_field_${currentFields.length}`,
+          id: fieldData.id || `${field.id}_field_${fields.length}`,
           fields: fieldData.fields || []
         };
 
-        // Add field at specified position or end
-        const updatedFields = [...currentFields];
-        if (typeof position.targetIndex === 'number') {
-          updatedFields.splice(position.targetIndex, 0, newField);
-        } else {
-          updatedFields.push(newField);
-        }
-
-        onUpdate(field.id, {
-          ...field,
-          fields: updatedFields
+        setFields(currentFields => {
+          const updatedFields = [...currentFields];
+          if (typeof position.targetIndex === 'number') {
+            updatedFields.splice(position.targetIndex, 0, newField);
+          } else {
+            updatedFields.push(newField);
+          }
+          return updatedFields;
         });
         break;
       }
 
       case 'reorder': {
         const { sourceIndex, targetIndex } = position;
-        if (field.fields) {
-          const newFields = [...field.fields];
+        setFields(currentFields => {
+          const newFields = [...currentFields];
           const [movedField] = newFields.splice(sourceIndex, 1);
           newFields.splice(targetIndex, 0, movedField);
-          onUpdate(field.id, { ...field, fields: newFields });
-        }
+          return newFields;
+        });
         break;
       }
     }
-  }, [field, onUpdate]);
+  }, [field.id]);
 
   /**
    * Handles drag start event for the object container
@@ -99,18 +94,10 @@ export const ObjectField = ({ field, onUpdate, index }) => {
         data-wrapper="is-object"
         onDrop={handleDropzoneEvent}
       >
-        {field.fields?.map((fieldItem, fieldIndex) => (
+        {fields.map((fieldItem, fieldIndex) => (
           <FormField
             key={`${fieldItem.id || fieldItem.name}-${fieldIndex}`}
             field={fieldItem}
-            onUpdate={(fieldId, newValue) =>
-              onUpdate(field.id, {
-                ...field,
-                fields: field.fields.map(f =>
-                  f.id === fieldId ? { ...f, ...newValue } : f
-                )
-              })
-            }
             index={fieldIndex}
           />
         ))}

@@ -13,9 +13,9 @@ import { ensureFieldStructure } from '../../utilities/field-structure';
  * @param {Function} props.onUpdate - Callback for field updates
  * @param {number} props.index - Field index in parent array
  */
-export const ArrayField = ({ field, onUpdate, index }) => {
+export const ArrayField = ({ field }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [collapsedFields, setCollapsedFields] = useState(new Set());
+  const [items, setItems] = useState(field.value || []);
 
   /**
    * Toggles the collapsed state of the array container
@@ -33,31 +33,27 @@ export const ArrayField = ({ field, onUpdate, index }) => {
     switch (type) {
       case 'sidebar': {
         const fieldData = data.field || data;
-        const currentValue = Array.isArray(field.value) ? field.value : [];
         const newItem = ensureFieldStructure({
           ...fieldData,
-          id: `${field.id}_item_${currentValue.length}`
+          id: `${field.id}_item_${items.length}`
         }, field.id);
 
-        onUpdate(field.id, {
-          ...field,
-          value: [...currentValue, newItem]
-        });
+        setItems(currentItems => [...currentItems, newItem]);
         break;
       }
 
       case 'reorder': {
         const { sourceIndex, targetIndex } = position;
-        if (field.value) {
-          const newValue = [...field.value];
-          const [movedItem] = newValue.splice(sourceIndex, 1);
-          newValue.splice(targetIndex, 0, movedItem);
-          onUpdate(field.id, { ...field, value: newValue });
-        }
+        setItems(currentItems => {
+          const newItems = [...currentItems];
+          const [movedItem] = newItems.splice(sourceIndex, 1);
+          newItems.splice(targetIndex, 0, movedItem);
+          return newItems;
+        });
         break;
       }
     }
-  }, [field, onUpdate]);
+  }, [field.id, items.length]);
 
   /**
    * Handles drag start event for the array container
@@ -121,15 +117,10 @@ export const ArrayField = ({ field, onUpdate, index }) => {
         data-wrapper="is-array"
         onDrop={handleDropzoneEvent}
       >
-        {(field.value || []).map((item, index) => (
+        {items.map((item, index) => (
           <FormField
             key={item.id || index}
             field={ensureFieldStructure(processArrayItem(item, index), field.id)}
-            onUpdate={(fieldId, newValue) => {
-              const newValues = [...field.value];
-              newValues[index] = ensureFieldStructure({ ...newValues[index], ...newValue }, field.id);
-              onUpdate(field.id, { ...field, value: newValues });
-            }}
             index={index}
           />
         ))}
