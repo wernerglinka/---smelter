@@ -81,3 +81,5 @@ Run `npm run docs` to generate documentation in the `docs` directory.
 ### Development Notes
 
 [Dev Notes](./dev-notes/README.md)
+
+and so on...
