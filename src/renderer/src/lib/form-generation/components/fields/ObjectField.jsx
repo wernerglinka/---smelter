@@ -31,6 +31,7 @@ export const ObjectField = ({ field }) => {
         const newField = {
           ...fieldData,
           id: fieldData.id || `${field.id}_field_${fields.length}`,
+          name: `${field.id}[${fields.length}]`,
           fields: fieldData.fields || []
         };
 
@@ -57,7 +58,7 @@ export const ObjectField = ({ field }) => {
         break;
       }
     }
-  }, [field.id]);
+  }, [field.id, fields.length]);
 
   /**
    * Handles drag start event for the object container
@@ -81,6 +82,7 @@ export const ObjectField = ({ field }) => {
         <input
           type="text"
           className="element-label"
+          name={`${field.id}_label`}
           placeholder="Object Name"
           defaultValue={displayLabel}
           readOnly
@@ -97,8 +99,10 @@ export const ObjectField = ({ field }) => {
         {fields.map((fieldItem, fieldIndex) => (
           <FormField
             key={`${fieldItem.id || fieldItem.name}-${fieldIndex}`}
-            field={fieldItem}
-            index={fieldIndex}
+            field={{
+              ...fieldItem,
+              name: `${field.id}[${fieldIndex}]${fieldItem.name ? `[${fieldItem.name}]` : ''}`
+            }}
           />
         ))}
       </Dropzone>

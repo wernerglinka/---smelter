@@ -10,7 +10,7 @@ import { ArrayField } from './fields/ArrayField';
 import { ListField } from './fields/ListField';
 import { DateField } from './fields/DateField';
 
-export const FormField = ({ field, onUpdate }) => {
+export const FormField = ( { field } ) => {
 
   if (!field || !field.type) {
     console.error('FormField received invalid field:', field);
@@ -19,12 +19,12 @@ export const FormField = ({ field, onUpdate }) => {
 
   // Handle objects
   if (field.type === 'object') {
-    return <ObjectField field={field} onUpdate={onUpdate} />;
+    return <ObjectField field={field} />;
   }
 
   // Handle arrays and lists
   if (field.type === 'array') {
-    return <ArrayField field={field} onUpdate={onUpdate} />;
+    return <ArrayField field={field} />;
   }
 
   if (field.type === 'list') {

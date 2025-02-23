@@ -44,30 +44,20 @@ const EditSpace = ({ fileContent, $expanded }) => {
   useEffect(() => {
     const processContent = async () => {
       if (fileContent?.data?.frontmatter) {
-
-        // Add debugging to see the structure as json
-        //console.log('Frontmatter as JSON:', JSON.stringify(fileContent.data.frontmatter, null, 2));
-
         const processedData = await processFrontmatter(
           fileContent.data.frontmatter,
           fileContent.data.content
         );
         setFormFields(processedData.fields);
-
-        // set active file path
-        const path = fileContent.path;
-        setActiveFilePath(path);
-
-        // get file name from path
-        const fileName = path.split('/').pop();
-        setFileName(fileName);
+        setActiveFilePath(fileContent.path);
+        setFileName(fileContent.path.split('/').pop());
       }
     };
 
     processContent();
   }, [fileContent]);
 
-  // Form submission handler
+  // Form submission handler - now using native form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(formRef.current);
@@ -78,27 +68,8 @@ const EditSpace = ({ fileContent, $expanded }) => {
     }
   };
 
-  // Field update handler
-  const handleFieldUpdate = useCallback((fieldId, newValue) => {
-    setFormFields(prevFields => {
-      return prevFields.map(field => {
-        if (field.id === fieldId) {
-          // For object fields, we need to preserve the entire field structure
-          if (typeof newValue === 'object' && newValue !== null) {
-            return { ...field, ...newValue };
-          }
-          // For primitive values
-          return { ...field, value: newValue };
-        }
-        return field;
-      });
-    });
-  }, []);
-
   // Dropzone event handler
   const handleDropzoneEvent = useCallback(({ type, data, position }) => {
-    console.log('Dropzone event - type:', type, 'data:', data, 'position:', position);
-
     if (!data) return;
 
     switch (type) {
@@ -106,10 +77,7 @@ const EditSpace = ({ fileContent, $expanded }) => {
         try {
           setFormFields(prevFields => {
             const fieldType = data.type;
-            console.log('Creating field of type:', fieldType);
-
             const fieldConfig = FIELD_TYPES[fieldType.toUpperCase()];
-            console.log('Field config:', fieldConfig);
 
             if (!fieldConfig) {
               console.warn(`No configuration found for field type: ${fieldType}`);
@@ -121,9 +89,9 @@ const EditSpace = ({ fileContent, $expanded }) => {
               id: `field-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
               type: fieldType,
               label: '',
+              name: `field-${Date.now()}`, // Add name attribute for form submission
               value: ''
             };
-            console.log('Created new field:', newField);
 
             const newFields = [...prevFields];
             if (typeof position.targetIndex === 'number' && position.targetIndex >= 0) {
@@ -160,13 +128,9 @@ const EditSpace = ({ fileContent, $expanded }) => {
         }
         break;
       }
-
-      default:
-        console.warn('Unhandled drop type:', type);
     }
   }, []);
 
-  // Add handleClearDropzone function
   const handleClearDropzone = useCallback((e) => {
     e.preventDefault();
     setFormFields([]);
@@ -193,7 +157,6 @@ const EditSpace = ({ fileContent, $expanded }) => {
                 <FormField
                   key={`${field.id || field.name}-${index}`}
                   field={field}
-                  onUpdate={handleFieldUpdate}
                   draggable
                   index={index}
                 />

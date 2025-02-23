@@ -41,7 +41,7 @@ export const DateField = ({ field }) => {
         </div>
       </label>
       <label className="content-wrapper">
-        <span className="hint">Date for {label || 'field'}</span>
+        <span className="hint">Date for {label}</span>
         <div>
           <input
             type="date"
