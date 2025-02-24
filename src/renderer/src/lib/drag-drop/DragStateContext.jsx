@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { setupGlobalDragListeners } from './utils';
 
 const DragStateContext = createContext();
 const DragStateDispatchContext = createContext();
@@ -39,8 +40,7 @@ function dragStateReducer(state, action) {
       };
 
     case 'CLEAR_DRAG_STATE':
-      // Only clear if we're actually dragging
-      if (!state.isDragging) return state;
+      // Always ensure ghost element is properly cleared
       return initialState;
 
     default:
@@ -48,8 +48,21 @@ function dragStateReducer(state, action) {
   }
 }
 
+/**
+ * Provider component for drag state management
+ * Sets up global event handlers and provides drag state context
+ *
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components
+ * @returns {JSX.Element} Provider component with children
+ */
 export function DragStateProvider({ children }) {
   const [state, dispatch] = useReducer(dragStateReducer, initialState);
+
+  // Set up global drag event listeners
+  useEffect(() => {
+    return setupGlobalDragListeners(dispatch);
+  }, []);
 
   return (
     <DragStateContext.Provider value={state}>
@@ -60,6 +73,10 @@ export function DragStateProvider({ children }) {
   );
 }
 
+/**
+ * Hook to access the current drag state
+ * @returns {Object} Current drag state
+ */
 export function useDragState() {
   const context = useContext(DragStateContext);
   if (context === undefined) {
@@ -68,6 +85,10 @@ export function useDragState() {
   return context;
 }
 
+/**
+ * Hook to access the drag state dispatch function
+ * @returns {Function} Dispatch function for drag state actions
+ */
 export function useDragStateDispatch() {
   const context = useContext(DragStateDispatchContext);
   if (context === undefined) {

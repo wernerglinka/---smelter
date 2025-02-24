@@ -51,3 +51,37 @@ export const recordElementPositions = (dropzone) => {
 
   return positions;
 };
+
+/**
+ * Adds global drag event handlers to ensure cleanup even when
+ * drag operations end outside of our components
+ *
+ * @param {Function} dispatch - The drag state dispatch function
+ * @returns {Function} Cleanup function to remove event listeners
+ */
+export const setupGlobalDragListeners = (dispatch) => {
+  /**
+   * Handle dragend events that occur anywhere in the document
+   * This ensures ghost elements are cleared even when dragging ends outside components
+   */
+  const handleGlobalDragEnd = () => {
+    dispatch({ type: 'CLEAR_DRAG_STATE' });
+  };
+
+  /**
+   * Handle mouseup events to catch cases where dragend might not fire
+   */
+  const handleGlobalMouseUp = () => {
+    dispatch({ type: 'CLEAR_DRAG_STATE' });
+  };
+
+  // Add global event listeners
+  document.addEventListener('dragend', handleGlobalDragEnd);
+  document.addEventListener('mouseup', handleGlobalMouseUp);
+
+  // Return a cleanup function
+  return () => {
+    document.removeEventListener('dragend', handleGlobalDragEnd);
+    document.removeEventListener('mouseup', handleGlobalMouseUp);
+  };
+};

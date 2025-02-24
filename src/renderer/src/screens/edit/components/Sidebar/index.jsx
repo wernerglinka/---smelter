@@ -10,6 +10,7 @@ import { useCreateFolder } from './hooks/useCreateFolder';
 import { HelpText } from '@components/HelpText';
 import { projectFilesHelpText } from './help/project-files.js';
 import { baseFields } from '@src/baseFields';
+import { useDragStateDispatch } from '@src/lib/drag-drop/DragStateContext';
 
 /**
  * @typedef {Object} SidebarProps
@@ -39,6 +40,9 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   const [activeFolder, setActiveFolder] = useState(null);
   // Default to markdown files unless in data folder
   const [activeFileExtension, setActiveFileExtension] = useState('.md');
+
+  // Get dispatch function from drag state context
+  const dispatch = useDragStateDispatch();
 
   /**
    * Handles file selection and propagates the selection to parent components
@@ -88,6 +92,13 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
     setActiveFileExtension(extension);
   };
 
+  /**
+   * Handles the start of a drag operation for field components
+   * Sets up drag data and applies visual indicators
+   *
+   * @param {DragEvent} e - The drag event object
+   * @param {string} fieldType - Type of field being dragged
+   */
   const handleDragStart = (e, fieldType) => {
     console.log('Drag start - field type:', fieldType);
     const data = { type: fieldType };
@@ -98,10 +109,22 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
 
     e.dataTransfer.effectAllowed = 'copy';
     e.currentTarget.classList.add('dragging');
+
+    // Signal to the app that dragging has started
+    dispatch({ type: 'UPDATE_DRAG_STATE', payload: { position: { x: e.clientX, y: e.clientY } } });
   };
 
+  /**
+   * Handles the end of a drag operation
+   * Cleans up visual indicators and ensures ghost elements are removed
+   *
+   * @param {DragEvent} e - The drag event object
+   */
   const handleDragEnd = (e) => {
     e.currentTarget.classList.remove('dragging');
+
+    // Always dispatch CLEAR_DRAG_STATE to ensure ghost elements are cleaned up
+    dispatch({ type: 'CLEAR_DRAG_STATE' });
   };
 
   return (
