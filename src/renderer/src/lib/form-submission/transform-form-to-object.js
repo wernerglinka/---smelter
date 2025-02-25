@@ -32,16 +32,6 @@ export const ValueOps = {
     const labelInput = element.querySelector('.element-label');
     const valueInput = element.querySelector('.element-value');
 
-    // Debug the inputs we found
-    console.log('Found inputs:', {
-      labelElement: labelInput ? true : false,
-      valueElement: valueInput ? true : false,
-      labelValue: labelInput?.value,
-      valueValue: valueInput?.value,
-      valueType: valueInput?.type,
-      isNumberField: element.classList.contains('is-number')
-    });
-
     const key = labelInput ? toCamelCase(labelInput.value) : '';
 
     if (!valueInput) return { key, value: '' };
@@ -51,7 +41,6 @@ export const ValueOps = {
 
     // Check if this is a number field by class
     if (element.classList.contains('is-number') || valueInput.type === 'number') {
-      console.log(`Converting number field "${key}" from "${value}" to number`);
       value = value === '' ? '' : Number(value);
     } else if (valueInput.type === 'checkbox') {
       value = valueInput.checked;
@@ -61,7 +50,6 @@ export const ValueOps = {
       value = value.trim();
     }
 
-    console.log(`Final value for "${key}":`, value, typeof value);
     return { key, value };
   }
 };

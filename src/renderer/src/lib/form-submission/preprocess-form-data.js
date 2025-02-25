@@ -18,7 +18,14 @@ import { transformFormElementsToObject } from './transform-form-to-object.js';
  * // Form structure:
  * // <form id="main-form">
  * //   <div class="js-dropzone">
- * //     <input name="title" value="Page Title">
+ * //     <div class="form-element no-drop" draggable="true">
+ * //       <label class="label-wrapper">
+ * //         <input type="text" class="element-label" value="title" />
+ * //       </label>
+ * //       <label class="content-wrapper">
+ * //         <input type="text" class="element-value" value="Page Title" />
+ * //       </label>
+ * //     </div>
  * //   </div>
  * // </form>
  *

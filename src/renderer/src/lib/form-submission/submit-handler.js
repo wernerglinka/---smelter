@@ -14,27 +14,9 @@ export const handleFormSubmission = async (form, filePath, schema = null) => {
     throw new Error('Invalid form element provided');
   }
 
-  // Log custom form elements
-  const formElements = form.querySelectorAll('.form-element');
-  console.log('Custom form elements found:', formElements.length);
-
-  // Log a sample of the first element if available
-  if (formElements.length > 0) {
-    const firstElement = formElements[0];
-    console.log('Sample element:', {
-      type: firstElement.classList.contains('is-number') ? 'number' : 'unknown',
-      label: firstElement.querySelector('.label-wrapper span')?.textContent,
-      labelInput: firstElement.querySelector('.element-label')?.value,
-      valueInput: firstElement.querySelector('.element-value')?.value,
-      html: firstElement.outerHTML.substring(0, 200) + '...'
-    });
-  }
-
   try {
     // Process form data
     const formData = preprocessFormData(form);
-
-    console.log('Processed form data:', formData);
 
     if (!formData) {
       throw new Error('No form data available');
