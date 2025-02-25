@@ -27,6 +27,12 @@ export const baseFields = [
     value: false
   },
   {
+    type: 'date',
+    name: 'date_field',
+    label: 'Date Field',
+    value: '2025-01-01'
+  },
+  {
     type: 'select',
     name: 'select_field',
     label: 'Select Field',

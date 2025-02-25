@@ -44,6 +44,7 @@ export const TextArea = ({ field }) => {
         <div>
           <textarea
             name={field.name}
+            className="element-value"
             defaultValue={field.value || ''}
             placeholder={`Enter ${label || 'long text'}`}
           />

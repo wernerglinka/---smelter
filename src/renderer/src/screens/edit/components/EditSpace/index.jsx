@@ -57,17 +57,6 @@ const EditSpace = ({ fileContent, $expanded }) => {
     processContent();
   }, [fileContent]);
 
-  // Form submission handler - now using native form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(formRef.current);
-    const result = await handleFormSubmission(formData, activeFilePath);
-
-    if (!result.success) {
-      console.error('Form submission failed:', result.error);
-    }
-  };
-
   // Dropzone event handler
   const handleDropzoneEvent = useCallback(({ type, data, position }) => {
     if (!data) return;
@@ -146,7 +135,14 @@ const EditSpace = ({ fileContent, $expanded }) => {
       </h2>
       <div id="content-container">
         {fileContent && (
-          <form ref={formRef} onSubmit={handleSubmit} className="main-form">
+          <form
+            ref={formRef}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleFormSubmission(formRef.current, activeFilePath);
+            }}
+            className="main-form"
+          >
             <Dropzone
               id="dropzone"
               type="main"

@@ -45,7 +45,9 @@ export const UrlField = ({ field }) => {
           <input
             type="url"
             name={field.name}
-            placeholder={`Enter ${label || 'URL'}`}
+            className="element-value"
+            defaultValue={field.value || ''}
+            placeholder={field.placeholder || `Enter ${label || 'URL'}`}
           />
         </div>
       </label>

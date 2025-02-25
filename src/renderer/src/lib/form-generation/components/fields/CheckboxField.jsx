@@ -44,7 +44,7 @@ export const CheckboxField = ({ field }) => {
           <input
             type="checkbox"
             role="switch"
-            className="checkbox-input"
+            className="checkbox-input element-value"
             defaultChecked={field.value || false}
           />
         </div>

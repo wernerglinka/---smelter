@@ -46,6 +46,7 @@ export const NumberField = ({ field }) => {
         <div>
           <input
             type="number"
+            className="element-value"
             defaultValue={field.value || ''}
             placeholder={`Enter ${label || 'number'}`}
           />

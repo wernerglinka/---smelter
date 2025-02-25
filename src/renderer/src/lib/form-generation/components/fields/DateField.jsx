@@ -46,6 +46,7 @@ export const DateField = ({ field }) => {
           <input
             type="date"
             name={field.id}
+            className="element-value"
             defaultValue={formattedDate}
             placeholder={`Enter ${label || 'date'}`}
           />
