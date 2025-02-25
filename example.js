@@ -1,90 +1,54 @@
-import { isSimpleList, isDateObject, isSectionsArray } from '../../utilities/type-validators.js';
-
 /**
- * Infers the field type from a value and key
- * @param {*} value - The value to analyze
- * @param {string} key - The field key
- * @returns {string} The inferred field type
+ * Initializes EasyMDE editor
+ * @returns {Object} EasyMDE instance
  */
-const inferFieldType = (value, key) => {
-  if (isSectionsArray(value, key)) return 'sections-array';
-  if (isSimpleList(value)) return 'list';
-  if (isDateObject(value)) return 'date';
-  if (Array.isArray(value)) return 'array';
+export const initializeEditor = () => {
+  const editorOverlay = createEditorOverlay();
+  const editor = new EasyMDE({
+    element: editorOverlay.querySelector('#editorWrapper'),
+    autoDownloadFontAwesome: true
+  });
 
-  const type = typeof value;
-  if (type === 'string') return value.includes('\n') ? 'textarea' : 'text';
-  if (type === 'object' && value !== null) return 'object';
-
-  return type === 'boolean' ? 'checkbox' : type === 'number' ? 'number' : 'text';
+  addEditorControls(editor, editorOverlay);
+  return editor;
 };
 
-/**
- * Creates a field definition from a key-value pair
- * @param {string} key - The field key
- * @param {*} value - The field value
- * @returns {Object} The field definition
- */
-function createField(key, value) {
-  const type = inferFieldType(value, key);
-  const baseField = {
-    label: key,
-    type,
-    value,
-    placeholder: `Add ${key}`
-  };
+const createEditorOverlay = () => {
+  const overlay = document.createElement('div');
+  overlay.id = 'editorOverlay';
 
-  // Handle sections array specially
-  if (type === 'sections-array') {
-    return {
-      ...baseField,
-      type: 'array',
-      isDropzone: true,
-      dropzoneType: 'sections',
-      value: Array.isArray(value)
-        ? value.map((section, index) => ({
-            type: 'object',
-            label: `section${index + 1}`,
-            value: Object.entries(section).map(([sKey, sValue]) => createField(sKey, sValue))
-          }))
-        : []
-    };
-  }
+  const textarea = document.createElement('textarea');
+  textarea.id = 'editorWrapper';
 
-  // Handle regular arrays
-  if (type === 'array') {
-    return {
-      ...baseField,
-      type: 'array',
-      isDropzone: true,
-      dropzoneType: 'sections',
-      value: Array.isArray(value)
-        ? value.map((arrayItem, index) => ({
-            type: 'object',
-            label: `Item ${index + 1}`,
-            value: Object.entries(arrayItem).map(([key, val]) => createField(key, val))
-          }))
-        : []
-    };
-  }
-  // Handle objects
-  else if (type === 'object') {
-    baseField.value = Object.entries(value).map(([subKey, subValue]) =>
-      createField(subKey, subValue)
-    );
-    delete baseField.placeholder;
-  }
+  overlay.appendChild(textarea);
+  document.body.appendChild(overlay);
 
-  return baseField;
-}
+  return overlay;
+};
 
-/**
- * Converts JSON to schema object
- * @param {Object} json - The JSON to convert
- * @returns {Object} The schema object
- */
-export async function convertToSchemaObject(json) {
-  return {
-    fields: Object.entries(json).map(([key, value]) => createField(key, value))
-  };
-}
+const addEditorControls = (editor, overlay) => {
+  const toolbar = document.querySelector('.editor-toolbar');
+
+  // Add inline styles toggle
+  const styleToggle = document.createElement('button');
+  styleToggle.id = 'disableMarkdownStyles';
+  styleToggle.innerHTML = 'Inline Styles';
+  styleToggle.addEventListener('click', toggleMarkdownStyles);
+  toolbar.appendChild(styleToggle);
+
+  // Add close button
+  const closeButton = document.createElement('div');
+  closeButton.id = 'closeEditor';
+  closeButton.innerHTML = ICONS.CLOSE;
+  closeButton.addEventListener('click', () => {
+    const textareaInput = window.textareaInput;
+    textareaInput.value = editor.value();
+    overlay.classList.remove('show');
+  });
+  overlay.appendChild(closeButton);
+};
+
+const toggleMarkdownStyles = (event) => {
+  event.target.classList.toggle('disabled');
+  document.querySelector('.CodeMirror').classList.toggle('disable-markdown-styles');
+};
