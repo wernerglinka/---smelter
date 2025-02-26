@@ -1,4 +1,5 @@
 export { default as AddIcon } from './AddIcon';
+export { default as CloseIcon } from './CloseIcon';
 export { default as CollapseIcon } from './CollapseIcon';
 export { default as CollapsedIcon } from './CollapsedIcon';
 export { default as DeleteIcon } from './DeleteIcon';
