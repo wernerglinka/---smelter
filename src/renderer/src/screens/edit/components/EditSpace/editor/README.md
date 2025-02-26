@@ -91,7 +91,7 @@ When the editor is opened, it loads content from the textarea. When closed, it u
 // When closing the editor
 if (window.textareaInput) {
   window.textareaInput.value = editor.value();
-  
+
   // Trigger input event to update form state
   const event = new Event('input', { bubbles: true });
   window.textareaInput.dispatchEvent(event);
@@ -125,11 +125,11 @@ function MyComponent() {
   useEffect(() => {
     // Set up the editor
     const cleanup = setupEditor();
-    
+
     // Clean up when component unmounts
     return cleanup;
   }, []);
-  
+
   return (
     <div>
       <textarea className="markdown-editor" defaultValue="# Hello World" />
@@ -181,4 +181,3 @@ The editor integrates with the application's form system by:
 2. **Template System**: Quick insertion of common content patterns
 3. **Image Upload**: Direct upload and insertion of images
 4. **Autosave**: Periodic saving of content to prevent data loss
-5. **Collaborative Editing**: Real-time collaboration features
