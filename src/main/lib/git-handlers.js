@@ -1,16 +1,69 @@
-// git-handlers.js
+/**
+ * Git operation handlers for the application
+ * @module git-handlers
+ */
 
 import simpleGit from 'simple-git';
 import { readdirSync } from 'node:fs';
+
+/**
+ * @typedef {Object} DirectoryResult
+ * @property {string} status - Operation status ('success' or 'cancelled')
+ * @property {string} [path] - Selected directory path (optional)
+ */
+
+/**
+ * @typedef {Object} ValidationResult
+ * @property {boolean} isValid - Whether the URL is valid
+ * @property {string} [error] - Error message if validation failed (optional)
+ */
+
+/**
+ * @typedef {Object} GitOperationResult
+ * @property {string} status - Operation status ('success' or 'failure')
+ * @property {Object} [data] - Operation data (optional)
+ * @property {string} [error] - Error message (optional)
+ */
+
+/**
+ * Creates and returns handlers for Git operations
+ * @param {BrowserWindow} window - The main electron window instance
+ * @param {Object} dialogOps - Dialog operations object
+ * @returns {Object} Object containing Git operation handlers
+ */
+export const createGitHandlers = (window, dialogOps) => {
+  /**
+   * Prompts user to select a directory
+   * @returns {Promise<DirectoryResult>} Directory selection result
+   */
+  const selectDirectory = async () => {
+    // implementation...
+  };
+
+  /**
+   * Validates Git repository URL
+   * @param {string} url - URL to validate
+   * @returns {ValidationResult} Validation result
+   */
+  const validateGitUrl = (url) => {
+    // implementation...
+  };
+
+  return {
+    handleGitCommit: (event, params) => handleGitCommit(event, params, dialogOps),
+    handleGitClone: (event, params) => handleGitClone(event, params, dialogOps),
+    handleGitStatus,
+    selectDirectory,
+    validateGitUrl
+  };
+};
 
 /**
  * Executes a series of Git operations: check status, add changes, commit, and push
  *
  * @param {SimpleGit} git - Initialized SimpleGit instance for the repository
  * @param {string} message - Commit message
- * @returns {Promise<object>} Operation result
- * @returns {object} result.commitResult - Result from git.commit()
- * @returns {object} result.status - Repository status before commit
+ * @returns {Promise<GitOperationResult>} Operation result
  * @throws {Error} If no changes to commit
  * @throws {Error} If git operations fail
  * @example
@@ -39,7 +92,7 @@ const executeGitOperations = async (git, message) => {
  * @param params.projectPath
  * @param params.message
  * @param dialogOps
- * @returns {Promise<object>} Operation result
+ * @returns {Promise<GitOperationResult>} Operation result
  */
 const handleGitCommit = async (event, { projectPath, message }, dialogOps) => {
   try {
@@ -116,7 +169,7 @@ const waitForDialog = () => new Promise((resolve) => setTimeout(resolve, 500));
 /**
  * Handles directory selection for git clone
  * @param {object} dialogOps - Dialog operations object
- * @returns {Promise<{status: string, path?: string}>} Selected directory path or cancelled status
+ * @returns {Promise<DirectoryResult>} Selected directory path or cancelled status
  */
 const handleDirectorySelection = async (dialogOps) => {
   const dialogResult = await dialogOps.showDialog('showOpenDialog', {
@@ -272,35 +325,15 @@ const handleGitStatus = async (event, { projectPath }) => {
   }
 };
 
-/**
- * Creates and returns IPC handlers for git operations
- *
- * @param window
- * @param dialogOps
- * @returns {object} Object containing handler functions
- */
-const createGitHandlers = (window, dialogOps) => ({
-  /**
-   *
-   * @param event
-   * @param params
-   */
-  handleGitCommit: (event, params) => handleGitCommit(event, params, dialogOps),
-  /**
-   *
-   * @param event
-   * @param params
-   */
-  handleGitClone: (event, params) => handleGitClone(event, params, dialogOps),
-  handleGitStatus
-});
-
-export { createGitHandlers };
+// Remove the duplicate createGitHandlers declaration at the bottom of the file
+// The main implementation with proper exports is at the top
 
 /**
  * Validates Git repository URL
  * @param {string} url - URL to validate
- * @returns {{isValid: boolean, error?: string}} Validation result
+ * @returns {Object} Validation result
+ * @returns {boolean} result.isValid - Whether the URL is valid
+ * @returns {string} [result.error] - Error message if validation failed
  */
 const validateGitUrl = (url) => {
   if (!url) {

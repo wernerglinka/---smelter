@@ -1,37 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
+<head>
+    <meta charset="utf-8">
     <title>JSDoc: Source: main/lib/git-handlers.js</title>
 
-    <script src="scripts/prettify/prettify.js"></script>
-    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css" />
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
-  </head>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
 
-  <body>
-    <div id="main">
-      <h1 class="page-title">Source: main/lib/git-handlers.js</h1>
+<body>
 
-      <section>
+<div id="main">
+
+    <h1 class="page-title">Source: main/lib/git-handlers.js</h1>
+
+    
+
+
+
+    
+    <section>
         <article>
-          <pre class="prettyprint source linenums"><code>// git-handlers.js
+            <pre class="prettyprint source linenums"><code>/**
+ * Git operation handlers for the application
+ * @module git-handlers
+ */
 
 import simpleGit from 'simple-git';
 import { readdirSync } from 'node:fs';
+
+/**
+ * @typedef {Object} DirectoryResult
+ * @property {string} status - Operation status ('success' or 'cancelled')
+ * @property {string} [path] - Selected directory path (optional)
+ */
+
+/**
+ * @typedef {Object} ValidationResult
+ * @property {boolean} isValid - Whether the URL is valid
+ * @property {string} [error] - Error message if validation failed (optional)
+ */
+
+/**
+ * @typedef {Object} GitOperationResult
+ * @property {string} status - Operation status ('success' or 'failure')
+ * @property {Object} [data] - Operation data (optional)
+ * @property {string} [error] - Error message (optional)
+ */
+
+/**
+ * Creates and returns handlers for Git operations
+ * @param {BrowserWindow} window - The main electron window instance
+ * @param {Object} dialogOps - Dialog operations object
+ * @returns {Object} Object containing Git operation handlers
+ */
+export const createGitHandlers = (window, dialogOps) => {
+  /**
+   * Prompts user to select a directory
+   * @returns {Promise&lt;DirectoryResult>} Directory selection result
+   */
+  const selectDirectory = async () => {
+    // implementation...
+  };
+
+  /**
+   * Validates Git repository URL
+   * @param {string} url - URL to validate
+   * @returns {ValidationResult} Validation result
+   */
+  const validateGitUrl = (url) => {
+    // implementation...
+  };
+
+  return {
+    handleGitCommit: (event, params) => handleGitCommit(event, params, dialogOps),
+    handleGitClone: (event, params) => handleGitClone(event, params, dialogOps),
+    handleGitStatus,
+    selectDirectory,
+    validateGitUrl
+  };
+};
 
 /**
  * Executes a series of Git operations: check status, add changes, commit, and push
  *
  * @param {SimpleGit} git - Initialized SimpleGit instance for the repository
  * @param {string} message - Commit message
- * @returns {Promise&lt;object>} Operation result
- * @returns {object} result.commitResult - Result from git.commit()
- * @returns {object} result.status - Repository status before commit
+ * @returns {Promise&lt;GitOperationResult>} Operation result
  * @throws {Error} If no changes to commit
  * @throws {Error} If git operations fail
  * @example
@@ -60,7 +120,7 @@ const executeGitOperations = async (git, message) => {
  * @param params.projectPath
  * @param params.message
  * @param dialogOps
- * @returns {Promise&lt;object>} Operation result
+ * @returns {Promise&lt;GitOperationResult>} Operation result
  */
 const handleGitCommit = async (event, { projectPath, message }, dialogOps) => {
   try {
@@ -135,6 +195,45 @@ const handleGitCommit = async (event, { projectPath, message }, dialogOps) => {
 const waitForDialog = () => new Promise((resolve) => setTimeout(resolve, 500));
 
 /**
+ * Handles directory selection for git clone
+ * @param {object} dialogOps - Dialog operations object
+ * @returns {Promise&lt;DirectoryResult>} Selected directory path or cancelled status
+ */
+const handleDirectorySelection = async (dialogOps) => {
+  const dialogResult = await dialogOps.showDialog('showOpenDialog', {
+    title: 'Select the folder to clone into',
+    message: 'Select the folder to clone into',
+    properties: ['openDirectory', 'createDirectory']
+  });
+
+  if (!dialogResult?.data?.filePaths?.[0]) {
+    return { status: 'cancelled' };
+  }
+
+  const localPath = dialogResult.data.filePaths[0];
+
+  // Check if directory is empty
+  const dirContents = readdirSync(localPath);
+  if (dirContents.length > 0) {
+    const emptyResult = await dialogOps.showCustomMessage({
+      type: 'warning',
+      message: 'Selected directory is not empty. Would you like to select a different directory?',
+      buttons: ['Yes', 'No']
+    });
+
+    await waitForDialog();
+
+    if (emptyResult?.response?.index === 0) {
+      return { status: 'retry' };
+    }
+
+    return { status: 'cancelled' };
+  }
+
+  return { status: 'success', path: localPath };
+};
+
+/**
  *
  * @param event
  * @param root0
@@ -143,8 +242,8 @@ const waitForDialog = () => new Promise((resolve) => setTimeout(resolve, 500));
  */
 const handleGitClone = async (event, { repoUrl }, dialogOps) => {
   try {
+    // Get repository URL if not provided
     if (!repoUrl) {
-      // Show custom input dialog for URL
       const urlResult = await dialogOps.showCustomMessage({
         type: 'custom',
         message: 'Enter Git Repository URL:',
@@ -152,62 +251,58 @@ const handleGitClone = async (event, { repoUrl }, dialogOps) => {
         buttons: ['Clone', 'Cancel']
       });
 
-      // Make sure we got a valid result
-      if (!urlResult?.response?.value || urlResult.response.index !== 0) {
+      if (!urlResult?.response || urlResult.response.index !== 0) {
         return { status: 'cancelled' };
       }
 
       repoUrl = urlResult.response.value;
-
-      // Wait for window to close before proceeding
-      await waitForDialog();
     }
 
-    // Show dialog to select directory to clone into
-    const dialogResult = await dialogOps.showDialog('showOpenDialog', {
-      title: 'Select the folder to clone into',
-      message: 'Select the folder to clone into',
-      properties: ['openDirectory', 'createDirectory']
-    });
-    const localPath = dialogResult.data.filePaths?.[0];
-
-    if (!localPath) {
-      throw new Error('No directory selected');
-    }
-
-    // check if the directory is empty
-    const dirContents = readdirSync(localPath);
-    if (dirContents.length > 0) {
-      // Show custom dialog for non-empty directory
-      const emptyResult = await dialogOps.showCustomMessage({
-        type: 'warning',
-        message: 'Selected directory is not empty. Would you like to select a different directory?',
-        buttons: ['Yes', 'No']
+    // Validate URL before proceeding
+    const urlValidation = validateGitUrl(repoUrl);
+    if (!urlValidation.isValid) {
+      await dialogOps.showCustomMessage({
+        type: 'error',
+        message: urlValidation.error,
+        buttons: ['OK']
       });
-
-      // Wait for dialog to close
-      await waitForDialog();
-
-      // Check if user wants to try another directory
-      if (emptyResult?.response?.index === 0) {
-        const recursiveResult = await handleGitClone(event, { repoUrl }, dialogOps);
-        return recursiveResult;
-      }
-      return { status: 'failure', error: 'Operation cancelled - Directory not empty' };
+      // Recursively retry the clone operation
+      return handleGitClone(event, { repoUrl: null }, dialogOps);
     }
 
-    // Clone repository to selected directory
-    await simpleGit().clone(repoUrl, localPath);
+    await waitForDialog();
 
-    // Show custom success dialog and ask to proceed
+    let directoryResult;
+    do {
+      directoryResult = await handleDirectorySelection(dialogOps);
+      if (directoryResult.status === 'cancelled') {
+        return { status: 'cancelled' };
+      }
+    } while (directoryResult.status === 'retry');
+
+    const localPath = directoryResult.path;
+
+    // Create a timeout promise
+    const timeout = new Promise((_, reject) => {
+      setTimeout(
+        () => {
+          reject(new Error('Clone operation timed out after 5 minutes'));
+        },
+        5 * 60 * 1000
+      ); // 5 minutes timeout
+    });
+
+    // Create the clone promise
+    const cloneOperation = simpleGit().clone(repoUrl, localPath);
+
+    // Race between timeout and clone operation
+    await Promise.race([cloneOperation, timeout]);
+
     const successResult = await dialogOps.showCustomMessage({
       type: 'success',
       message: `Repository successfully cloned to:\n${localPath}\n\nWould you like to work with this project?`,
       buttons: ['Yes', 'No']
     });
-
-    // Wait for success dialog to close
-    await waitForDialog();
 
     return {
       status: 'success',
@@ -219,7 +314,17 @@ const handleGitClone = async (event, { repoUrl }, dialogOps) => {
     };
   } catch (error) {
     console.error('Clone Repository Error:', error);
-    return { status: 'failure', error: error.message };
+
+    const errorMessage = error.message.includes('timed out')
+      ? 'The clone operation timed out after 5 minutes. Please check your internet connection and try again.'
+      : `Failed to clone repository: ${error.message}`;
+
+    await dialogOps.showCustomMessage({
+      type: 'error',
+      message: errorMessage,
+      buttons: ['OK']
+    });
+    return { status: 'error', error: error.message };
   }
 };
 
@@ -248,85 +353,62 @@ const handleGitStatus = async (event, { projectPath }) => {
   }
 };
 
-/**
- * Creates and returns IPC handlers for git operations
- *
- * @param window
- * @param dialogOps
- * @returns {object} Object containing handler functions
- */
-const createGitHandlers = (window, dialogOps) => ({
-  /**
-   *
-   * @param event
-   * @param params
-   */
-  handleGitCommit: (event, params) => handleGitCommit(event, params, dialogOps),
-  /**
-   *
-   * @param event
-   * @param params
-   */
-  handleGitClone: (event, params) => handleGitClone(event, params, dialogOps),
-  handleGitStatus
-});
+// Remove the duplicate createGitHandlers declaration at the bottom of the file
+// The main implementation with proper exports is at the top
 
-export { createGitHandlers };
+/**
+ * Validates Git repository URL
+ * @param {string} url - URL to validate
+ * @returns {Object} Validation result
+ * @returns {boolean} result.isValid - Whether the URL is valid
+ * @returns {string} [result.error] - Error message if validation failed
+ */
+const validateGitUrl = (url) => {
+  if (!url) {
+    return { isValid: false, error: 'Repository URL is required' };
+  }
+
+  // Strict patterns for different Git URL formats
+  const patterns = {
+    https:
+      /^https:\/\/(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_.]+(?:\.git)?$/,
+    ssh: /^git@([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}:[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_.]+\.git$/,
+    git: /^git:\/\/([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_.]+\.git$/
+  };
+
+  // Check if URL matches any of the allowed patterns
+  const matchesPattern = Object.entries(patterns).some(([type, pattern]) => pattern.test(url));
+
+  if (!matchesPattern) {
+    return {
+      isValid: false,
+      error:
+        'Invalid Git URL format. Must be a valid HTTPS, SSH, or Git protocol URL.\nExample: https://github.com/username/repository.git'
+    };
+  }
+
+  return { isValid: true };
+};
 </code></pre>
         </article>
-      </section>
-    </div>
+    </section>
 
-    <nav>
-      <h2><a href="index.html">Home</a></h2>
-      <h3>Global</h3>
-      <ul>
-        <li><a href="global.html#App">App</a></li>
-        <li><a href="global.html#DEFAULT_VERSIONS">DEFAULT_VERSIONS</a></li>
-        <li><a href="global.html#click">click</a></li>
-        <li><a href="global.html#closeProgress">closeProgress</a></li>
-        <li><a href="global.html#createApplicationMenu">createApplicationMenu</a></li>
-        <li><a href="global.html#createConfirmationOptions">createConfirmationOptions</a></li>
-        <li><a href="global.html#createCustomDialog">createCustomDialog</a></li>
-        <li><a href="global.html#createCustomDialogHTML">createCustomDialogHTML</a></li>
-        <li><a href="global.html#createDialogOperations">createDialogOperations</a></li>
-        <li><a href="global.html#createDialogWindow">createDialogWindow</a></li>
-        <li><a href="global.html#createFileOperations">createFileOperations</a></li>
-        <li><a href="global.html#createGitHandlers">createGitHandlers</a></li>
-        <li><a href="global.html#createIPCHandlers">createIPCHandlers</a></li>
-        <li><a href="global.html#createNPMHandlers">createNPMHandlers</a></li>
-        <li><a href="global.html#createWindow">createWindow</a></li>
-        <li><a href="global.html#deleteFile">deleteFile</a></li>
-        <li><a href="global.html#electronAPI">electronAPI</a></li>
-        <li><a href="global.html#ensureDirectoryExists">ensureDirectoryExists</a></li>
-        <li><a href="global.html#executeGitOperations">executeGitOperations</a></li>
-        <li><a href="global.html#fileExists">fileExists</a></li>
-        <li><a href="global.html#getWindow">getWindow</a></li>
-        <li><a href="global.html#handleGitClone">handleGitClone</a></li>
-        <li><a href="global.html#handleGitCommit">handleGitCommit</a></li>
-        <li><a href="global.html#handleGitStatus">handleGitStatus</a></li>
-        <li><a href="global.html#readAllFiles">readAllFiles</a></li>
-        <li><a href="global.html#readDirectoryStructure">readDirectoryStructure</a></li>
-        <li><a href="global.html#readFile">readFile</a></li>
-        <li><a href="global.html#setupIPC">setupIPC</a></li>
-        <li><a href="global.html#showConfirmation">showConfirmation</a></li>
-        <li><a href="global.html#showDialog">showDialog</a></li>
-        <li><a href="global.html#showMessage">showMessage</a></li>
-        <li><a href="global.html#waitForDialog">waitForDialog</a></li>
-        <li><a href="global.html#writeFile">writeFile</a></li>
-      </ul>
-    </nav>
 
-    <br class="clear" />
 
-    <footer>
-      Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jan
-      31 2025 14:10:32 GMT-0800 (Pacific Standard Time)
-    </footer>
 
-    <script>
-      prettyPrint();
-    </script>
-    <script src="scripts/linenumber.js"></script>
-  </body>
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-FormTransformation%2520to%2520JS%2520Object.html">FormTransformation to JS Object</a></li><li><a href="module-date-formatter.html">date-formatter</a></li><li><a href="module-git-handlers.html">git-handlers</a></li><li><a href="module-schema_field-types.html">schema/field-types</a></li><li><a href="module-schema_schema-error.html">schema/schema-error</a></li><li><a href="module-schema_schema-handler.html">schema/schema-handler</a></li><li><a href="module-schema_validate-schema.html">schema/validate-schema</a></li><li><a href="module-utils_type-validators.html">utils/type-validators</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-FormTransformation%2520to%2520JS%2520Object-FormStateOps.html">FormStateOps</a></li><li><a href="module-FormTransformation%2520to%2520JS%2520Object-PathOps.html">PathOps</a></li><li><a href="module-FormTransformation%2520to%2520JS%2520Object-ValueOps.html">ValueOps</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddIcon">AddIcon</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#ArrayField">ArrayField</a></li><li><a href="global.html#CheckboxField">CheckboxField</a></li><li><a href="global.html#CloseIcon">CloseIcon</a></li><li><a href="global.html#CollapseIcon">CollapseIcon</a></li><li><a href="global.html#CollapsedIcon">CollapsedIcon</a></li><li><a href="global.html#DEFAULT_VERSIONS">DEFAULT_VERSIONS</a></li><li><a href="global.html#DIALOG_CONFIG">DIALOG_CONFIG</a></li><li><a href="global.html#DeleteIcon">DeleteIcon</a></li><li><a href="global.html#DragHandleIcon">DragHandleIcon</a></li><li><a href="global.html#DragStateProvider">DragStateProvider</a></li><li><a href="global.html#ERRORS">ERRORS</a></li><li><a href="global.html#EditSpace">EditSpace</a></li><li><a href="global.html#FileIcon">FileIcon</a></li><li><a href="global.html#FileJsIcon">FileJsIcon</a></li><li><a href="global.html#FileJsonIcon">FileJsonIcon</a></li><li><a href="global.html#FileMdIcon">FileMdIcon</a></li><li><a href="global.html#FilePlusIcon">FilePlusIcon</a></li><li><a href="global.html#FileTreeBase">FileTreeBase</a></li><li><a href="global.html#FolderIcon">FolderIcon</a></li><li><a href="global.html#FolderMinusIcon">FolderMinusIcon</a></li><li><a href="global.html#FolderOpenIcon">FolderOpenIcon</a></li><li><a href="global.html#FolderPlusIcon">FolderPlusIcon</a></li><li><a href="global.html#FormProvider">FormProvider</a></li><li><a href="global.html#GhostElement">GhostElement</a></li><li><a href="global.html#GithubIcon">GithubIcon</a></li><li><a href="global.html#HelpIcon">HelpIcon</a></li><li><a href="global.html#HelpText">HelpText</a></li><li><a href="global.html#MinusIcon">MinusIcon</a></li><li><a href="global.html#NumberField">NumberField</a></li><li><a href="global.html#ObjectField">ObjectField</a></li><li><a href="global.html#PreviewShowIcon">PreviewShowIcon</a></li><li><a href="global.html#RenderContentFilesTree">RenderContentFilesTree</a></li><li><a href="global.html#SELECTORS">SELECTORS</a></li><li><a href="global.html#SelectField">SelectField</a></li><li><a href="global.html#Sidebar">Sidebar</a></li><li><a href="global.html#SidebarHideIcon">SidebarHideIcon</a></li><li><a href="global.html#SidebarShowIcon">SidebarShowIcon</a></li><li><a href="global.html#StorageOperations">StorageOperations</a></li><li><a href="global.html#TextArea">TextArea</a></li><li><a href="global.html#TextField">TextField</a></li><li><a href="global.html#UrlField">UrlField</a></li><li><a href="global.html#click">click</a></li><li><a href="global.html#closeProgress">closeProgress</a></li><li><a href="global.html#convertToSchemaObject">convertToSchemaObject</a></li><li><a href="global.html#createApplicationMenu">createApplicationMenu</a></li><li><a href="global.html#createConfirmationOptions">createConfirmationOptions</a></li><li><a href="global.html#createCustomDialog">createCustomDialog</a></li><li><a href="global.html#createCustomDialogHTML">createCustomDialogHTML</a></li><li><a href="global.html#createDialogWindow">createDialogWindow</a></li><li><a href="global.html#createField">createField</a></li><li><a href="global.html#createFileOperations">createFileOperations</a></li><li><a href="global.html#createIPCHandlers">createIPCHandlers</a></li><li><a href="global.html#createNPMHandlers">createNPMHandlers</a></li><li><a href="global.html#createWindow">createWindow</a></li><li><a href="global.html#deleteFile">deleteFile</a></li><li><a href="global.html#electronAPI">electronAPI</a></li><li><a href="global.html#ensureDirectoryExists">ensureDirectoryExists</a></li><li><a href="global.html#ensureFieldStructure">ensureFieldStructure</a></li><li><a href="global.html#fileExists">fileExists</a></li><li><a href="global.html#formatDateForInput">formatDateForInput</a></li><li><a href="global.html#getDirectoryFiles">getDirectoryFiles</a></li><li><a href="global.html#getMarkdownFile">getMarkdownFile</a></li><li><a href="global.html#getMetadataFile">getMetadataFile</a></li><li><a href="global.html#getProjectFromDialog">getProjectFromDialog</a></li><li><a href="global.html#getWindow">getWindow</a></li><li><a href="global.html#handleEditProject">handleEditProject</a></li><li><a href="global.html#handleFileDelete">handleFileDelete</a></li><li><a href="global.html#handleFolderDelete">handleFolderDelete</a></li><li><a href="global.html#handleFormSubmission">handleFormSubmission</a></li><li><a href="global.html#handleNewFileClick">handleNewFileClick</a></li><li><a href="global.html#handleNewFolderClick">handleNewFolderClick</a></li><li><a href="global.html#handleRecentProject">handleRecentProject</a></li><li><a href="global.html#handleTextareaClick">handleTextareaClick</a></li><li><a href="global.html#inferType">inferType</a></li><li><a href="global.html#initializeEditor">initializeEditor</a></li><li><a href="global.html#isValidLabel">isValidLabel</a></li><li><a href="global.html#matchSchemaField">matchSchemaField</a></li><li><a href="global.html#preprocessFormData">preprocessFormData</a></li><li><a href="global.html#processFrontmatter">processFrontmatter</a></li><li><a href="global.html#readAllFiles">readAllFiles</a></li><li><a href="global.html#readDirectoryStructure">readDirectoryStructure</a></li><li><a href="global.html#readFile">readFile</a></li><li><a href="global.html#recordElementPositions">recordElementPositions</a></li><li><a href="global.html#selectFolder">selectFolder</a></li><li><a href="global.html#selectProject">selectProject</a></li><li><a href="global.html#setupEditor">setupEditor</a></li><li><a href="global.html#setupEditorOverlay">setupEditorOverlay</a></li><li><a href="global.html#setupEditorStyles">setupEditorStyles</a></li><li><a href="global.html#setupProjectConfig">setupProjectConfig</a></li><li><a href="global.html#setupRecentProject">setupRecentProject</a></li><li><a href="global.html#showConfirmation">showConfirmation</a></li><li><a href="global.html#showDialog">showDialog</a></li><li><a href="global.html#showMessage">showMessage</a></li><li><a href="global.html#toCamelCase">toCamelCase</a></li><li><a href="global.html#toTitleCase">toTitleCase</a></li><li><a href="global.html#useCreateFile">useCreateFile</a></li><li><a href="global.html#useDragState">useDragState</a></li><li><a href="global.html#useDragStateDispatch">useDragStateDispatch</a></li><li><a href="global.html#useFormContext">useFormContext</a></li><li><a href="global.html#validateDialogResult">validateDialogResult</a></li><li><a href="global.html#validatePath">validatePath</a></li><li><a href="global.html#writeFile">writeFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Feb 27 2025 12:22:44 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
 </html>

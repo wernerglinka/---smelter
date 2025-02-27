@@ -16,9 +16,9 @@ import Templates from '@components/Templates';
 /**
  * @typedef {Object} SidebarProps
  * @property {string} path - Root path of the project
- * @property {string} [className=''] - Additional CSS classes to apply
- * @property {(filepath: string) => void} onFileSelect - Callback when a file is selected
- * @property {(filepath: string) => void} onFileDelete - Callback when a file is deleted
+ * @property {string} [className] - Additional CSS classes to apply
+ * @property {Function} onFileSelect - Callback when a file is selected
+ * @property {Function} onFileDelete - Callback when a file is deleted
  */
 
 /**
@@ -26,10 +26,10 @@ import Templates from '@components/Templates';
  * It contains three main panes:
  * 1. File Selection: Shows project structure and allows file/folder operations
  * 2. Add Field: Provides draggable field components for form building
- * 3. Add Template: Allows adding pre-configured templates (not implemented)
+ * 3. Add Template: Allows adding pre-configured templates
  *
  * @param {SidebarProps} props - Component properties
- * @returns {JSX.Element} Rendered sidebar component
+ * @returns {React.ReactElement} Rendered sidebar component
  */
 const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   // Track active pane and file selection state
