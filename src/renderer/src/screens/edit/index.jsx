@@ -67,8 +67,6 @@ export default function EditPage() {
   return (
     <DragStateProvider>
       <main className="edit-container">
-        <div className="titlebar" />
-
         <h1 className="page-title">
           {projectName}
           <Link className="btn" to="/">

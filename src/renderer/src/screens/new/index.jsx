@@ -100,7 +100,6 @@ export default function NewProject() {
 
   return (
     <main className="new-project">
-      <div className="titlebar" />
       <h1>Smelter</h1>
       <p>Define a New Project</p>
 

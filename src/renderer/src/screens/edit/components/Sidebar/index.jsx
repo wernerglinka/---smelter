@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, memo, useEffect } from 'react';
 import './styles.css';
 import { RenderContentFilesTree } from './ContentFilesTree';
 import { RenderDataFilesTree } from './DataFilesTree';
@@ -12,6 +12,7 @@ import { projectFilesHelpText } from './help/project-files.js';
 import { baseFields } from '@src/baseFields';
 import { useDragStateDispatch } from '@src/lib/drag-drop/DragStateContext';
 import Templates from '@components/Templates';
+import { hasProjectTemplates } from '../../../../utils/template-utils';
 
 /**
  * @typedef {Object} SidebarProps
@@ -36,6 +37,17 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   const [activePane, setActivePane] = useState('select-file');
   const [fileSelected, setFileSelected] = useState(null);
   const [openFolders, setOpenFolders] = useState(() => new Set());
+  const [showTemplateTab, setShowTemplateTab] = useState(false);
+
+  useEffect(() => {
+    const checkTemplates = async () => {
+      const hasTemplates = await hasProjectTemplates();
+      console.log('Template check result:', hasTemplates); // Debug log
+      setShowTemplateTab(hasTemplates);
+    };
+
+    checkTemplates();
+  }, []);
 
   // Track active folder for new file/folder creation
   const [activeFolder, setActiveFolder] = useState(null);
@@ -152,16 +164,18 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
               Add Field
             </button>
           </li>
-          {/* Add Template Tab - Enabled only when a file is selected */}
-          <li className="select-file">
-            <button
-              className={`btn ${activePane === 'add-template' ? 'active' : ''}`}
-              onClick={() => handleTabClick('add-template')}
-              disabled={!fileSelected}
-            >
-              Add Template
-            </button>
-          </li>
+          {/* Add Template Tab - Only shown if templates exist */}
+          {showTemplateTab && (
+            <li className="select-file">
+              <button
+                className={`btn ${activePane === 'add-template' ? 'active' : ''}`}
+                onClick={() => handleTabClick('add-template')}
+                disabled={!fileSelected}
+              >
+                Add Template
+              </button>
+            </li>
+          )}
         </ul>
       </div>
 

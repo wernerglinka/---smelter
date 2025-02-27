@@ -140,7 +140,6 @@ const App = () => {
 
   return (
     <main className="welcome">
-      <div className="titlebar" />
       <h1>Smelter</h1>
       <p>Content Management for Metalsmith refined</p>
 

@@ -8,9 +8,22 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
     />
+    <style>
+      .titlebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        height: 40px;
+        width: 100%;
+        -webkit-user-select: none;
+        -webkit-app-region: drag;
+      }
+    </style>
   </head>
 
   <body>
+    <div class="titlebar"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
