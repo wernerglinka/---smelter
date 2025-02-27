@@ -1,14 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { useDragState, useDragStateDispatch } from '@lib/drag-drop/DragStateContext';
 
-const DEBUG = true;
-
-function logDebug(...args) {
-  if (DEBUG) {
-    console.log('[Dropzone]', ...args);
-  }
-}
-
 export const Dropzone = ({ children, className = '', onDrop, type = 'main' }) => {
   const dropzoneRef = useRef(null);
   const dragState = useDragState();
@@ -28,7 +20,6 @@ export const Dropzone = ({ children, className = '', onDrop, type = 'main' }) =>
         Math.abs(currentPos.x - lastPosition.current.x) > 10 ||
         Math.abs(currentPos.y - lastPosition.current.y) > 10) {
       lastPosition.current = currentPos;
-      console.log('[Dropzone] Position changed:', currentPos);
     }
 
     // Calculate insertion point
@@ -103,15 +94,12 @@ export const Dropzone = ({ children, className = '', onDrop, type = 'main' }) =>
 
     try {
       const origin = e.dataTransfer.getData('origin');
-      console.log('Drop - origin:', origin);
 
       let data;
       try {
         data = JSON.parse(e.dataTransfer.getData('application/json'));
-        console.log('Drop - parsed data:', data);
       } catch (err) {
         data = e.dataTransfer.getData('text/plain');
-        console.log('Drop - text data:', data);
       }
 
       if (onDrop && data) {

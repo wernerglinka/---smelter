@@ -1,62 +1,60 @@
 import React, { memo } from 'react';
+import { templates } from '@src/templates';
 import './styles.css';
 
-const templateCategories = {
-  blocks: [
-    { id: 'text-block', name: 'Text Block', type: 'block' },
-    { id: 'image-block', name: 'Image Block', type: 'block' },
-    { id: 'code-block', name: 'Code Block', type: 'block' }
-  ],
-  sections: [
-    { id: 'content-section', name: 'Content Section', type: 'section' },
-    { id: 'hero-section', name: 'Hero Section', type: 'section' }
-  ],
-  pages: [
-    { id: 'article-page', name: 'Article Page', type: 'page' },
-    { id: 'landing-page', name: 'Landing Page', type: 'page' }
-  ]
-};
-
-const Templates = memo(({ category = 'blocks' }) => {
-  const handleDragStart = (e, template) => {
-    e.currentTarget.classList.add('dragging');
-
-    const dragData = {
-      type: 'template',
-      template: template
-    };
-
-    e.dataTransfer.setData('origin', 'templates');
-    e.dataTransfer.setData('application/json', JSON.stringify(dragData));
-    e.dataTransfer.effectAllowed = 'copy';
-
-    // Optional: Set drag image
-    const dragImage = e.currentTarget.cloneNode(true);
-    dragImage.classList.add('drag-image');
-    document.body.appendChild(dragImage);
-    e.dataTransfer.setDragImage(dragImage, 0, 0);
-    setTimeout(() => document.body.removeChild(dragImage), 0);
-  };
-
-  const handleDragEnd = (e) => {
-    e.currentTarget.classList.remove('dragging');
-  };
+const Templates = memo(() => {
+  // Group templates by type
+  const groupedTemplates = Object.entries(templates).reduce((acc, [key, value]) => {
+    if (key.startsWith('page')) {
+      acc.pages.push({ id: key, url: `/pages/${key}.js`, label: key.replace('page', '').toUpperCase() });
+    } else if (key.endsWith('Section')) {
+      acc.sections.push({ id: key, url: `/sections/${key}.js`, label: key.replace('Section', '').toUpperCase() });
+    } else {
+      acc.blocks.push({ id: key, url: `/blocks/${key}.js`, label: key.toUpperCase() });
+    }
+    return acc;
+  }, { pages: [], sections: [], blocks: [] });
 
   return (
-    <div className="templates-container">
-      <ul className="templates-list">
-        {templateCategories[category].map(template => (
-          <li
-            key={template.id}
-            className="template-item"
-            draggable="true"
-            onDragStart={(e) => handleDragStart(e, template)}
-            onDragEnd={handleDragEnd}
-          >
-            {template.name}
-          </li>
-        ))}
-      </ul>
+    <div className="templates-wrapper">
+      <h3 className="section-header">Page Templates</h3>
+      {groupedTemplates.pages.map((template, index) => (
+        <div
+          key={template.id}
+          id={`template-page-${index + 1}`}
+          className="template-selection draggable"
+          draggable="true"
+          data-url={template.url}
+        >
+          {template.label}
+        </div>
+      ))}
+
+      <h3 className="section-header">Section Templates</h3>
+      {groupedTemplates.sections.map((template, index) => (
+        <div
+          key={template.id}
+          id={`template-section-${index}`}
+          className="template-selection draggable"
+          draggable="true"
+          data-url={template.url}
+        >
+          {template.label}
+        </div>
+      ))}
+
+      <h3 className="section-header">Block Templates</h3>
+      {groupedTemplates.blocks.map((template, index) => (
+        <div
+          key={template.id}
+          id={`template-block-${index}`}
+          className="template-selection draggable"
+          draggable="true"
+          data-url={template.url}
+        >
+          {template.label}
+        </div>
+      ))}
     </div>
   );
 });

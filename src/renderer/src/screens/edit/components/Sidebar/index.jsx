@@ -11,6 +11,7 @@ import { HelpText } from '@components/HelpText';
 import { projectFilesHelpText } from './help/project-files.js';
 import { baseFields } from '@src/baseFields';
 import { useDragStateDispatch } from '@src/lib/drag-drop/DragStateContext';
+import Templates from '@components/Templates';
 
 /**
  * @typedef {Object} SidebarProps

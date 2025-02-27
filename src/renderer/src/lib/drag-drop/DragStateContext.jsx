@@ -13,11 +13,6 @@ const initialState = {
 };
 
 function dragStateReducer(state, action) {
-  // Only log non-UPDATE_DRAG_STATE actions and only log CLEAR_DRAG_STATE once
-  if (action.type !== 'UPDATE_DRAG_STATE' &&
-      !(action.type === 'CLEAR_DRAG_STATE' && state.isDragging === false)) {
-    console.log('[DragState]', action.type, action.payload);
-  }
 
   switch (action.type) {
     case 'UPDATE_DRAG_STATE':
