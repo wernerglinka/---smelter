@@ -1,5 +1,25 @@
 import { StorageOperations } from '@services/storage';
 
+// Helper function to check if a file is an index file
+const isIndexFile = (fileName) => {
+  return fileName.toLowerCase().includes('index.');
+};
+
+// Helper function to extract filename from path or object
+const getFileName = (file) => {
+  if (typeof file === 'string') {
+    return file.split('/').pop();
+  }
+  if (typeof file === 'object' && file !== null) {
+    if (file.name) return file.name;
+    if (file.path) return file.path.split('/').pop();
+    const keys = Object.keys(file);
+    if (keys.length === 1) return keys[0];
+  }
+  console.warn('Unexpected file format:', file);
+  return null;
+};
+
 export const getTemplates = async () => {
   try {
     const projectPath = StorageOperations.getProjectPath();
@@ -23,7 +43,6 @@ export const getTemplates = async () => {
     const templateTypes = Array.isArray(typesConfig) ? typesConfig : typesConfig.types;
     const formattingRules = !Array.isArray(typesConfig) ? typesConfig.formatting || {} : {};
 
-    // Initialize groupedTemplates using types from JSON
     const groupedTemplates = templateTypes.reduce((acc, type) => {
       acc[type] = [];
       return acc;
@@ -41,26 +60,10 @@ export const getTemplates = async () => {
       throw new Error(`Failed to read templates directory: ${templatesError}`);
     }
 
-    // Process the directory structure
     const directoryContents = templatesData[templatesPath];
     if (!Array.isArray(directoryContents)) {
       throw new Error('Unexpected directory structure');
     }
-
-    // Helper function to extract filename from path or object
-    const getFileName = (file) => {
-      if (typeof file === 'string') {
-        return file.split('/').pop();
-      }
-      if (typeof file === 'object' && file !== null) {
-        if (file.name) return file.name;
-        if (file.path) return file.path.split('/').pop();
-        const keys = Object.keys(file);
-        if (keys.length === 1) return keys[0];
-      }
-      console.warn('Unexpected file format:', file);
-      return null;
-    };
 
     // Process each category
     for (const item of directoryContents) {
@@ -71,7 +74,7 @@ export const getTemplates = async () => {
         if (type in item) {
           for (const file of item[type]) {
             const fileName = getFileName(file);
-            if (!fileName) continue;
+            if (!fileName || isIndexFile(fileName)) continue; // Skip index files
 
             const key = fileName.replace('.js', '');
             groupedTemplates[type].push({

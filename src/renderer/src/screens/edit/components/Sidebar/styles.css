@@ -261,10 +261,38 @@
     border-radius: var(--default-radius);
   }
 }
-
+/*
 .templates-wrapper {
   & .section-header {
     padding: 2rem 0;
+  }
+
+  & .template-tabs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+
+    & .template-tab {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: none;
+      text-transform: uppercase;
+      font-size: 1.2rem;
+      color: gray;
+      border-bottom: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        border-bottom: 1px solid gray;
+      }
+
+      &.active {
+        color: black;
+        font-weight: bold;
+        border-bottom: 1px solid black;
+      }
+    }
   }
 
   & .template-selection,
@@ -276,10 +304,10 @@
     font-size: 1rem;
     font-weight: 600;
     text-transform: uppercase;
-    /* cursor for drag and drop */
     cursor: move;
   }
 }
+*/
 
 /* Make sure the file tree can scroll if needed */
 .file-tree {
