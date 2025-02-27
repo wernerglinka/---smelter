@@ -11,13 +11,17 @@ export const getTemplates = async () => {
     const typesPath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/types.json`;
     const {
       status: typesStatus,
-      data: templateTypes,
+      data: typesConfig,
       error: typesError
     } = await window.electronAPI.files.read(typesPath);
 
     if (typesStatus === 'failure') {
       throw new Error(`Failed to read template types: ${typesError}`);
     }
+
+    // Extract types array and formatting rules from config
+    const templateTypes = Array.isArray(typesConfig) ? typesConfig : typesConfig.types;
+    const formattingRules = !Array.isArray(typesConfig) ? typesConfig.formatting || {} : {};
 
     // Initialize groupedTemplates using types from JSON
     const groupedTemplates = templateTypes.reduce((acc, type) => {
@@ -49,11 +53,8 @@ export const getTemplates = async () => {
         return file.split('/').pop();
       }
       if (typeof file === 'object' && file !== null) {
-        // If it's an object with a name property
         if (file.name) return file.name;
-        // If it's an object with a path property
         if (file.path) return file.path.split('/').pop();
-        // If it's an object with a single key-value pair
         const keys = Object.keys(file);
         if (keys.length === 1) return keys[0];
       }
@@ -65,48 +66,20 @@ export const getTemplates = async () => {
     for (const item of directoryContents) {
       if (typeof item !== 'object') continue;
 
-      // Handle blocks directory
-      if ('blocks' in item) {
-        for (const blockFile of item.blocks) {
-          const fileName = getFileName(blockFile);
-          if (!fileName) continue;
+      // Dynamically process each template type
+      for (const type of templateTypes) {
+        if (type in item) {
+          for (const file of item[type]) {
+            const fileName = getFileName(file);
+            if (!fileName) continue;
 
-          const key = fileName.replace('.js', '');
-          groupedTemplates.blocks.push({
-            id: key,
-            url: `/blocks/${fileName}`,
-            label: key.toUpperCase()
-          });
-        }
-      }
-
-      // Handle pages directory
-      if ('pages' in item) {
-        for (const pageFile of item.pages) {
-          const fileName = getFileName(pageFile);
-          if (!fileName) continue;
-
-          const key = fileName.replace('.js', '');
-          groupedTemplates.pages.push({
-            id: key,
-            url: `/pages/${fileName}`,
-            label: key.replace('page', '').toUpperCase()
-          });
-        }
-      }
-
-      // Handle sections directory
-      if ('sections' in item) {
-        for (const sectionFile of item.sections) {
-          const fileName = getFileName(sectionFile);
-          if (!fileName) continue;
-
-          const key = fileName.replace('.js', '');
-          groupedTemplates.sections.push({
-            id: key,
-            url: `/sections/${fileName}`,
-            label: key.replace('Section', '').toUpperCase()
-          });
+            const key = fileName.replace('.js', '');
+            groupedTemplates[type].push({
+              id: key,
+              url: `/${type}/${fileName}`,
+              label: formatLabel(key, type, formattingRules)
+            });
+          }
         }
       }
     }
@@ -116,4 +89,17 @@ export const getTemplates = async () => {
     console.error('Error in getTemplates:', error);
     return [[], {}];
   }
+};
+
+// Helper function to format labels based on type and formatting rules
+const formatLabel = (key, type, formattingRules) => {
+  const typeRules = formattingRules[type] || {};
+  const { remove, uppercase = true } = typeRules;
+
+  let label = key;
+  if (remove) {
+    label = label.replace(new RegExp(remove, 'g'), '');
+  }
+
+  return uppercase ? label.toUpperCase() : label;
 };
