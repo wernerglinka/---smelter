@@ -121,7 +121,7 @@ Run `npm run docs` to generate documentation in the `docs` directory.
 
 ### Required Project Structure
 
-For Metallurgy to work with a Metalsmith site, the site must have:
+For Smelter to work with a Metalsmith site, the site must have:
 - A `.metallurgy` folder in the project root
 - A `projectData.json` file in the `.metallurgy` folder
 - Properly configured content and data paths
