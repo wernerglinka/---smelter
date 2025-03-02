@@ -43,10 +43,13 @@ export const ArrayField = ({ field }) => {
    * @param {number} [params.position.targetIndex] - Target position for reorder
    */
   const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
+    console.log('ArrayField handleDropzoneEvent:', { type, data, position });
+
     if (!data) return;
 
     switch (type) {
       case 'template': {
+        console.log('Processing template:', data);
         try {
           const projectPath = await StorageOperations.getProjectPath();
           if (!projectPath) {
@@ -57,6 +60,8 @@ export const ArrayField = ({ field }) => {
           const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
 
           const result = await window.electronAPI.files.read(templatePath);
+          console.log('Template read result:', result);
+
           if (result.status === 'failure') {
             throw new Error(`Failed to read template: ${result.error}`);
           }
@@ -64,32 +69,68 @@ export const ArrayField = ({ field }) => {
           const rawTemplate = typeof result.data === 'string' ?
             JSON.parse(result.data) : result.data;
 
-          // Match the EditSpace behavior
-          const processedData = await processFrontmatter(
-            rawTemplate.frontMatter || rawTemplate,
-            rawTemplate.content || ''
-          );
+          console.log('Raw template:', rawTemplate);
 
-          setItems(currentItems => [...currentItems, {
-            type: 'object',
-            label: rawTemplate.sectionDescription || 'New Section',
-            id: `${field.id}_item_${currentItems.length}`,
-            fields: processedData.fields
-          }]);
+          // Special handling for flex sections
+          if (rawTemplate.columns) {
+            setItems(currentItems => {
+              const newItems = [...currentItems];
+              // Create a columns array field
+              const columnsField = {
+                type: 'array',
+                label: 'columns',
+                id: `${field.id}_columns`,
+                value: rawTemplate.columns.map((column, colIndex) => ({
+                  type: 'array',
+                  label: `Column ${colIndex + 1}`,
+                  id: `${field.id}_column_${colIndex}`,
+                  name: 'column',
+                  value: column.column || []
+                }))
+              };
+              newItems.push(columnsField);
+              return newItems;
+            });
+          } else {
+            // Default template processing
+            const processedData = await processFrontmatter(
+              rawTemplate.frontMatter || rawTemplate,
+              rawTemplate.content || ''
+            );
 
+            setItems(currentItems => {
+              const newItems = [...currentItems, {
+                type: 'object',
+                label: rawTemplate.sectionDescription || 'New Section',
+                id: `${field.id}_item_${currentItems.length}`,
+                fields: processedData.fields
+              }];
+              console.log('Updated items:', newItems);
+              return newItems;
+            });
+          }
         } catch (error) {
           console.error('Error processing template in array:', error);
         }
         break;
       }
       case 'sidebar': {
+        console.log('Processing sidebar drop:', data);
         const fieldData = data.field || data;
+        console.log('Field data to process:', fieldData);
+
         const newItem = ensureFieldStructure({
           ...fieldData,
           id: `${field.id}_item_${items.length}`
         }, field.id);
 
-        setItems(currentItems => [...currentItems, newItem]);
+        console.log('New item structure:', newItem);
+
+        setItems(currentItems => {
+          const newItems = [...currentItems, newItem];
+          console.log('Updated items:', newItems);
+          return newItems;
+        });
         break;
       }
       case 'reorder': {
@@ -124,14 +165,31 @@ export const ArrayField = ({ field }) => {
     if (item.type) return item;
 
     if (typeof item === 'object' && item !== null) {
+      // Check if this is a column object
+      if (item.column || field.label === 'columns') {
+        return {
+          type: 'object',
+          label: `Column ${index + 1}`,  // Use "Column X" instead of "Item X"
+          id: `${field.id}_column_${index + 1}`,
+          fields: Object.entries(item).map(([key, value]) => ({
+            type: typeof value === 'object' ? 'object' : 'text',
+            label: key,
+            id: `${field.id}_column_${index + 1}_${key}`,
+            name: `${field.id}[${index}][${key}]`,
+            defaultValue: value
+          }))
+        };
+      }
+
+      // Default object processing
       return {
         type: 'object',
-        label: `Item ${index + 1}`,
-        id: `${field.id}_item_${index}`,
+        label: `${field.label} ${index + 1}`, // Use the field label as prefix
+        id: `${field.id}_${index + 1}`,
         fields: Object.entries(item).map(([key, value]) => ({
           type: typeof value === 'object' ? 'object' : 'text',
           label: key,
-          id: `${field.id}_item_${index}_${key}`,
+          id: `${field.id}_${index + 1}_${key}`,
           name: `${field.id}[${index}][${key}]`,
           defaultValue: value
         }))
@@ -140,12 +198,12 @@ export const ArrayField = ({ field }) => {
 
     return {
       type: 'text',
-      label: `Item ${index + 1}`,
-      id: `${field.id}_item_${index}`,
+      label: `${field.label} ${index + 1}`,
+      id: `${field.id}_${index + 1}`,
       name: `${field.id}[${index}]`,
       defaultValue: item
     };
-  }, [field.id]);
+  }, [field.id, field.label]);
 
   return (
     <div className="form-element is-array no-drop label-exists" draggable="true" onDragStart={handleDragStart}>
