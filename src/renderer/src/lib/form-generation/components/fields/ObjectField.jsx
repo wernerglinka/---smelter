@@ -2,6 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { FormField } from '../FormField';
 import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '@components/icons';
 import Dropzone from '@components/Dropzone';
+import { StorageOperations } from '@services/storage';
+import { processFrontmatter } from '../../processors/frontmatter-processor';
 
 /**
  * Renders an object field that can contain multiple fields of different types
@@ -26,27 +28,43 @@ export const ObjectField = ({ field }) => {
     if (!data) return;
 
     switch (type) {
-      case 'sidebar': {
-        const fieldData = data.field || data;
-        const newField = {
-          ...fieldData,
-          id: fieldData.id || `${field.id}_field_${fields.length}`,
-          name: `${field.id}[${fields.length}]`,
-          fields: fieldData.fields || []
-        };
-
-        setFields(currentFields => {
-          const updatedFields = [...currentFields];
-          if (typeof position.targetIndex === 'number') {
-            updatedFields.splice(position.targetIndex, 0, newField);
-          } else {
-            updatedFields.push(newField);
+      case 'template': {
+        try {
+          const projectPath = await StorageOperations.getProjectPath();
+          if (!projectPath) {
+            throw new Error('Project path not found');
           }
-          return updatedFields;
-        });
+
+          const templateUrl = data.url.replace(/^\/+|\/+$/g, '');
+          const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
+
+          const result = await window.electronAPI.files.read(templatePath);
+          if (result.status === 'failure') {
+            throw new Error(`Failed to read template: ${result.error}`);
+          }
+
+          const templateData = typeof result.data === 'string' ?
+            JSON.parse(result.data) : result.data;
+
+          const schema = await processFrontmatter(templateData, '');
+
+          setFields(currentFields => [...currentFields, {
+            ...schema,
+            id: `${field.id}_field_${currentFields.length}`
+          }]);
+        } catch (error) {
+          console.error('Error processing template in object:', error);
+        }
         break;
       }
-
+      case 'sidebar': {
+        const fieldData = data.field || data;
+        setFields(currentFields => [...currentFields, {
+          ...fieldData,
+          id: `${field.id}_field_${currentFields.length}`
+        }]);
+        break;
+      }
       case 'reorder': {
         const { sourceIndex, targetIndex } = position;
         setFields(currentFields => {

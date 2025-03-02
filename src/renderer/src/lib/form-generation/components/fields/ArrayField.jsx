@@ -3,6 +3,8 @@ import { FormField } from '../FormField';
 import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '@components/icons';
 import Dropzone from '@components/Dropzone';
 import { ensureFieldStructure } from '../../utilities/field-structure';
+import { StorageOperations } from '@services/storage';
+import { processFrontmatter } from '../../processors/frontmatter-processor';
 
 /**
  * @typedef {Object} ArrayFieldProps
@@ -44,6 +46,42 @@ export const ArrayField = ({ field }) => {
     if (!data) return;
 
     switch (type) {
+      case 'template': {
+        try {
+          const projectPath = await StorageOperations.getProjectPath();
+          if (!projectPath) {
+            throw new Error('Project path not found');
+          }
+
+          const templateUrl = data.url.replace(/^\/+|\/+$/g, '');
+          const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
+
+          const result = await window.electronAPI.files.read(templatePath);
+          if (result.status === 'failure') {
+            throw new Error(`Failed to read template: ${result.error}`);
+          }
+
+          const rawTemplate = typeof result.data === 'string' ?
+            JSON.parse(result.data) : result.data;
+
+          // Match the EditSpace behavior
+          const processedData = await processFrontmatter(
+            rawTemplate.frontMatter || rawTemplate,
+            rawTemplate.content || ''
+          );
+
+          setItems(currentItems => [...currentItems, {
+            type: 'object',
+            label: rawTemplate.sectionDescription || 'New Section',
+            id: `${field.id}_item_${currentItems.length}`,
+            fields: processedData.fields
+          }]);
+
+        } catch (error) {
+          console.error('Error processing template in array:', error);
+        }
+        break;
+      }
       case 'sidebar': {
         const fieldData = data.field || data;
         const newItem = ensureFieldStructure({
@@ -54,7 +92,6 @@ export const ArrayField = ({ field }) => {
         setItems(currentItems => [...currentItems, newItem]);
         break;
       }
-
       case 'reorder': {
         const { sourceIndex, targetIndex } = position;
         setItems(currentItems => {
@@ -132,7 +169,10 @@ export const ArrayField = ({ field }) => {
       <Dropzone
         className={`array-dropzone dropzone js-dropzone ${isCollapsed ? 'is-collapsed' : ''}`}
         data-wrapper="is-array"
-        onDrop={handleDropzoneEvent}
+        onDrop={(event) => {
+          console.log('Array dropzone receiving drop:', event);
+          handleDropzoneEvent(event);
+        }}
       >
         {items.map((item, index) => (
           <FormField

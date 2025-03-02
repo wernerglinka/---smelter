@@ -86,25 +86,31 @@ export const Dropzone = ({ children, className = '', onDrop, type = 'main' }) =>
     e.preventDefault();
     e.stopPropagation();
 
-    dropzoneRef.current?.classList.remove('drag-over');
+    console.log('Drop event:', {
+      origin: e.dataTransfer.getData('origin'),
+      type,
+      className: e.currentTarget.className,
+      isArrayDropzone: className.includes('array-dropzone')
+    });
 
-    if (e.currentTarget !== e.target.closest('.dropzone')) {
-      return;
-    }
+    dropzoneRef.current?.classList.remove('drag-over');
 
     try {
       const origin = e.dataTransfer.getData('origin');
-
       let data;
       try {
         data = JSON.parse(e.dataTransfer.getData('application/json'));
+        console.log('Parsed drop data:', data);
       } catch (err) {
         data = e.dataTransfer.getData('text/plain');
       }
 
       if (onDrop && data) {
+        // Use the data type for templates, otherwise use the origin or default type
+        const dropType = data.type === 'template' ? 'template' : (origin || type || 'main');
+
         onDrop({
-          type: origin || type,
+          type: dropType,
           data,
           position: {
             x: e.clientX,
@@ -114,13 +120,18 @@ export const Dropzone = ({ children, className = '', onDrop, type = 'main' }) =>
               (dragState.insertionPoint.position === 'after' ? 1 : 0) : -1
           }
         });
+        console.log('Dispatching drop event:', {
+          type: dropType,
+          data,
+          isArrayDropzone: className.includes('array-dropzone')
+        });
       }
     } catch (error) {
       console.error('Drop handling error:', error);
     }
 
     dispatch({ type: 'CLEAR_DRAG_STATE' });
-  }, [onDrop, type, dispatch, dragState]);
+  }, [type, className, dragState.insertionPoint, onDrop]);
 
   return (
     <div
