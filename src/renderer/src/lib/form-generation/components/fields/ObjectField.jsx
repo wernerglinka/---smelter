@@ -1,6 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { FormField } from '../FormField';
-import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '@components/icons';
+import {
+  DragHandleIcon,
+  CollapsedIcon,
+  CollapseIcon,
+  AddIcon,
+  DeleteIcon
+} from '@components/icons';
 import Dropzone from '@components/Dropzone';
 import { StorageOperations } from '@services/storage';
 import { processFrontmatter } from '../../processors/frontmatter-processor';
@@ -13,7 +19,7 @@ import { processFrontmatter } from '../../processors/frontmatter-processor';
  * @param {Object} props.field - Field configuration object
  * @param {Function} props.onUpdate - Callback for field updates
  */
-export const ObjectField = ({ field }) => {
+export const ObjectField = ({ field, allowDuplication = true, allowDeletion = true }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [fields, setFields] = useState(field.fields || []);
 
@@ -124,6 +130,18 @@ export const ObjectField = ({ field }) => {
           />
         ))}
       </Dropzone>
+      <div className="button-wrapper">
+        {allowDuplication && (
+          <div className="add-button button">
+            <AddIcon />
+          </div>
+        )}
+        {allowDeletion && (
+          <div className="delete-button">
+            <DeleteIcon />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

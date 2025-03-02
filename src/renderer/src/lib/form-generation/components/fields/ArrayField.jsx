@@ -1,10 +1,17 @@
 import { useState, useCallback } from 'react';
 import { FormField } from '../FormField';
-import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '@components/icons';
+import {
+  DragHandleIcon,
+  CollapsedIcon,
+  CollapseIcon,
+  AddIcon,
+  DeleteIcon
+} from '@components/icons';
 import Dropzone from '@components/Dropzone';
 import { ensureFieldStructure } from '../../utilities/field-structure';
 import { StorageOperations } from '@services/storage';
 import { processFrontmatter } from '../../processors/frontmatter-processor';
+
 
 /**
  * @typedef {Object} ArrayFieldProps
@@ -22,7 +29,7 @@ import { processFrontmatter } from '../../processors/frontmatter-processor';
  * @param {ArrayFieldProps} props - Component properties
  * @returns {JSX.Element} Rendered array field component
  */
-export const ArrayField = ({ field }) => {
+export const ArrayField = ({ field, allowDuplication = true, allowDeletion = true }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [items, setItems] = useState(field.value || []);
 
@@ -242,6 +249,18 @@ export const ArrayField = ({ field }) => {
           />
         ))}
       </Dropzone>
+      <div className="button-wrapper">
+        {allowDuplication && (
+          <div className="add-button button">
+            <AddIcon />
+          </div>
+        )}
+        {allowDeletion && (
+          <div className="delete-button">
+            <DeleteIcon />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

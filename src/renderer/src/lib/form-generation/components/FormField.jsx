@@ -19,12 +19,20 @@ export const FormField = ( { field } ) => {
 
   // Handle objects
   if (field.type === 'object') {
-    return <ObjectField field={field} />;
+    return <ObjectField
+      field={ field }
+      allowDuplication={!field?.noDuplication}
+      allowDeletion={ !field?.noDeletion }
+    />;
   }
 
   // Handle arrays and lists
   if (field.type === 'array') {
-    return <ArrayField field={field} />;
+    return <ArrayField
+      field={ field }
+      allowDuplication={!field?.noDuplication}
+      allowDeletion={ !field?.noDeletion }
+    />;
   }
 
   if (field.type === 'list') {
