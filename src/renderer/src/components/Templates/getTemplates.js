@@ -76,7 +76,8 @@ export const getTemplates = async () => {
             const fileName = getFileName(file);
             if (!fileName || isIndexFile(fileName)) continue; // Skip index files
 
-            const key = fileName.replace('.js', '');
+            // Remove the .json extension for the ID and display
+            const key = fileName.replace('.json', '');
             groupedTemplates[type].push({
               id: key,
               url: `/${type}/${fileName}`,

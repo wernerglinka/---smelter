@@ -26,6 +26,24 @@ const Templates = memo(() => {
     fetchTemplates();
   }, []);
 
+  const handleTemplateDragStart = (e, template) => {
+    console.log('Template drag started:', template);
+    const templateUrl = template.dataset.url;
+    console.log('Template URL:', templateUrl);
+
+    e.dataTransfer.setData('origin', 'template');
+    e.dataTransfer.setData('application/json', JSON.stringify({
+      type: 'template',
+      url: templateUrl
+    }));
+
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+
+  const handleTemplateDragEnd = (e) => {
+    e.currentTarget.classList.remove('dragging');
+  };
+
   return (
     <div className="templates-wrapper">
       <div className="template-tabs">
@@ -54,8 +72,11 @@ const Templates = memo(() => {
                   className="template-selection draggable"
                   draggable="true"
                   data-url={template.url}
+                  onDragStart={(e) => handleTemplateDragStart(e, e.currentTarget)}
+                  onDragEnd={handleTemplateDragEnd}
                 >
-                  {template.label}
+                  {/* Display the filename without extension and path */}
+                  {template.label || template.url.split('/').pop().split('.')[0]}
                 </div>
               ))}
             </div>

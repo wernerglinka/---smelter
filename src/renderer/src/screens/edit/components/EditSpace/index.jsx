@@ -9,6 +9,7 @@ import { FIELD_TYPES } from '@lib/form-generation/schema/field-types';
 import { setupEditor } from './editor';
 import 'easymde/dist/easymde.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { StorageOperations } from '@services/storage';
 
 import './styles.css';
 
@@ -29,6 +30,49 @@ const createFieldFromTemplate = (template) => {
     id: `field-${Date.now()}`,
     type: fieldType.type,
     value: template.value || fieldType.default
+  };
+};
+
+const processTemplateField = (key, value, parentId = '') => {
+  const fieldId = `field-${Date.now()}-${parentId}${key}`;
+
+  if (value === null || value === undefined) {
+    return {
+      id: fieldId,
+      name: key,
+      type: 'TEXT',
+      label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+      value: ''
+    };
+  }
+
+  // Handle different types
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    return {
+      id: fieldId,
+      name: key,
+      type: 'OBJECT',
+      label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+      fields: Object.entries(value).map(([k, v]) => processTemplateField(k, v, `${fieldId}-`))
+    };
+  }
+
+  if (Array.isArray(value)) {
+    return {
+      id: fieldId,
+      name: key,
+      type: 'ARRAY',
+      label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+      items: value.map((item, index) => processTemplateField(`${index}`, item, `${fieldId}-`))
+    };
+  }
+
+  return {
+    id: fieldId,
+    name: key,
+    type: typeof value === 'boolean' ? 'BOOLEAN' : 'TEXT',
+    label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+    value: value
   };
 };
 
@@ -70,8 +114,46 @@ const EditSpace = ({ fileContent, $expanded }) => {
   }, [fileContent]);
 
   // Handle dropzone events (field addition, reordering)
-  const handleDropzoneEvent = useCallback(({ type, data, position }) => {
+  const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
+    console.log('Dropzone event:', { type, data, position });
+
     switch (type) {
+      case 'template': {
+        try {
+          const projectPath = StorageOperations.getProjectPath();
+          if (!projectPath) {
+            throw new Error('Project path not found');
+          }
+
+          const templateUrl = data.url.replace(/^\/+|\/+$/g, '');
+          const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
+
+          const result = await window.electronAPI.files.read(templatePath);
+
+          if (result.status === 'failure') {
+            throw new Error(`Failed to read template: ${result.error}`);
+          }
+
+          const rawTemplate = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+
+          // Use the existing processFrontmatter function to transform the template
+          const processedData = await processFrontmatter(rawTemplate, '');
+
+          setFormFields(prevFields => {
+            const newFields = [...(prevFields || [])];
+            if (position && typeof position.targetIndex === 'number') {
+              newFields.splice(position.targetIndex, 0, ...processedData.fields);
+            } else {
+              newFields.push(...processedData.fields);
+            }
+            return newFields;
+          });
+
+        } catch (error) {
+          console.error('Error inserting template:', error);
+        }
+        break;
+      }
       case 'sidebar': {
         try {
           const newField = createFieldFromTemplate(data);

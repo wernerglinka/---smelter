@@ -140,6 +140,20 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
     dispatch({ type: 'CLEAR_DRAG_STATE' });
   };
 
+  const handleTemplateDragStart = (e, element) => {
+    console.log('Template drag started:', element);
+    const templateUrl = element.dataset.url;
+    console.log('Template URL:', templateUrl);
+
+    e.dataTransfer.setData('origin', 'template');
+    e.dataTransfer.setData('application/json', JSON.stringify({
+      type: 'template',
+      url: templateUrl
+    }));
+
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+
   return (
     <div className={`sidebar ${className}`}>
       {/* Navigation Tabs */}
