@@ -37,6 +37,15 @@ function matchSchemaField(key, schema = []) {
 }
 
 /**
+ * Converts a string to title case
+ * @param {string} str - The string to convert
+ * @returns {string} The title case string
+ */
+function toTitleCase(str) {
+  return str.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+/**
  * Creates a field configuration object for form generation
  * @param {string} key - Field name
  * @param {any} value - Field value
@@ -50,11 +59,11 @@ function createField(key, value, schema = []) {
 
   // Create base field with common properties
   const baseField = {
-    label: key,
+    label: toTitleCase(key),
     name: key,
     type: schemaField?.type || inferredType,
     value,
-    placeholder: `Add ${key}`,
+    placeholder: `Add ${toTitleCase(key)}`,
     isExplicit
   };
 

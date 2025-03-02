@@ -1,3 +1,5 @@
+import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
+
 /**
  * Ensures proper field structure for both array and object fields
  * @param {Object} item - The field item to structure
@@ -31,11 +33,19 @@ export const ensureFieldStructure = (item, parentId) => {
   // Base field properties
   const structuredItem = {
     ...item,
-    id: item.id || `${parentId || 'root'}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    id: item.id || `${parentId || 'root'}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    label: item.label ? toTitleCase(item.label) : undefined // Transform label if it exists
   };
 
   // If this is already a field with a type, return it as is
   if (structuredItem.type && structuredItem.fields) {
+    // Transform labels in nested fields
+    if (structuredItem.fields) {
+      structuredItem.fields = structuredItem.fields.map((field) => ({
+        ...field,
+        label: toTitleCase(field.label)
+      }));
+    }
     return structuredItem;
   }
 

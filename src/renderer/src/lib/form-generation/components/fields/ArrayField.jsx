@@ -11,7 +11,7 @@ import Dropzone from '@components/Dropzone';
 import { ensureFieldStructure } from '../../utilities/field-structure';
 import { StorageOperations } from '@services/storage';
 import { processFrontmatter } from '../../processors/frontmatter-processor';
-
+import { toTitleCase } from '../../../utilities/formatting/to-title-case';
 
 /**
  * @typedef {Object} ArrayFieldProps
@@ -176,11 +176,11 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
       if (item.column || field.label === 'columns') {
         return {
           type: 'object',
-          label: `Column ${index + 1}`,  // Use "Column X" instead of "Item X"
+          label: toTitleCase(`Column ${index + 1}`),  // Transform label
           id: `${field.id}_column_${index + 1}`,
           fields: Object.entries(item).map(([key, value]) => ({
             type: typeof value === 'object' ? 'object' : 'text',
-            label: key,
+            label: toTitleCase(key), // Transform label
             id: `${field.id}_column_${index + 1}_${key}`,
             name: `${field.id}[${index}][${key}]`,
             defaultValue: value
@@ -191,11 +191,11 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
       // Default object processing
       return {
         type: 'object',
-        label: `${field.label} ${index + 1}`, // Use the field label as prefix
+        label: toTitleCase(`${field.label} ${index + 1}`), // Transform label
         id: `${field.id}_${index + 1}`,
         fields: Object.entries(item).map(([key, value]) => ({
           type: typeof value === 'object' ? 'object' : 'text',
-          label: key,
+          label: toTitleCase(key), // Transform label
           id: `${field.id}_${index + 1}_${key}`,
           name: `${field.id}[${index}][${key}]`,
           defaultValue: value
@@ -205,7 +205,7 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
 
     return {
       type: 'text',
-      label: `${field.label} ${index + 1}`,
+      label: toTitleCase(`${field.label} ${index + 1}`), // Transform label
       id: `${field.id}_${index + 1}`,
       name: `${field.id}[${index}]`,
       defaultValue: item
