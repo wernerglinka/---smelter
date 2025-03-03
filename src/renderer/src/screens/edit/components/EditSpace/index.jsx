@@ -10,6 +10,7 @@ import { setupEditor } from './editor';
 import 'easymde/dist/easymde.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { StorageOperations } from '@services/storage';
+import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 import './styles.css';
 
@@ -41,7 +42,7 @@ const processTemplateField = (key, value, parentId = '') => {
       id: fieldId,
       name: key,
       type: 'TEXT',
-      label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+      label: toTitleCase(key),
       value: ''
     };
   }
@@ -52,7 +53,7 @@ const processTemplateField = (key, value, parentId = '') => {
       id: fieldId,
       name: key,
       type: 'OBJECT',
-      label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+      label: toTitleCase(key),
       fields: Object.entries(value).map(([k, v]) => processTemplateField(k, v, `${fieldId}-`))
     };
   }
@@ -62,7 +63,7 @@ const processTemplateField = (key, value, parentId = '') => {
       id: fieldId,
       name: key,
       type: 'ARRAY',
-      label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+      label: toTitleCase(key),
       items: value.map((item, index) => processTemplateField(`${index}`, item, `${fieldId}-`))
     };
   }
@@ -71,7 +72,7 @@ const processTemplateField = (key, value, parentId = '') => {
     id: fieldId,
     name: key,
     type: typeof value === 'boolean' ? 'BOOLEAN' : 'TEXT',
-    label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+    label: toTitleCase(key),
     value: value
   };
 };

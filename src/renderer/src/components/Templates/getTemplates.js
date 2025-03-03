@@ -1,9 +1,5 @@
 import { StorageOperations } from '@services/storage';
-
-// Helper function to check if a file is an index file
-const isIndexFile = (fileName) => {
-  return fileName.toLowerCase().includes('index.');
-};
+import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 // Helper function to extract filename from path or object
 const getFileName = (file) => {
@@ -27,26 +23,9 @@ export const getTemplates = async () => {
       throw new Error('Project path not found in storage');
     }
 
-    // Get template types from project directory
-    const typesPath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/types.json`;
-    const {
-      status: typesStatus,
-      data: typesConfig,
-      error: typesError
-    } = await window.electronAPI.files.read(typesPath);
-
-    if (typesStatus === 'failure') {
-      throw new Error(`Failed to read template types: ${typesError}`);
-    }
-
-    // Extract types array and formatting rules from config
-    const templateTypes = Array.isArray(typesConfig) ? typesConfig : typesConfig.types;
-    const formattingRules = !Array.isArray(typesConfig) ? typesConfig.formatting || {} : {};
-
-    const groupedTemplates = templateTypes.reduce((acc, type) => {
-      acc[type] = [];
-      return acc;
-    }, {});
+    // Define template types directly
+    const templateTypes = ['pages', 'sections', 'blocks'];
+    const groupedTemplates = Object.fromEntries(templateTypes.map((type) => [type, []]));
 
     // Read templates directory
     const templatesPath = `${projectPath}/.metallurgy/frontMatterTemplates/templates`;
@@ -69,19 +48,18 @@ export const getTemplates = async () => {
     for (const item of directoryContents) {
       if (typeof item !== 'object') continue;
 
-      // Dynamically process each template type
+      // Process each template type
       for (const type of templateTypes) {
         if (type in item) {
           for (const file of item[type]) {
             const fileName = getFileName(file);
-            if (!fileName || isIndexFile(fileName)) continue; // Skip index files
+            if (!fileName) continue;
 
-            // Remove the .json extension for the ID and display
             const key = fileName.replace('.json', '');
             groupedTemplates[type].push({
               id: key,
               url: `/${type}/${fileName}`,
-              label: formatLabel(key, type, formattingRules)
+              label: toTitleCase(key)
             });
           }
         }
@@ -93,17 +71,4 @@ export const getTemplates = async () => {
     console.error('Error in getTemplates:', error);
     return [[], {}];
   }
-};
-
-// Helper function to format labels based on type and formatting rules
-const formatLabel = (key, type, formattingRules) => {
-  const typeRules = formattingRules[type] || {};
-  const { remove, uppercase = true } = typeRules;
-
-  let label = key;
-  if (remove) {
-    label = label.replace(new RegExp(remove, 'g'), '');
-  }
-
-  return uppercase ? label.toUpperCase() : label;
 };

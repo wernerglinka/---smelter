@@ -14,6 +14,14 @@ export const ValueOps = {
    * @returns {string} Cleaned, camelCased name
    */
   getName: (element) => {
+    // Special handling for arrays
+    if (element.classList.contains('is-array')) {
+      const arrayLabel = element.querySelector('.array-name .element-label');
+      if (arrayLabel) {
+        return toCamelCase(arrayLabel.value);
+      }
+    }
+
     const input = element.querySelector('.object-name input');
     const text = element.querySelector('.label-text');
     if (!input && !text) return '';
