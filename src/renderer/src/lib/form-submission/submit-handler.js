@@ -39,6 +39,13 @@ export const handleFormSubmission = async (form, filePath, schema = null) => {
       throw new Error(`Failed to save file: ${result.error}`);
     }
 
+    // Add success notification
+    await window.electronAPI.dialog.showCustomMessage({
+      type: 'info',
+      message: 'File saved successfully',
+      buttons: ['OK']
+    });
+
     return { success: true };
   } catch (error) {
     console.error('Form submission failed:', error);

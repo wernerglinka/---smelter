@@ -26,6 +26,7 @@ export const ObjectField = ({ field, allowDuplication = true, allowDeletion = tr
   const handleCollapse = () => setIsCollapsed(!isCollapsed);
 
   const displayLabel = field.fields?.find(f => f.name === 'sectionDescription')?.value || field.label;
+  const originalName = field.name; // Store the original field name
 
   /**
    * Handles drag and drop events for object fields
@@ -125,23 +126,24 @@ export const ObjectField = ({ field, allowDuplication = true, allowDeletion = tr
             key={`${fieldItem.id || fieldItem.name}-${fieldIndex}`}
             field={{
               ...fieldItem,
-              name: `${field.id}[${fieldIndex}]${fieldItem.name ? `[${fieldItem.name}]` : ''}`
+              name: `${field.name}[${fieldIndex}]${fieldItem.name ? `[${fieldItem.name}]` : ''}`
             }}
           />
         ))}
       </Dropzone>
       <div className="button-wrapper">
         {allowDuplication && (
-          <div className="add-button button">
+          <div className="add-button" title="Duplicate this object">
             <AddIcon />
           </div>
         )}
         {allowDeletion && (
-          <div className="delete-button">
+          <div className="delete-button" title="Delete this object">
             <DeleteIcon />
           </div>
         )}
       </div>
+      <input type="hidden" name={originalName} value={field.value} />
     </div>
   );
 };

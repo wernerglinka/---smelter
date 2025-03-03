@@ -59,7 +59,7 @@
     opacity: 0;
   }
 
-  & .button-wrapper {
+  & > .button-wrapper {
     display: flex;
     justify-content: space-between;
     margin: 3rem 0;
@@ -216,18 +216,7 @@ fieldset {
 
     & svg g {
       stroke: var(--text-color);
-    }
-
-    &:hover svg g {
-      stroke: var(--link-color-hover);
-      transition: stroke 0.3s;
-    }
-  }
-
-  &:hover {
-    > .sort-handle,
-    > .button-wrapper {
-      opacity: 1;
+      stroke-width: 1px;
     }
   }
 
@@ -391,10 +380,6 @@ fieldset {
       & .button-wrapper {
         position: static;
         margin-top: 0.5rem;
-      }
-
-      &:hover .button-wrapper {
-        opacity: 1;
       }
     }
 
@@ -720,3 +705,15 @@ input:where([type='checkbox'][role='switch']):disabled {
   opacity: 0.4;
 }
 
+/* Hide all button-wrappers and sort-handles by default */
+.button-wrapper,
+.sort-handle {
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+/* Show controls when hovering any form element */
+.form-element:hover > .button-wrapper,
+.form-element:hover > .sort-handle {
+  opacity: 1;
+}

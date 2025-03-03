@@ -16,12 +16,12 @@ export const BaseField = ({ children, field, allowDuplication = true, allowDelet
       {children}
       <div className="button-wrapper">
         {allowDuplication && (
-          <div className="add-button button">
+          <div className="add-button" title="Duplicate this element">
             <AddIcon />
           </div>
         )}
         {allowDeletion && (
-          <div className="delete-button">
+          <div className="delete-button" title="Delete this element">
             <DeleteIcon />
           </div>
         )}

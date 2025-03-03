@@ -104,6 +104,7 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
                 type: 'object',
                 label: rawTemplate.sectionDescription || 'New Section',
                 id: `${field.id}_item_${currentItems.length}`,
+                name: field.name, // Preserve the original array name
                 fields: processedData.fields
               }];
               return newItems;
@@ -139,7 +140,7 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
         break;
       }
     }
-  }, [field.id, items.length]);
+  }, [field.id, field.name, items.length]); // Add field.name to dependencies
 
   /**
    * Sets up drag data when starting to drag the array field
@@ -231,19 +232,19 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
             key={item.id || index}
             field={{
               ...ensureFieldStructure(processArrayItem(item, index), field.id),
-              name: `${field.id}[${index}]`
+              name: `${field.name}[${index}]` // Use field.name instead of field.id
             }}
           />
         ))}
       </Dropzone>
       <div className="button-wrapper">
         {allowDuplication && (
-          <div className="add-button button">
+          <div className="add-button" title="Duplicate this array">
             <AddIcon />
           </div>
         )}
         {allowDeletion && (
-          <div className="delete-button">
+          <div className="delete-button" title="Delete this array">
             <DeleteIcon />
           </div>
         )}
