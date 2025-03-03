@@ -712,8 +712,19 @@ input:where([type='checkbox'][role='switch']):disabled {
   transition: opacity 0.2s ease-out;
 }
 
-/* Show controls when hovering any form element */
+/* Show controls when hovering any form element or list item */
 .form-element:hover > .button-wrapper,
-.form-element:hover > .sort-handle {
+.form-element:hover > .sort-handle,
+.is-list li:hover > .button-wrapper {
   opacity: 1;
+}
+
+/* Hide parent controls when hovering dropzone areas */
+.object-dropzone:hover ~ .button-wrapper,
+.object-dropzone:hover ~ .sort-handle,
+.array-dropzone:hover ~ .button-wrapper,
+.array-dropzone:hover ~ .sort-handle,
+.list-dropzone:hover ~ .button-wrapper,
+.list-dropzone:hover ~ .sort-handle {
+  opacity: 0;
 }

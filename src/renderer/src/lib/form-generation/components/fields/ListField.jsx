@@ -1,29 +1,25 @@
 import React from 'react';
 import { DragHandleIcon, AddIcon, DeleteIcon, CollapseIcon, CollapsedIcon } from '@components/icons';
 
-export const ListField = ({ field }) => {
+export const ListField = ({ field = {}, allowDuplication = true, allowDeletion = true }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
+  const [items, setItems] = React.useState(field.value || []);
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  const handleItemChange = (index, e) => {
-    const newValue = [...(field.value || [])];
-    newValue[index] = e.target.value;
-    onChange?.(newValue);
-  };
-
   const handleAddItem = (index) => {
-    const newValue = [...(field.value || [])];
-    newValue.splice(index + 1, 0, '');
-    onChange?.(newValue);
+    const newItems = [...items];
+    const itemToClone = newItems[index];
+    newItems.splice(index + 1, 0, `Copy of ${itemToClone}`);
+    setItems(newItems);
   };
 
   const handleDeleteItem = (index) => {
-    const newValue = [...(field.value || [])];
-    newValue.splice(index, 1);
-    onChange?.(newValue);
+    const newItems = [...items];
+    newItems.splice(index, 1);
+    setItems(newItems);
   };
 
   return (
@@ -32,12 +28,12 @@ export const ListField = ({ field }) => {
         <DragHandleIcon />
       </span>
       <label className="label-wrapper object-name">
-        <span>{field.label}</span>
+        <span>{field.label || ''}</span>
         <input
           type="text"
           className="element-label"
           placeholder="Label Placeholder"
-          value={field.label}
+          defaultValue={field.label || ''}
           readOnly
         />
         <span className="collapse-icon" onClick={handleCollapse}>
@@ -46,20 +42,23 @@ export const ListField = ({ field }) => {
       </label>
       <div className={`list-dropzone dropzone js-dropzone ${isCollapsed ? 'is-collapsed' : ''}`} data-wrapper="is-list">
         <ul>
-          {(field.value || []).map((item, index) => (
-            <li key={index}>
+          {items.map((item, index) => (
+            <li key={`${index}-${item}`} className="list-item">
               <input
                 type="text"
-                value={item}
-                onChange={(e) => handleItemChange(index, e)}
+                defaultValue={item || ''}
               />
               <div className="button-wrapper">
-                <div className="add-button button" onClick={() => handleAddItem(index)}>
-                  <AddIcon />
-                </div>
-                <div className="delete-button" onClick={() => handleDeleteItem(index)}>
-                  <DeleteIcon />
-                </div>
+                {allowDuplication && (
+                  <div className="add-button" title="Duplicate this list" onClick={() => handleAddItem(index)}>
+                    <AddIcon />
+                  </div>
+                )}
+                {allowDeletion && (
+                  <div className="delete-button" title="Delete this list" onClick={() => handleDeleteItem(index)}>
+                    <DeleteIcon />
+                  </div>
+                )}
               </div>
             </li>
           ))}
