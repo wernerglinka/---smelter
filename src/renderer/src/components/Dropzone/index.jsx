@@ -86,13 +86,6 @@ export const Dropzone = ({ children, className = '', onDrop, type = 'main' }) =>
     e.preventDefault();
     e.stopPropagation();
 
-    console.log('Drop event:', {
-      origin: e.dataTransfer.getData('origin'),
-      type,
-      className: e.currentTarget.className,
-      isArrayDropzone: className.includes('array-dropzone')
-    });
-
     dropzoneRef.current?.classList.remove('drag-over');
 
     try {
@@ -100,7 +93,6 @@ export const Dropzone = ({ children, className = '', onDrop, type = 'main' }) =>
       let data;
       try {
         data = JSON.parse(e.dataTransfer.getData('application/json'));
-        console.log('Parsed drop data:', data);
       } catch (err) {
         data = e.dataTransfer.getData('text/plain');
       }
@@ -119,11 +111,6 @@ export const Dropzone = ({ children, className = '', onDrop, type = 'main' }) =>
               Array.from(e.currentTarget.children).indexOf(dragState.insertionPoint.closest) +
               (dragState.insertionPoint.position === 'after' ? 1 : 0) : -1
           }
-        });
-        console.log('Dispatching drop event:', {
-          type: dropType,
-          data,
-          isArrayDropzone: className.includes('array-dropzone')
         });
       }
     } catch (error) {
@@ -144,10 +131,9 @@ export const Dropzone = ({ children, className = '', onDrop, type = 'main' }) =>
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {children}
+      { children }
     </div>
   );
 };
 
 export default Dropzone;
-

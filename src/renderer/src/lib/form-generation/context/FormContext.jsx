@@ -16,10 +16,6 @@ export const FormContext = createContext(null);
 export const FormProvider = ({ children, initialData }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData);
-    // Handle form submission
-    console.log('Form submitted:', data);
   };
 
   return (

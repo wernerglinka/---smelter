@@ -67,7 +67,6 @@ export const handleEditProject = async (e) => {
     const projectFolder = await getProjectFromDialog();
 
     if (!projectFolder) {
-      console.log('No project folder selected');
       return;
     }
 
@@ -89,14 +88,6 @@ export const handleEditProject = async (e) => {
     if (!config) {
       throw new Error('Failed to load project configuration');
     }
-
-    console.log('Debug paths:', {
-      projectFolder,
-      configPath,
-      loadedConfig: config,
-      contentPath: config.contentPath,
-      dataPath: config.dataPath
-    });
 
     const projectData = {
       projectPath: projectFolder,

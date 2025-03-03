@@ -362,14 +362,11 @@ const createIPCHandlers = (window) => {
      * @returns {object} Operation result
      */
     handleCreateDirectory: async (event, dirPath) => {
-      console.log('IPC handler: received createDirectory request for:', dirPath);
       try {
         // Check if directory exists
         const exists = FileSystem.directoryExists(dirPath);
-        console.log('Directory exists check:', exists);
 
         if (exists) {
-          console.log('Directory already exists, returning failure');
           return {
             status: 'failure',
             error: 'Directory already exists'
@@ -377,9 +374,7 @@ const createIPCHandlers = (window) => {
         }
 
         // Create directory
-        console.log('Attempting to create directory');
         await FileSystem.createDirectory(dirPath);
-        console.log('Directory created successfully');
 
         return {
           status: 'success',

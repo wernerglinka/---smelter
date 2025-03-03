@@ -26,8 +26,6 @@ export const handleNewFileClick = async (
 ) => {
   if (!activeFolder) return;
 
-  console.log(activeFolder);
-
   try {
     // Get all required paths from storage
     const projectPath = StorageOperations.getProjectPath();

@@ -27,9 +27,7 @@ const Templates = memo(() => {
   }, []);
 
   const handleTemplateDragStart = (e, template) => {
-    console.log('Template drag started:', template);
     const templateUrl = template.dataset.url;
-    console.log('Template URL:', templateUrl);
 
     e.dataTransfer.setData('origin', 'template');
     e.dataTransfer.setData('application/json', JSON.stringify({

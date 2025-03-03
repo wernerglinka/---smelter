@@ -42,7 +42,6 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   useEffect(() => {
     const checkTemplates = async () => {
       const hasTemplates = await hasProjectTemplates();
-      console.log('Template check result:', hasTemplates); // Debug log
       setShowTemplateTab(hasTemplates);
     };
 
@@ -113,9 +112,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
    * @param {string} fieldType - Type of field being dragged
    */
   const handleDragStart = (e, fieldType) => {
-    console.log('Drag start - field type:', fieldType);
     const data = { type: fieldType };
-    console.log('Setting drag data:', data);
 
     e.dataTransfer.setData('origin', 'sidebar');
     e.dataTransfer.setData('application/json', JSON.stringify(data));
@@ -141,9 +138,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
   };
 
   const handleTemplateDragStart = (e, element) => {
-    console.log('Template drag started:', element);
     const templateUrl = element.dataset.url;
-    console.log('Template URL:', templateUrl);
 
     e.dataTransfer.setData('origin', 'template');
     e.dataTransfer.setData('application/json', JSON.stringify({

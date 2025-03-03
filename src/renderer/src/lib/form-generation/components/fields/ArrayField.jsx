@@ -50,13 +50,10 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
    * @param {number} [params.position.targetIndex] - Target position for reorder
    */
   const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
-    console.log('ArrayField handleDropzoneEvent:', { type, data, position });
-
     if (!data) return;
 
     switch (type) {
       case 'template': {
-        console.log('Processing template:', data);
         try {
           const projectPath = await StorageOperations.getProjectPath();
           if (!projectPath) {
@@ -67,7 +64,6 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
           const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
 
           const result = await window.electronAPI.files.read(templatePath);
-          console.log('Template read result:', result);
 
           if (result.status === 'failure') {
             throw new Error(`Failed to read template: ${result.error}`);
@@ -75,8 +71,6 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
 
           const rawTemplate = typeof result.data === 'string' ?
             JSON.parse(result.data) : result.data;
-
-          console.log('Raw template:', rawTemplate);
 
           // Special handling for flex sections
           if (rawTemplate.columns) {
@@ -112,7 +106,6 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
                 id: `${field.id}_item_${currentItems.length}`,
                 fields: processedData.fields
               }];
-              console.log('Updated items:', newItems);
               return newItems;
             });
           }
@@ -122,20 +115,15 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
         break;
       }
       case 'sidebar': {
-        console.log('Processing sidebar drop:', data);
         const fieldData = data.field || data;
-        console.log('Field data to process:', fieldData);
 
         const newItem = ensureFieldStructure({
           ...fieldData,
           id: `${field.id}_item_${items.length}`
         }, field.id);
 
-        console.log('New item structure:', newItem);
-
         setItems(currentItems => {
           const newItems = [...currentItems, newItem];
-          console.log('Updated items:', newItems);
           return newItems;
         });
         break;
@@ -235,7 +223,6 @@ export const ArrayField = ({ field, allowDuplication = true, allowDeletion = tru
         className={`array-dropzone dropzone js-dropzone ${isCollapsed ? 'is-collapsed' : ''}`}
         data-wrapper="is-array"
         onDrop={(event) => {
-          console.log('Array dropzone receiving drop:', event);
           handleDropzoneEvent(event);
         }}
       >

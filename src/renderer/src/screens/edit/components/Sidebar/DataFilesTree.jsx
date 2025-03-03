@@ -117,7 +117,6 @@ export const RenderDataFilesTree = ({
       loadFiles();
     };
     const handleFolderDeleted = (event) => {
-      console.log('Folder deleted event received in DataFilesTree:', event.detail);
       // Reload files only if the deleted folder was in our data path
       const dataPath = StorageOperations.getDataPath();
       if (event.detail.path.startsWith(dataPath)) {

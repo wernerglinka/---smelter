@@ -133,7 +133,6 @@ const electronAPI = {
      * @param directoryPath
      */
     create: (directoryPath) => {
-      console.log('Preload: invoking createDirectory with path:', directoryPath);
       return ipcRenderer.invoke('createDirectory', directoryPath);
     },
     /**

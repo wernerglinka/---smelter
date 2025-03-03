@@ -1,4 +1,5 @@
 import { isSimpleList, isDateObject } from '@lib/utilities/validation/type-validators.js';
+import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
 
 /**
  * Infers the field type from a value
@@ -40,11 +41,11 @@ function matchSchemaField(key, schema = []) {
  * Converts a string to title case
  * @param {string} str - The string to convert
  * @returns {string} The title case string
- */
+
 function toTitleCase(str) {
   return str.replace(/\b\w/g, (char) => char.toUpperCase());
 }
-
+*/
 /**
  * Creates a field configuration object for form generation
  * @param {string} key - Field name

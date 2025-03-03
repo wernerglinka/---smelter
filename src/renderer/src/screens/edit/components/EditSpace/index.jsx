@@ -116,8 +116,6 @@ const EditSpace = ({ fileContent, $expanded }) => {
 
   // Handle dropzone events (field addition, reordering)
   const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
-    console.log('Dropzone event:', { type, data, position });
-
     switch (type) {
       case 'template': {
         try {
