@@ -18,15 +18,32 @@ const formatDateForInput = (dateString) => {
   // Format as YYYY-MM-DD
   return date.toISOString().split('T')[0];
 };
-export const DateField = ({ field }) => {
-  const label = field.label || '';
+export const DateField = ({ 
+  field,
+  onDuplicate,
+  onDelete,
+  allowDuplication = !field?.noDuplication,
+  allowDeletion = !field?.noDeletion
+}) => {
+  // Use _displayLabel for duplicated fields (with empty label but display text)
+  // This allows the label to appear in the UI while still being editable
+  const label = field._displayLabel || field.label || '';
   const formattedDate = formatDateForInput(field.value);
+  
+  console.log('Rendering DateField', { 
+    id: field.id, 
+    parentId: field.parentId,
+    hasDuplicateHandler: !!onDuplicate,
+    hasDeleteHandler: !!onDelete 
+  });
 
   return (
     <BaseField
       field={field}
-      allowDuplication={!field?.noDuplication}
-      allowDeletion={!field?.noDeletion}
+      onDuplicate={onDuplicate}
+      onDelete={onDelete}
+      allowDuplication={allowDuplication}
+      allowDeletion={allowDeletion}
     >
       <label className="label-wrapper">
         <span>{toTitleCase(label) || 'Label'}</span>

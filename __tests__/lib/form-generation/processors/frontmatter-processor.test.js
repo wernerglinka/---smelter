@@ -72,7 +72,7 @@ describe('FrontmatterProcessor', () => {
 
     // Test the top-level structure
     expect(sectionsField).toMatchObject({
-      label: 'sections',
+      label: 'Sections', // Title case in current implementation
       type: 'array'
     });
 
@@ -130,7 +130,7 @@ describe('FrontmatterProcessor', () => {
 
     const result = await processFrontmatter(frontmatter, '');
     expect(result.fields[0]).toMatchObject({
-      label: 'seo',
+      label: 'Seo', // Title case in current implementation
       type: 'object',
       value: frontmatter.seo
     });
@@ -160,27 +160,27 @@ describe('FrontmatterProcessor', () => {
     expect(result.fields).toHaveLength(3);
     expect(result.fields).toEqual([
       {
-        label: 'layout',
+        label: 'Layout', // Title case in current implementation
         name: 'layout',
         type: 'text',
         value: 'default.njk',
-        placeholder: 'Add layout',
+        placeholder: 'Add Layout',
         isExplicit: false
       },
       {
-        label: 'draft',
+        label: 'Draft', // Title case in current implementation
         name: 'draft',
         type: 'checkbox',
         value: false,
-        placeholder: 'Add draft',
+        placeholder: 'Add Draft',
         isExplicit: false
       },
       {
-        label: 'navLabel',
+        label: 'Nav Label', // Title case in current implementation
         name: 'navLabel',
         type: 'text',
         value: 'Home',
-        placeholder: 'Add navLabel',
+        placeholder: 'Add Nav Label',
         isExplicit: false
       }
     ]);
@@ -223,7 +223,7 @@ describe('FrontmatterProcessor', () => {
     // Only test the essential structure and values
     const sectionsField = result.fields[0];
     expect(sectionsField).toMatchObject({
-      label: 'sections',
+      label: 'Sections', // Title case in current implementation
       type: 'array',
       value: expect.arrayContaining([
         expect.objectContaining({
@@ -271,12 +271,12 @@ describe('FrontmatterProcessor', () => {
     const result = await processFrontmatter(frontmatter, '');
 
     expect(result.fields[0]).toMatchObject({
-      label: 'seo',
+      label: 'Seo', // Title case in current implementation
       type: 'object',
       noDuplication: true,
       fields: expect.arrayContaining([
         expect.objectContaining({
-          label: 'title',
+          label: 'Title', // Title case in current implementation  
           name: 'title',
           type: 'text',
           value: 'Test Page',

@@ -61,6 +61,7 @@
 
   & > .button-wrapper {
     display: flex;
+    opacity: 1;
     justify-content: space-between;
     margin: 3rem 0;
   }

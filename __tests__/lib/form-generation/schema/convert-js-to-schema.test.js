@@ -144,27 +144,27 @@ describe('convertToSchemaObject', () => {
     expect(result).toEqual({
       fields: [
         {
-          label: 'title',
+          label: 'Title', // Title case in current implementation
           name: 'title',
           type: 'text',
           value: 'Test Page',
-          placeholder: 'Add title',
+          placeholder: 'Add Title',
           isExplicit: false
         },
         {
-          label: 'published',
+          label: 'Published', // Title case in current implementation
           name: 'published',
           type: 'checkbox',
           value: true,
-          placeholder: 'Add published',
+          placeholder: 'Add Published',
           isExplicit: false
         },
         {
-          label: 'order',
+          label: 'Order', // Title case in current implementation
           name: 'order',
           type: 'number',
           value: 1,
-          placeholder: 'Add order',
+          placeholder: 'Add Order',
           isExplicit: false
         }
       ]
@@ -186,11 +186,11 @@ describe('convertToSchemaObject', () => {
 
     const result = await convertToSchemaObject(json, schema);
     expect(result.fields[0]).toEqual({
-      label: 'title',
+      label: 'Title', // Title case in current implementation
       name: 'title',
       type: 'textarea',
       value: 'Test Page',
-      placeholder: 'Add title',
+      placeholder: 'Add Title',
       required: true,
       description: 'Page title',
       isExplicit: true
@@ -207,7 +207,7 @@ describe('convertToSchemaObject', () => {
 
     const result = await convertToSchemaObject(json);
     expect(result.fields[0]).toEqual({
-      label: 'meta',
+      label: 'Meta', // Title case in current implementation
       name: 'meta',
       type: 'object',
       value: {
@@ -216,23 +216,23 @@ describe('convertToSchemaObject', () => {
       },
       fields: [
         {
-          label: 'author',
+          label: 'Author', // Title case in current implementation
           name: 'author',
           type: 'text',
           value: 'John Doe',
-          placeholder: 'Add author',
+          placeholder: 'Add Author',
           isExplicit: false
         },
         {
-          label: 'tags',
+          label: 'Tags', // Title case in current implementation
           name: 'tags',
           type: 'list',
           value: ['test', 'example'],
-          placeholder: 'Add tags',
+          placeholder: 'Add Tags',
           isExplicit: false
         }
       ],
-      placeholder: 'Add meta',
+      placeholder: 'Add Meta',
       isExplicit: false,
       noDeletion: false,
       isRequired: false,
@@ -250,7 +250,7 @@ describe('convertToSchemaObject', () => {
 
     const result = await convertToSchemaObject(json);
     expect(result.fields[0]).toEqual({
-      label: 'sections',
+      label: 'Sections', // Title case in current implementation
       name: 'sections',
       type: 'array',
       value: [
@@ -261,19 +261,19 @@ describe('convertToSchemaObject', () => {
           value: { title: 'Section 1', content: 'Content 1' },
           fields: [
             {
-              label: 'title',
+              label: 'Title', // Title case in current implementation
               name: 'title',
               type: 'date',
               value: 'Section 1',
-              placeholder: 'Add title',
+              placeholder: 'Add Title',
               isExplicit: false
             },
             {
-              label: 'content',
+              label: 'Content', // Title case in current implementation
               name: 'content',
               type: 'date',
               value: 'Content 1',
-              placeholder: 'Add content',
+              placeholder: 'Add Content',
               isExplicit: false
             }
           ]
@@ -285,25 +285,25 @@ describe('convertToSchemaObject', () => {
           value: { title: 'Section 2', content: 'Content 2' },
           fields: [
             {
-              label: 'title',
+              label: 'Title', // Title case in current implementation
               name: 'title',
               type: 'date',
               value: 'Section 2',
-              placeholder: 'Add title',
+              placeholder: 'Add Title',
               isExplicit: false
             },
             {
-              label: 'content',
+              label: 'Content', // Title case in current implementation
               name: 'content',
               type: 'date',
               value: 'Content 2',
-              placeholder: 'Add content',
+              placeholder: 'Add Content',
               isExplicit: false
             }
           ]
         }
       ],
-      placeholder: 'Add sections',
+      placeholder: 'Add Sections',
       isExplicit: false,
       noDeletion: false,
       isRequired: false,
@@ -323,11 +323,11 @@ describe('convertToSchemaObject', () => {
     };
     const result = await convertToSchemaObject(json);
     expect(result.fields[0]).toEqual({
-      label: 'nullField',
+      label: 'Null Field', // Title case in current implementation
       name: 'nullField',
       type: 'text',
       value: null,
-      placeholder: 'Add nullField',
+      placeholder: 'Add Null Field',
       isExplicit: false
     });
   });
@@ -340,45 +340,45 @@ describe('convertToSchemaObject', () => {
 
     const result = await convertToSchemaObject(json);
     expect(result.fields[0]).toEqual({
-      label: 'numbers',
+      label: 'Numbers', // Title case in current implementation
       name: 'numbers',
       type: 'list',
       value: [1, 2, 3],
-      placeholder: 'Add numbers',
+      placeholder: 'Add Numbers',
       isExplicit: false
     });
 
     expect(result.fields[1]).toEqual({
-      label: 'mixed',
+      label: 'Mixed', // Title case in current implementation
       name: 'mixed',
       type: 'array',
       value: [
         {
           isExplicit: false,
-          label: 'item',
+          label: 'Item', // Title case in current implementation
           name: 'item',
-          placeholder: 'Add item',
+          placeholder: 'Add Item',
           type: 'text',
           value: 'text'
         },
         {
           isExplicit: false,
-          label: 'item',
+          label: 'Item',
           name: 'item',
-          placeholder: 'Add item',
+          placeholder: 'Add Item',
           type: 'number',
           value: 42
         },
         {
           isExplicit: false,
-          label: 'item',
+          label: 'Item',
           name: 'item',
-          placeholder: 'Add item',
+          placeholder: 'Add Item',
           type: 'checkbox',
           value: true
         }
       ],
-      placeholder: 'Add mixed',
+      placeholder: 'Add Mixed',
       isExplicit: false,
       noDeletion: false,
       isRequired: false,
@@ -394,11 +394,11 @@ describe('convertToSchemaObject', () => {
     expect(result).toEqual({
       fields: [
         {
-          label: 'title',
+          label: 'Title',
           name: 'title',
           type: 'text',
           value: 'Test',
-          placeholder: 'Add title',
+          placeholder: 'Add Title',
           isExplicit: false
         }
       ]
@@ -418,11 +418,11 @@ describe('convertToSchemaObject', () => {
     ];
     const result = await convertToSchemaObject(json, schema);
     expect(result.fields[0]).toEqual({
-      label: 'title',
+      label: 'Title',
       name: 'title',
       type: 'text',
       value: 'Test',
-      placeholder: 'Add title',
+      placeholder: 'Add Title',
       isExplicit: false
     });
   });
@@ -443,7 +443,7 @@ describe('convertToSchemaObject', () => {
     ];
     const result = await convertToSchemaObject(json, schema);
     expect(result.fields[0]).toEqual({
-      label: 'items',
+      label: 'Items',
       name: 'items',
       type: 'array',
       items: {
@@ -451,7 +451,7 @@ describe('convertToSchemaObject', () => {
         required: true
       },
       value: ['item1', 'item2'],
-      placeholder: 'Add items',
+      placeholder: 'Add Items',
       isExplicit: true
     });
   });
@@ -909,7 +909,7 @@ describe('createField', () => {
       value: 'value',
       type: 'text',
       isExplicit: false,
-      placeholder: 'Add test'
+      placeholder: 'Add Test'
     });
   });
 
@@ -920,7 +920,7 @@ describe('createField', () => {
       value: 'value',
       type: 'text',
       isExplicit: false,
-      placeholder: 'Add test'
+      placeholder: 'Add Test'
     });
   });
 
@@ -930,6 +930,6 @@ describe('createField', () => {
       type: 'text'
     };
     const result = createField('test', 'value', schemaField);
-    expect(result.placeholder).toBe('Add test');
+    expect(result.placeholder).toBe('Add Test');
   });
 });

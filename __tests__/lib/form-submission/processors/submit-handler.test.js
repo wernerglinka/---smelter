@@ -17,6 +17,9 @@ global.window = Object.create(window);
 window.electronAPI = {
   files: {
     writeYAML: jest.fn().mockResolvedValue({ status: 'success' })
+  },
+  dialog: {
+    showCustomMessage: jest.fn().mockResolvedValue({ response: 0 })
   }
 };
 

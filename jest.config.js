@@ -14,7 +14,7 @@ module.exports = {
     '\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/styleMock.js'
   },
   setupFilesAfterEnv: ['<rootDir>/__tests__/setup.js'],
-  testMatch: ['**/__tests__/**/*.test.js'],
+  testMatch: ['**/__tests__/**/*.test.js?(x)'],
   transform: {
     '^.+\\.(js|jsx)$': 'babel-jest'
   },

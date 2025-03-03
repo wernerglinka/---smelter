@@ -1,8 +1,9 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 /**
  * @typedef {Object} FormContextValue
  * @property {Function} onSubmit - Form submission handler
+ * @property {Function} updateFormState - Update form state
  */
 
 export const FormContext = createContext(null);
@@ -13,13 +14,46 @@ export const FormContext = createContext(null);
  * @param {React.ReactNode} props.children
  * @param {Object} props.initialData - Initial form data
  */
-export const FormProvider = ({ children, initialData }) => {
+export const FormProvider = ({ children, initialData = {} }) => {
+  const [formState, setFormState] = useState(initialData);
+  
+  /**
+   * Handles form submission
+   */
   const handleSubmit = (event) => {
     event.preventDefault();
   };
+  
+  /**
+   * Updates form state based on operation type
+   * @param {string} operationType - Type of operation to perform
+   * @param {Object} data - Operation data
+   */
+  const updateFormState = (operationType, data) => {
+    switch(operationType) {
+      case 'setValue':
+        setFormState(prevState => ({
+          ...prevState,
+          [data.field]: data.value
+        }));
+        break;
+      case 'duplicateField':
+        // Add implementation if needed at form context level
+        break;
+      case 'deleteField':
+        // Add implementation if needed at form context level
+        break;
+      default:
+        console.warn(`Unknown operation type: ${operationType}`);
+    }
+  };
 
   return (
-    <FormContext.Provider value={{ onSubmit: handleSubmit }}>
+    <FormContext.Provider value={{ 
+      onSubmit: handleSubmit, 
+      formState,
+      updateFormState 
+    }}>
       <form onSubmit={handleSubmit}>
         {children}
       </form>

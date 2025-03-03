@@ -11,6 +11,10 @@ import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
  * @property {string} [field.placeholder] - Input placeholder text
  * @property {boolean} [field.noDuplication] - Whether field can be duplicated
  * @property {boolean} [field.noDeletion] - Whether field can be deleted
+ * @property {Function} [onDuplicate] - Handler for field duplication
+ * @property {Function} [onDelete] - Handler for field deletion
+ * @property {boolean} [allowDuplication] - Whether duplication is allowed
+ * @property {boolean} [allowDeletion] - Whether deletion is allowed
  */
 
 /**
@@ -18,14 +22,24 @@ import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
  * @param {TextFieldProps} props - Component properties
  * @returns {JSX.Element} Rendered field component
  */
-export const TextField = ({ field }) => {
-  const label = field.label || '';
+export const TextField = ({ 
+  field, 
+  onDuplicate,
+  onDelete,
+  allowDuplication = !field?.noDuplication,
+  allowDeletion = !field?.noDeletion
+}) => {
+  // Use _displayLabel for duplicated fields (with empty label but display text)
+  // This allows the label to appear in the UI while still being editable
+  const label = field._displayLabel || field.label || '';
 
   return (
     <BaseField
       field={field}
-      allowDuplication={!field?.noDuplication}
-      allowDeletion={!field?.noDeletion}
+      onDuplicate={onDuplicate}
+      onDelete={onDelete}
+      allowDuplication={allowDuplication}
+      allowDeletion={allowDeletion}
     >
       <label className="label-wrapper">
         <span>{toTitleCase(label) || 'Label'}</span>
@@ -35,7 +49,7 @@ export const TextField = ({ field }) => {
             className="element-label"
             placeholder="Label Placeholder"
             defaultValue={label}
-            readOnly={!!label}
+            readOnly={!field._displayLabel && !!label}
           />
         </div>
       </label>

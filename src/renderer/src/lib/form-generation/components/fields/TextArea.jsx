@@ -18,14 +18,31 @@ import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
  * @param {TextAreaProps} props - Component properties
  * @returns {JSX.Element} Rendered field component
  */
-export const TextArea = ({ field }) => {
-  const label = field.label || '';
+export const TextArea = ({ 
+  field, 
+  onDuplicate,
+  onDelete,
+  allowDuplication = !field?.noDuplication,
+  allowDeletion = !field?.noDeletion
+}) => {
+  // Use _displayLabel for duplicated fields (with empty label but display text)
+  // This allows the label to appear in the UI while still being editable
+  const label = field._displayLabel || field.label || '';
+  
+  console.log('Rendering TextArea', { 
+    id: field.id, 
+    parentId: field.parentId,
+    hasDuplicateHandler: !!onDuplicate,
+    hasDeleteHandler: !!onDelete 
+  });
 
   return (
     <BaseField
       field={field}
-      allowDuplication={!field?.noDuplication}
-      allowDeletion={!field?.noDeletion}
+      onDuplicate={onDuplicate}
+      onDelete={onDelete}
+      allowDuplication={allowDuplication}
+      allowDeletion={allowDeletion}
     >
       <label className="label-wrapper">
         <span>{toTitleCase(label) || 'Label'}</span>
@@ -35,7 +52,7 @@ export const TextArea = ({ field }) => {
             className="element-label"
             placeholder="Label Placeholder"
             defaultValue={label}
-            readOnly={!!label}
+            readOnly={!field._displayLabel && !!label}
           />
         </div>
       </label>

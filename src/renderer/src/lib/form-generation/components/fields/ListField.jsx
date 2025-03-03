@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { DragHandleIcon, AddIcon, DeleteIcon, CollapseIcon, CollapsedIcon } from '@components/icons';
+import FieldControls from './FieldControls';
 
 /**
  * @typedef {Object} ListFieldProps
  * @property {Object} field - The field configuration object
  * @property {string} [field.label] - Display label for the field
  * @property {Array<string>} [field.value] - Initial list values
- * @property {boolean} [allowDuplication=true] - Whether items can be duplicated
+ * @property {boolean} [allowDuplication=true] - Whether the list itself can be duplicated
+ * @property {boolean} [allowDeletion=true] - Whether the list itself can be deleted
+ * @property {Function} [onDuplicate] - Handler for duplicating this list field
+ * @property {Function} [onDelete] - Handler for deleting this list field
  */
 
 /**
@@ -17,7 +21,13 @@ import { DragHandleIcon, AddIcon, DeleteIcon, CollapseIcon, CollapsedIcon } from
  * @param {ListFieldProps} props - Component properties
  * @returns {JSX.Element} Rendered list field component
  */
-export const ListField = ({ field = {}, allowDuplication = true }) => {
+export const ListField = ({ 
+  field = {}, 
+  onDuplicate,
+  onDelete,
+  allowDuplication = true,
+  allowDeletion = true
+}) => {
   // Track collapsed state of the list
   const [isCollapsed, setIsCollapsed] = useState(true);
 
@@ -27,7 +37,9 @@ export const ListField = ({ field = {}, allowDuplication = true }) => {
   /**
    * Toggles the collapsed state of the list
    */
-  const handleCollapse = () => {
+  const handleCollapse = (e) => {
+    // Stop event propagation to prevent bubble up
+    if (e) e.stopPropagation();
     setIsCollapsed(!isCollapsed);
   };
 
@@ -36,9 +48,27 @@ export const ListField = ({ field = {}, allowDuplication = true }) => {
    * @param {number} index - Index of the item to duplicate
    */
   const handleAddItem = (index) => {
+    // Make sure the list stays expanded during duplication
+    if (isCollapsed) {
+      setIsCollapsed(false);
+    }
+    
+    console.log('List: Duplicating item at index', index);
+    
     const newItems = [...items];
     const itemToClone = newItems[index];
-    newItems.splice(index + 1, 0, `Copy of ${itemToClone}`);
+    
+    // Generate the new item label with proper copy suffix
+    let newItemText = itemToClone;
+    if (typeof itemToClone === 'string') {
+      if (itemToClone.includes('Copy of')) {
+        newItemText = `Copy of ${itemToClone}`;
+      } else {
+        newItemText = `Copy of ${itemToClone}`;
+      }
+    }
+    
+    newItems.splice(index + 1, 0, newItemText);
     setItems(newItems);
   };
 
@@ -47,10 +77,19 @@ export const ListField = ({ field = {}, allowDuplication = true }) => {
    * @param {number} index - Index of the item to delete
    */
   const handleDeleteItem = (index) => {
+    // Make sure the list stays expanded during deletion
+    if (isCollapsed) {
+      setIsCollapsed(false);
+    }
+    
+    console.log('List: Deleting item at index', index);
+    
     if (items.length > 1) {
       const newItems = [...items];
       newItems.splice(index, 1);
       setItems(newItems);
+    } else {
+      console.warn('Cannot delete the last item in a list');
     }
   };
 
@@ -68,8 +107,8 @@ export const ListField = ({ field = {}, allowDuplication = true }) => {
           type="text"
           className="element-label"
           placeholder="Label Placeholder"
-          defaultValue={field.label || ''}
-          readOnly
+          defaultValue={field._displayLabel || field.label || ''}
+          readOnly={!!field.label}
         />
         <span className="collapse-icon" onClick={handleCollapse}>
           {isCollapsed ? <CollapsedIcon /> : <CollapseIcon />}
@@ -87,17 +126,13 @@ export const ListField = ({ field = {}, allowDuplication = true }) => {
               />
               {/* Item action buttons */}
               <div className="button-wrapper">
-                {/* Duplicate button - shown if duplication is allowed */}
-                {allowDuplication && (
-                  <div className="add-button" title="Duplicate this list" onClick={() => handleAddItem(index)}>
-                    <AddIcon />
-                  </div>
-                )}
-                {/* Delete button - only shown when there's more than one item */}
+                <div className="add-button" title="Duplicate this item" onClick={() => handleAddItem(index)}>
+                  <AddIcon />
+                </div>
                 {items.length > 1 && (
                   <div
                     className="delete-button"
-                    title="Delete this list"
+                    title="Delete this item"
                     onClick={() => handleDeleteItem(index)}
                   >
                     <DeleteIcon />
@@ -108,6 +143,14 @@ export const ListField = ({ field = {}, allowDuplication = true }) => {
           ))}
         </ul>
       </div>
+      
+      {/* Controls for the entire list field */}
+      <FieldControls
+        onDuplicate={onDuplicate}
+        onDelete={onDelete}
+        allowDuplication={allowDuplication}
+        allowDeletion={allowDeletion}
+      />
     </div>
   );
 };
