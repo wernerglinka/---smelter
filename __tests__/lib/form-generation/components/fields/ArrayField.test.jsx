@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, act } from '@testing-library/react';
 import { ArrayField } from '../../../../../src/renderer/src/lib/form-generation/components/fields/ArrayField';
 import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '../../../../../src/renderer/src/components/icons';
+import { StorageOperations } from '../../../../../src/renderer/src/lib/utilities/services/storage';
 
 // Mock the icons and Dropzone components
 jest.mock('../../../../../src/renderer/src/components/icons', () => ({
@@ -33,15 +34,40 @@ jest.mock('../../../../../src/renderer/src/lib/form-generation/components/FormFi
 
 // Mock FieldControls component
 jest.mock('../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls', () => {
-  return function MockFieldControls({ onDuplicate, onDelete }) {
+  return function MockFieldControls({ onDuplicate, onDelete, allowDuplication = true, allowDeletion = true }) {
     return (
-      <div data-testid="field-controls">
-        <button data-testid="duplicate-button" onClick={onDuplicate}>Duplicate</button>
-        <button data-testid="delete-button" onClick={onDelete}>Delete</button>
+      <div data-testid="field-controls" className="button-wrapper">
+        {allowDuplication && (
+          <div 
+            className="add-button" 
+            data-testid="duplicate-button" 
+            onClick={onDuplicate}
+            title="Duplicate this element"
+          >
+            Duplicate
+          </div>
+        )}
+        {allowDeletion && (
+          <div 
+            className="delete-button" 
+            data-testid="delete-button" 
+            onClick={onDelete}
+            title="Delete this element"
+          >
+            Delete
+          </div>
+        )}
       </div>
     );
   };
 });
+
+// Mock StorageOperations
+jest.mock('../../../../../src/renderer/src/lib/utilities/services/storage', () => ({
+  StorageOperations: {
+    getProjectPath: jest.fn()
+  }
+}));
 
 describe('ArrayField', () => {
   const defaultProps = {
@@ -155,6 +181,44 @@ describe('ArrayField', () => {
       render(<ArrayField field={field} onUpdate={defaultProps.onUpdate} index={0} />);
       
       expect(screen.queryAllByTestId('form-field')).toHaveLength(0);
+    });
+  });
+
+  describe('item manipulation', () => {
+    test('has add button for duplication', () => {
+      const { container } = render(<ArrayField {...defaultProps} />);
+      
+      // Find duplicate button for the array
+      const duplicateButton = container.querySelector('.add-button');
+      expect(duplicateButton).toBeInTheDocument();
+    });
+    
+    test('has delete button for deletion', () => {
+      const { container } = render(<ArrayField {...defaultProps} />);
+      
+      // Find delete button for the array
+      const deleteButton = container.querySelector('.delete-button');
+      expect(deleteButton).toBeInTheDocument();
+    });
+    
+    test('renders in collapsed state with collapse class', () => {
+      render(<ArrayField {...defaultProps} initiallyCollapsed={true} />);
+      
+      // Verify it starts collapsed
+      const dropzone = screen.getByTestId('dropzone');
+      expect(dropzone).toHaveClass('is-collapsed');
+    });
+  });
+
+  describe('array structure', () => {
+    test('renders correct number of child elements', () => {
+      render(<ArrayField {...defaultProps} />);
+      
+      // Check that all array items are rendered
+      const formFields = screen.getAllByTestId('form-field');
+      expect(formFields).toHaveLength(2);
+      expect(formFields[0]).toHaveAttribute('data-field-id', 'item1');
+      expect(formFields[1]).toHaveAttribute('data-field-id', 'item2');
     });
   });
 });

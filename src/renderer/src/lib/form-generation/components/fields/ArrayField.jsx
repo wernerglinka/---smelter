@@ -36,20 +36,17 @@ import FieldControls from './FieldControls';
  * @param {ArrayFieldProps} props - Component properties
  * @returns {JSX.Element} Rendered array field component
  */
-export const ArrayField = ({ 
-  field, 
+export const ArrayField = ({
+  field,
   onDuplicate,
   onDelete,
   onFieldDuplicate,
   onFieldDelete,
-  allowDuplication = true, 
+  allowDuplication = true,
   allowDeletion = true,
   initiallyCollapsed = true
 }) => {
-  // Using debug ID to help trace specific instances
-  const debugId = `array-${field.id || Math.random().toString(36).substring(2, 9)}`;
-  console.log(`Rendering ArrayField ${debugId}`);
-  
+
   const [isCollapsed, setIsCollapsed] = useState(initiallyCollapsed);
   const [items, setItems] = useState(field.value || []);
 
@@ -59,19 +56,17 @@ export const ArrayField = ({
   const handleCollapse = useCallback((e) => {
     // Stop event propagation to prevent bubble up
     if (e) e.stopPropagation();
-    console.log(`Toggle collapse on ${debugId}, currently ${isCollapsed ? 'collapsed' : 'expanded'}`);
     setIsCollapsed(prev => !prev);
-  }, [debugId, isCollapsed]);
-  
+  }, [isCollapsed]);
+
   // Force open the container if it's closed - useful for operations that need to see the content
   const forceExpand = useCallback(() => {
     if (isCollapsed) {
-      console.log(`Forcing expansion of ${debugId}`);
       setIsCollapsed(false);
       return true;
     }
     return false;
-  }, [isCollapsed, debugId]);
+  }, [isCollapsed]);
 
   /**
    * Handles dropzone events for drag and drop operations
@@ -240,30 +235,23 @@ export const ArrayField = ({
   const handleFieldDuplicate = useCallback((itemToDuplicate) => {
     // Make sure the array stays expanded during duplication
     forceExpand();
-    
+
     // Generate a unique identifier for the duplicate
     const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    
+
     // Handle label for duplicate properly, adding (Copy) suffix
     let newLabel;
     if (itemToDuplicate.label) {
       newLabel = `${itemToDuplicate.label}${itemToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
     }
-    
+
     // Create duplicated item with unique ID (deep clone to avoid reference issues)
     const duplicatedItem = {
       ...JSON.parse(JSON.stringify(itemToDuplicate)),
       id: `${itemToDuplicate.id}_${uniqueId}`,
       label: newLabel
     };
-    
-    console.log('Array: Duplicating item', { 
-      original: itemToDuplicate.id, 
-      duplicate: duplicatedItem.id,
-      originalLabel: itemToDuplicate.label,
-      duplicateLabel: duplicatedItem.label 
-    });
-    
+
     setItems(currentItems => {
       const index = currentItems.findIndex(item => item.id === itemToDuplicate.id);
       if (index !== -1) {
@@ -274,31 +262,29 @@ export const ArrayField = ({
       return currentItems;
     });
   }, [isCollapsed]);
-  
+
   /**
    * Handles deletion of items inside this array
    */
   const handleFieldDelete = useCallback((itemToDelete) => {
     // Make sure the array stays expanded during deletion
     forceExpand();
-    
-    console.log('Array: Deleting item', { id: itemToDelete.id });
-    
+
     setItems(currentItems => {
       // Find exact item to delete
       const itemIndex = currentItems.findIndex(item => item.id === itemToDelete.id);
-      
+
       if (itemIndex === -1) {
         console.error('Item to delete not found:', itemToDelete.id);
         return currentItems;
       }
-      
+
       // Create new array without the specific item
       const newItems = [
         ...currentItems.slice(0, itemIndex),
         ...currentItems.slice(itemIndex + 1)
       ];
-      
+
       return newItems;
     });
   }, [forceExpand]);
@@ -338,32 +324,25 @@ export const ArrayField = ({
               parentId: field.id // Add parent reference
             }}
             onFieldDuplicate={(itemToDuplicate) => {
-              console.log('ArrayField: Child item duplication requested', {
-                itemId: itemToDuplicate.id,
-                parentId: field.id,
-                itemIndex: index, // Add the index from the map loop
-                debugId
-              });
-              
               // Use the index from the map to directly insert the duplicate after the correct item
               // This is more reliable than searching by ID which might not be unique
               const duplicateByIndex = () => {
                 // Generate a unique identifier
                 const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-                
+
                 // Handle label for duplicate
                 let newLabel;
                 if (itemToDuplicate.label) {
                   newLabel = `${itemToDuplicate.label}${itemToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
                 }
-                
+
                 // Create the duplicated item with unique ID
                 // Get the original itemToDuplicate without readonly flags
                 const itemCopy = JSON.parse(JSON.stringify(itemToDuplicate));
-                
+
                 // Remove readonly from the itemCopy
                 if (itemCopy.readOnly) delete itemCopy.readOnly;
-                
+
                 // Set the label to empty string to make it editable
                 // This is all we need since readOnly={!!label} checks if label exists
                 const duplicatedItem = {
@@ -371,13 +350,13 @@ export const ArrayField = ({
                   id: `${itemToDuplicate.id || field.id}_item_${index}_${uniqueId}`,
                   label: '' // Empty label makes readOnly={!!label} evaluate to false
                 };
-                
+
                 // Store the label suggestion in a custom property
                 duplicatedItem._displayLabel = newLabel;
-                
+
                 // Make sure the container stays expanded
                 forceExpand();
-                
+
                 // Insert after the index position directly
                 setItems(currentItems => {
                   if (index >= 0 && index < currentItems.length) {
@@ -388,21 +367,14 @@ export const ArrayField = ({
                   return currentItems;
                 });
               };
-              
+
               // Duplicate by index instead of searching by ID
               duplicateByIndex();
-              
+
               // Return false to prevent the event from bubbling up
               return false;
             }}
             onFieldDelete={(itemToDelete) => {
-              console.log('ArrayField: Child item deletion requested', {
-                itemId: itemToDelete.id,
-                parentId: field.id,
-                itemIndex: index, // Add the index directly from the map loop
-                debugId
-              });
-              
               // Use the index from the map to directly delete the correct item
               // This is more reliable than searching by ID which might not be unique
               const deleteByIndex = () => {
@@ -417,10 +389,10 @@ export const ArrayField = ({
                   return currentItems;
                 });
               };
-              
+
               // Delete by index instead of searching by ID
               deleteByIndex();
-              
+
               // Return false to prevent the event from bubbling up
               return false;
             }}
@@ -437,7 +409,6 @@ export const ArrayField = ({
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              console.log(`Duplicate button clicked on ${debugId}`);
               if (onDuplicate) onDuplicate();
             }}
           >
@@ -451,7 +422,6 @@ export const ArrayField = ({
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              console.log(`Delete button clicked on ${debugId}`);
               if (onDelete) onDelete();
             }}
           >
@@ -459,11 +429,12 @@ export const ArrayField = ({
           </div>
         )}
       </div>
-      {/* Debug info */}
+      {/* Debug info
       <div style={{display: 'none'}}>
-        Array debug ID: {debugId}, 
+        Array debug ID: {debugId},
         Handlers: Duplicate={!!onDuplicate}, Delete={!!onDelete}
       </div>
+      */}
     </div>
   );
 };

@@ -18,7 +18,7 @@ import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
  * @param {UrlFieldProps} props - Component properties
  * @returns {JSX.Element} Rendered field component
  */
-export const UrlField = ({ 
+export const UrlField = ({
   field,
   onDuplicate,
   onDelete,
@@ -28,13 +28,6 @@ export const UrlField = ({
   // Use _displayLabel for duplicated fields (with empty label but display text)
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
-  
-  console.log('Rendering UrlField', { 
-    id: field.id, 
-    parentId: field.parentId,
-    hasDuplicateHandler: !!onDuplicate,
-    hasDeleteHandler: !!onDelete 
-  });
 
   return (
     <BaseField

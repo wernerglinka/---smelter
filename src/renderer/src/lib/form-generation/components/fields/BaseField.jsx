@@ -30,16 +30,6 @@ export const BaseField = ({
   allowDuplication = !field?.noDuplication,
   allowDeletion = !field?.noDeletion
 }) => {
-  // Add console logging to help debug
-  console.log('BaseField rendered', { 
-    fieldId: field?.id, 
-    fieldType: field?.type,
-    hasDuplicateHandler: !!onDuplicate,
-    hasDeleteHandler: !!onDelete,
-    allowDuplication,
-    allowDeletion
-  });
-  
   const labelExistsClass = field?.label ? 'label-exists' : '';
   const fieldTypeClass = field?.type ? `is-${field.type}` : '';
 

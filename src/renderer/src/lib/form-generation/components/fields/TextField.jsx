@@ -13,6 +13,7 @@ import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
  * @property {boolean} [field.noDeletion] - Whether field can be deleted
  * @property {Function} [onDuplicate] - Handler for field duplication
  * @property {Function} [onDelete] - Handler for field deletion
+ * @property {Function} [onUpdate] - Handler for field value updates
  * @property {boolean} [allowDuplication] - Whether duplication is allowed
  * @property {boolean} [allowDeletion] - Whether deletion is allowed
  */
@@ -26,12 +27,33 @@ export const TextField = ({
   field, 
   onDuplicate,
   onDelete,
+  onUpdate,
   allowDuplication = !field?.noDuplication,
   allowDeletion = !field?.noDeletion
 }) => {
   // Use _displayLabel for duplicated fields (with empty label but display text)
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
+  
+  // Handle text value changes
+  const handleTextChange = (e) => {
+    if (onUpdate) {
+      onUpdate({
+        ...field,
+        value: e.target.value
+      });
+    }
+  };
+
+  // Handle label changes when editable
+  const handleLabelChange = (e) => {
+    if (onUpdate && field._displayLabel !== undefined) {
+      onUpdate({
+        ...field,
+        _displayLabel: e.target.value
+      });
+    }
+  };
 
   return (
     <BaseField
@@ -50,6 +72,7 @@ export const TextField = ({
             placeholder="Label Placeholder"
             defaultValue={label}
             readOnly={!field._displayLabel && !!label}
+            onChange={handleLabelChange}
           />
         </div>
       </label>
@@ -62,6 +85,7 @@ export const TextField = ({
             className="element-value"
             defaultValue={field.value}
             placeholder={field.placeholder}
+            onChange={handleTextChange}
           />
         </div>
       </label>

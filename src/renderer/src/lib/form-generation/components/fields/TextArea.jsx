@@ -18,8 +18,8 @@ import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
  * @param {TextAreaProps} props - Component properties
  * @returns {JSX.Element} Rendered field component
  */
-export const TextArea = ({ 
-  field, 
+export const TextArea = ({
+  field,
   onDuplicate,
   onDelete,
   allowDuplication = !field?.noDuplication,
@@ -28,13 +28,6 @@ export const TextArea = ({
   // Use _displayLabel for duplicated fields (with empty label but display text)
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
-  
-  console.log('Rendering TextArea', { 
-    id: field.id, 
-    parentId: field.parentId,
-    hasDuplicateHandler: !!onDuplicate,
-    hasDeleteHandler: !!onDelete 
-  });
 
   return (
     <BaseField

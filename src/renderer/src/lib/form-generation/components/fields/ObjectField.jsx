@@ -26,20 +26,16 @@ import FieldControls from './FieldControls';
  * @param {boolean} [props.allowDeletion] - Whether this object can be deleted
  * @param {boolean} [props.initiallyCollapsed] - Whether to start collapsed (default: true)
  */
-export const ObjectField = ({ 
-  field, 
+export const ObjectField = ({
+  field,
   onDuplicate,
   onDelete,
   onFieldDuplicate,
   onFieldDelete,
-  allowDuplication = true, 
+  allowDuplication = true,
   allowDeletion = true,
   initiallyCollapsed = true
 }) => {
-  // Using debug ID to help trace specific instances
-  const debugId = `object-${field.id || Math.random().toString(36).substring(2, 9)}`;
-  console.log(`Rendering ObjectField ${debugId}`);
-  
   const [isCollapsed, setIsCollapsed] = useState(initiallyCollapsed);
   const [fields, setFields] = useState(field.fields || []);
 
@@ -47,19 +43,17 @@ export const ObjectField = ({
   const handleCollapse = (e) => {
     // Stop event propagation to prevent bubble up
     if (e) e.stopPropagation();
-    console.log(`Toggle collapse on ${debugId}, currently ${isCollapsed ? 'collapsed' : 'expanded'}`);
     setIsCollapsed(!isCollapsed);
   };
-  
+
   // Force open the container if it's closed - useful for operations that need to see the content
   const forceExpand = useCallback(() => {
     if (isCollapsed) {
-      console.log(`Forcing expansion of ${debugId}`);
       setIsCollapsed(false);
       return true;
     }
     return false;
-  }, [isCollapsed, debugId]);
+  }, [isCollapsed]);
 
   // Use _displayLabel for duplicated fields (with empty label but display text)
   // This allows the label to appear in the UI while still being editable
@@ -137,30 +131,23 @@ export const ObjectField = ({
   const handleFieldDuplicate = useCallback((fieldToDuplicate) => {
     // Make sure the object stays expanded during duplication
     forceExpand();
-    
+
     // Generate a unique identifier for the duplicate
     const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    
+
     // Handle label for duplicate properly, adding (Copy) suffix
     let newLabel;
     if (fieldToDuplicate.label) {
       newLabel = `${fieldToDuplicate.label}${fieldToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
     }
-    
+
     // Create duplicated field with unique ID (deep clone to avoid reference issues)
     const duplicatedField = {
       ...JSON.parse(JSON.stringify(fieldToDuplicate)),
       id: `${fieldToDuplicate.id}_${uniqueId}`,
       label: newLabel
     };
-    
-    console.log('Object: Duplicating field', { 
-      original: fieldToDuplicate.id, 
-      duplicate: duplicatedField.id,
-      originalLabel: fieldToDuplicate.label,
-      duplicateLabel: duplicatedField.label
-    });
-    
+
     setFields(currentFields => {
       const index = currentFields.findIndex(f => f.id === fieldToDuplicate.id);
       if (index !== -1) {
@@ -171,31 +158,29 @@ export const ObjectField = ({
       return currentFields;
     });
   }, [isCollapsed]);
-  
+
   /**
    * Handles deletion of fields inside this object
    */
   const handleFieldDelete = useCallback((fieldToDelete) => {
     // Make sure the object stays expanded during deletion
     forceExpand();
-    
-    console.log('Object: Deleting field', { id: fieldToDelete.id });
-    
+
     setFields(currentFields => {
       // Find exact field to delete
       const fieldIndex = currentFields.findIndex(f => f.id === fieldToDelete.id);
-      
+
       if (fieldIndex === -1) {
         console.error('Field to delete not found:', fieldToDelete.id);
         return currentFields;
       }
-      
+
       // Create new array without the specific field
       const newFields = [
         ...currentFields.slice(0, fieldIndex),
         ...currentFields.slice(fieldIndex + 1)
       ];
-      
+
       return newFields;
     });
   }, [forceExpand]);
@@ -237,32 +222,25 @@ export const ObjectField = ({
               parentId: field.id // Add parent reference
             }}
             onFieldDuplicate={(fieldToDuplicate) => {
-              console.log('ObjectField: Child field duplication requested', {
-                fieldId: fieldToDuplicate.id,
-                parentId: field.id,
-                fieldIndex: fieldIndex, // Add the index from the map loop
-                debugId
-              });
-              
               // Use the index from the map to directly insert the duplicate after the correct field
               // This is more reliable than searching by ID which might not be unique
               const duplicateByIndex = () => {
                 // Generate a unique identifier
                 const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-                
+
                 // Handle label for duplicate
                 let newLabel;
                 if (fieldToDuplicate.label) {
                   newLabel = `${fieldToDuplicate.label}${fieldToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
                 }
-                
+
                 // Create the duplicated field with unique ID
                 // Get the original fieldToDuplicate without readonly flags
                 const fieldCopy = JSON.parse(JSON.stringify(fieldToDuplicate));
-                
+
                 // Remove readonly from the fieldCopy
                 if (fieldCopy.readOnly) delete fieldCopy.readOnly;
-                
+
                 // Set the label to empty string to make it editable
                 // This is all we need since readOnly={!!label} checks if label exists
                 const duplicatedField = {
@@ -270,13 +248,13 @@ export const ObjectField = ({
                   id: `${fieldToDuplicate.id || field.id}_field_${fieldIndex}_${uniqueId}`,
                   label: '' // Empty label makes readOnly={!!label} evaluate to false
                 };
-                
+
                 // Store the label suggestion in a custom property
                 duplicatedField._displayLabel = newLabel;
-                
+
                 // Make sure the container stays expanded
                 forceExpand();
-                
+
                 // Insert after the index position directly
                 setFields(currentFields => {
                   if (fieldIndex >= 0 && fieldIndex < currentFields.length) {
@@ -287,21 +265,14 @@ export const ObjectField = ({
                   return currentFields;
                 });
               };
-              
+
               // Duplicate by index instead of searching by ID
               duplicateByIndex();
-              
+
               // Return false to prevent the event from bubbling up
               return false;
             }}
             onFieldDelete={(fieldToDelete) => {
-              console.log('ObjectField: Child field deletion requested', {
-                fieldId: fieldToDelete.id,
-                parentId: field.id,
-                fieldIndex: fieldIndex, // Add the index directly from the map loop
-                debugId
-              });
-              
               // Use the index from the map to directly delete the correct field
               // This is more reliable than searching by ID which might not be unique
               const deleteByIndex = () => {
@@ -316,10 +287,10 @@ export const ObjectField = ({
                   return currentFields;
                 });
               };
-              
+
               // Delete by index instead of searching by ID
               deleteByIndex();
-              
+
               // Return false to prevent the event from bubbling up
               return false;
             }}
@@ -336,7 +307,6 @@ export const ObjectField = ({
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              console.log(`Duplicate button clicked on ${debugId}`);
               if (onDuplicate) onDuplicate();
             }}
           >
@@ -350,7 +320,6 @@ export const ObjectField = ({
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              console.log(`Delete button clicked on ${debugId}`);
               if (onDelete) onDelete();
             }}
           >
@@ -358,11 +327,12 @@ export const ObjectField = ({
           </div>
         )}
       </div>
-      {/* Debug info */}
+      {/* Debug info
       <div style={{display: 'none'}}>
-        Object debug ID: {debugId}, 
+        Object debug ID: {debugId},
         Handlers: Duplicate={!!onDuplicate}, Delete={!!onDelete}
       </div>
+      */}
       <input type="hidden" name={originalName} value={field.value} />
     </div>
   );

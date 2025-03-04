@@ -24,7 +24,7 @@ import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
  * @param {SelectFieldProps} props - Component properties
  * @returns {JSX.Element} Rendered field component
  */
-export const SelectField = ({ 
+export const SelectField = ({
   field,
   onDuplicate,
   onDelete,
@@ -35,13 +35,6 @@ export const SelectField = ({
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
   const options = field.options || [];
-  
-  console.log('Rendering SelectField', { 
-    id: field.id, 
-    parentId: field.parentId,
-    hasDuplicateHandler: !!onDuplicate,
-    hasDeleteHandler: !!onDelete 
-  });
 
   return (
     <BaseField

@@ -575,7 +575,9 @@ fieldset {
     transition: all 0.5s ease-in-out;
 
     & svg {
+      display: block;
       margin: 0.25rem;
+      pointer-events: none;
 
       & * {
         stroke: #000;

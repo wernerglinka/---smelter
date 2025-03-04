@@ -26,14 +26,11 @@ export const setupEditorOverlay = () => {
 
     // Add close button
     const closeButton = document.createElement('div');
+    closeButton.innerHTML = 'X';
     closeButton.id = 'closeEditor';
     overlay.appendChild(closeButton);
 
     // Add to document
     document.body.appendChild(overlay);
-
-    // Render the CloseIcon React component into the close button
-    const root = createRoot(closeButton);
-    root.render(React.createElement(CloseIcon));
   }
 };

@@ -14,7 +14,8 @@ export const FIELD_TYPES = {
     type: 'textarea',
     default: '',
     placeholder: true,
-    canHaveLabel: true
+    canHaveLabel: true,
+    isMarkdownEditor: true
   },
   NUMBER: {
     type: 'number',

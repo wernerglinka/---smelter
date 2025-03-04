@@ -65,3 +65,73 @@ export const getFieldType = (value, key) => {
 
   return typeof value;
 };
+
+/**
+ * Checks if value is a string
+ * @param {*} value - Value to check
+ * @returns {boolean} True if value is a string
+ */
+export const isString = (value) => typeof value === 'string';
+
+/**
+ * Checks if value is a number (excluding NaN)
+ * @param {*} value - Value to check
+ * @returns {boolean} True if value is a number
+ */
+export const isNumber = (value) => typeof value === 'number' && !isNaN(value);
+
+/**
+ * Checks if value is a boolean
+ * @param {*} value - Value to check
+ * @returns {boolean} True if value is a boolean
+ */
+export const isBoolean = (value) => typeof value === 'boolean';
+
+/**
+ * Checks if value is a Date instance
+ * @param {*} value - Value to check
+ * @returns {boolean} True if value is a Date
+ */
+export const isDate = (value) => value instanceof Date;
+
+/**
+ * Checks if value is an array
+ * @param {*} value - Value to check
+ * @returns {boolean} True if value is an array
+ */
+export const isArray = (value) => Array.isArray(value);
+
+/**
+ * Checks if value is an object (not array, not null)
+ * @param {*} value - Value to check
+ * @returns {boolean} True if value is an object
+ */
+export const isObject = (value) => 
+  typeof value === 'object' && !Array.isArray(value) && value !== null;
+
+/**
+ * Checks if value is null
+ * @param {*} value - Value to check
+ * @returns {boolean} True if value is null
+ */
+export const isNull = (value) => value === null;
+
+/**
+ * Checks if value is undefined
+ * @param {*} value - Value to check
+ * @returns {boolean} True if value is undefined
+ */
+export const isUndefined = (value) => value === undefined;
+
+/**
+ * Checks if value is empty (null, undefined, empty string, empty array, empty object)
+ * @param {*} value - Value to check
+ * @returns {boolean} True if value is empty
+ */
+export const isEmpty = (value) => {
+  if (value === null || value === undefined) return true;
+  if (typeof value === 'string') return value.trim() === '';
+  if (Array.isArray(value)) return value.length === 0;
+  if (typeof value === 'object') return Object.keys(value).length === 0;
+  return false;
+};

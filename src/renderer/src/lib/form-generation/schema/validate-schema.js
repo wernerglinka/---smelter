@@ -60,6 +60,16 @@ export const validateSchema = (schema) => {
     throw createValidationError('Schema fields must be an array', schema);
   }
 
+  // Add contents field validation
+  if (schema.name === 'contents') {
+    if (schema.type !== 'TEXTAREA') {
+      throw new Error('Contents field must be of type TEXTAREA');
+    }
+    if (schema.noDuplication !== true || schema.noDeletion !== true) {
+      throw new Error('Contents field must have noDuplication and noDeletion set to true');
+    }
+  }
+
   schema.fields.forEach(validateField);
   return true;
 };

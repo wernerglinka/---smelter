@@ -72,7 +72,9 @@ export const initializeEditor = (textareaContent) => {
   // Add close button event listener
   const closeButton = document.getElementById('closeEditor');
   if (closeButton) {
-    closeButton.addEventListener('click', () => {
+    closeButton.addEventListener('click', (e) => {
+      console.log(e);
+
       if (window.textareaInput) {
         window.textareaInput.value = editor.value();
 

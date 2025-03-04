@@ -17,8 +17,8 @@ import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
  * @param {CheckboxFieldProps} props - Component properties
  * @returns {JSX.Element} Rendered field component
  */
-export const CheckboxField = ({ 
-  field, 
+export const CheckboxField = ({
+  field,
   onDuplicate,
   onDelete,
   allowDuplication = !field?.noDuplication,
@@ -27,13 +27,6 @@ export const CheckboxField = ({
   // Use _displayLabel for duplicated fields (with empty label but display text)
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
-  
-  console.log('Rendering CheckboxField', { 
-    id: field.id, 
-    parentId: field.parentId,
-    hasDuplicateHandler: !!onDuplicate,
-    hasDeleteHandler: !!onDelete 
-  });
 
   return (
     <BaseField

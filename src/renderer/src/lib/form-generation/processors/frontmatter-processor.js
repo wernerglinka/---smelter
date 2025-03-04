@@ -12,19 +12,27 @@ export const processFrontmatter = async (frontmatter, content) => {
   try {
     const explicitSchema = await getExplicitSchema();
 
-    // show frontmatter as json object
-    //console.log('Frontmatter as JSON:', JSON.stringify(frontmatter, null, 2));
+    // Process frontmatter
+    const frontmatterSchema = await convertToSchemaObject(frontmatter, explicitSchema);
+    validateSchema(frontmatterSchema);
 
-    //show explicit schema as json object
-    //console.log('Explicit Schema as JSON:', JSON.stringify(explicitSchema, null, 2));
+    // Add contents as a textarea field
+    const contentsField = {
+      type: 'TEXTAREA',
+      name: 'contents',
+      label: 'Contents',
+      value: content,
+      id: 'markdown-contents',
+      // Prevent duplication/deletion of contents field
+      noDuplication: true,
+      noDeletion: true
+    };
 
-    const schema = await convertToSchemaObject(frontmatter, explicitSchema);
-    validateSchema(schema);
-
-    // console log log the schema object
-    //console.log('Schema:', schema);
-
-    return schema;
+    // Combine schemas
+    return {
+      ...frontmatterSchema,
+      fields: [...frontmatterSchema.fields, contentsField]
+    };
   } catch (error) {
     console.error('Error processing frontmatter:', error);
     throw error;

@@ -276,7 +276,7 @@ describe('FrontmatterProcessor', () => {
       noDuplication: true,
       fields: expect.arrayContaining([
         expect.objectContaining({
-          label: 'Title', // Title case in current implementation  
+          label: 'Title', // Title case in current implementation
           name: 'title',
           type: 'text',
           value: 'Test Page',
@@ -294,5 +294,34 @@ describe('FrontmatterProcessor', () => {
     );
 
     await expect(processFrontmatter({}, '')).rejects.toThrow('Invalid schema structure');
+  });
+});
+
+describe('processFrontmatter', () => {
+  test('processes contents field correctly', async () => {
+    const frontmatter = { title: 'Test' };
+    const content = '# Test Content\n\nSome markdown content';
+
+    const result = await processFrontmatter(frontmatter, content);
+
+    expect(result.fields).toContainEqual({
+      type: 'TEXTAREA',
+      name: 'contents',
+      label: 'Contents',
+      value: content,
+      id: 'markdown-contents',
+      noDuplication: true,
+      noDeletion: true
+    });
+  });
+
+  test('preserves contents when processing empty frontmatter', async () => {
+    const frontmatter = {};
+    const content = '# Just Content';
+
+    const result = await processFrontmatter(frontmatter, content);
+
+    expect(result.fields.find((f) => f.name === 'contents')).toBeTruthy();
+    expect(result.fields.find((f) => f.name === 'contents').value).toBe(content);
   });
 });

@@ -52,6 +52,16 @@ export const setupEditorStyles = () => {
       right: 20px;
       color: #333;
       cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+      -webkit-user-select: none;
+      font-weight: bold;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
     }
 
     #disableMarkdownStyles {

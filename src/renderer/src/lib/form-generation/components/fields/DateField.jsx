@@ -18,7 +18,7 @@ const formatDateForInput = (dateString) => {
   // Format as YYYY-MM-DD
   return date.toISOString().split('T')[0];
 };
-export const DateField = ({ 
+export const DateField = ({
   field,
   onDuplicate,
   onDelete,
@@ -29,13 +29,6 @@ export const DateField = ({
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
   const formattedDate = formatDateForInput(field.value);
-  
-  console.log('Rendering DateField', { 
-    id: field.id, 
-    parentId: field.parentId,
-    hasDuplicateHandler: !!onDuplicate,
-    hasDeleteHandler: !!onDelete 
-  });
 
   return (
     <BaseField
