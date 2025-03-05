@@ -103,12 +103,21 @@ const EditSpace = ({ fileContent, $expanded }) => {
       if (fileContent?.data?.frontmatter) {
         const processedData = await processFrontmatter(
           fileContent.data.frontmatter,
-          fileContent.data.content
+          fileContent.data.content || '' // Ensure we always pass at least an empty string for content
         );
-        // Use the processed fields directly - they already have readonly properly set
-        setFormFields(processedData.fields);
-        setActiveFilePath(fileContent.path);
-        setFileName(fileContent.path.split('/').pop());
+        // Clear previous form fields first to prevent persistence between files
+        setFormFields(null);
+        // Then set the new fields after a short delay
+        setTimeout(() => {
+          setFormFields(processedData.fields);
+          setActiveFilePath(fileContent.path);
+          setFileName(fileContent.path.split('/').pop());
+        }, 10);
+      } else {
+        // Reset form fields when no content is loaded
+        setFormFields(null);
+        setActiveFilePath(null);
+        setFileName(null);
       }
     };
 
