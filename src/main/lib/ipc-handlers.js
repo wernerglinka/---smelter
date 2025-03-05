@@ -333,25 +333,29 @@ const createIPCHandlers = (window) => {
     },
 
     /**
-     * Writes an object as YAML frontmatter to a file
+     * Writes an object as YAML frontmatter to a file, with optional content
      *
      * @param {Event} event - IPC event object
      * @param {object} params - Write parameters
      * @param {string} params.path - File path
      * @param {object} params.obj - Object to serialize as YAML
+     * @param {string} [params.content] - Optional markdown content to append after frontmatter
      * @returns {object} Operation result
      * @returns {string} result.status - 'success' or 'failure'
      * @returns {string} [result.error] - Error message if failed
      * @example
      * await handleWriteObjectToFile(event, {
      *   path: '/path/to/file.md',
-     *   obj: { title: 'Page Title', draft: false }
+     *   obj: { title: 'Page Title', draft: false },
+     *   content: '# Markdown content here'
      * })
      */
-    handleWriteObjectToFile: async (event, { path: filePath, obj }) => {
+    handleWriteObjectToFile: async (event, { path: filePath, obj, content = '' }) => {
       const yamlString = yaml.stringify(obj);
-      const content = `---\n${yamlString}---\n`;
-      return FileSystem.writeFile(filePath, content);
+      const fileContent = content.trim()
+        ? `---\n${yamlString}---\n\n${content}`
+        : `---\n${yamlString}---\n`;
+      return FileSystem.writeFile(filePath, fileContent);
     },
 
     /**

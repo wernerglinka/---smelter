@@ -146,9 +146,10 @@ const electronAPI = {
   markdown: {
     /**
      *
-     * @param data
+     * @param {string} filePath - Path to the markdown file
+     * @param {string} content - Content to write
      */
-    write: (data) => ipcRenderer.invoke('writeMarkdownFile', data),
+    write: (filePath, content) => ipcRenderer.invoke('writeMarkdownFile', filePath, content),
     /**
      *
      * @param filePath
