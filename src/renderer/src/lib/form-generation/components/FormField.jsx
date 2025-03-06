@@ -25,6 +25,7 @@ export const FormField = ({
   field, 
   onFieldDuplicate,
   onFieldDelete,
+  onFieldUpdate,
   parentType = 'main' // 'main', 'array', 'object', 'list'
 }) => {
   if (!field || !field.type) {
@@ -54,6 +55,7 @@ export const FormField = ({
       } : undefined}
       onFieldDuplicate={onFieldDuplicate}
       onFieldDelete={onFieldDelete}
+      onFieldUpdate={onFieldUpdate}
       initiallyCollapsed={false} // Start expanded to help with debugging
     />;
   }
@@ -79,6 +81,7 @@ export const FormField = ({
       } : undefined}
       onFieldDuplicate={onFieldDuplicate}
       onFieldDelete={onFieldDelete}
+      onFieldUpdate={onFieldUpdate}
       initiallyCollapsed={false} // Start expanded to help with debugging
     />;
   }
@@ -90,6 +93,7 @@ export const FormField = ({
       allowDeletion={!field?.noDeletion}
       onDuplicate={onFieldDuplicate ? () => onFieldDuplicate(field) : undefined}
       onDelete={onFieldDelete ? () => onFieldDelete(field) : undefined}
+      onUpdate={onFieldUpdate ? (updatedField) => onFieldUpdate(updatedField) : undefined}
     />;
   }
 
@@ -120,6 +124,10 @@ export const FormField = ({
         // No parent, so this is at the root level
         onFieldDelete(field);
       }
+    } : undefined,
+    onUpdate: onFieldUpdate ? (updatedField) => {
+      console.log('FormField: Value update for field:', updatedField.id);
+      onFieldUpdate(updatedField);
     } : undefined,
     allowDuplication: !field?.noDuplication,
     allowDeletion: !field?.noDeletion

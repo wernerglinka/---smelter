@@ -32,6 +32,7 @@ export const ObjectField = ({
   onDelete,
   onFieldDuplicate,
   onFieldDelete,
+  onFieldUpdate,
   allowDuplication = true,
   allowDeletion = true,
   initiallyCollapsed = true
@@ -293,6 +294,29 @@ export const ObjectField = ({
 
               // Return false to prevent the event from bubbling up
               return false;
+            }}
+            onFieldUpdate={(updatedField) => {
+              if (onFieldUpdate) {
+                // Create a copy of the current fields to update the specific field
+                setFields(currentFields => {
+                  const newFields = [...currentFields];
+                  // Update the specific field at this index
+                  newFields[fieldIndex] = {
+                    ...newFields[fieldIndex],
+                    ...updatedField
+                  };
+                  
+                  // Pass the entire updated object with all fields to the parent handler
+                  setTimeout(() => {
+                    onFieldUpdate({
+                      ...field,
+                      fields: newFields
+                    }, [{ type: 'object', index: fieldIndex, fieldIndex }]);
+                  }, 0);
+                  
+                  return newFields;
+                });
+              }
             }}
             parentType="object"
           />

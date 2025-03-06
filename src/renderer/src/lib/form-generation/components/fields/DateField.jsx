@@ -22,6 +22,7 @@ export const DateField = ({
   field,
   onDuplicate,
   onDelete,
+  onUpdate,
   allowDuplication = !field?.noDuplication,
   allowDeletion = !field?.noDeletion
 }) => {
@@ -29,6 +30,18 @@ export const DateField = ({
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
   const formattedDate = formatDateForInput(field.value);
+  
+  // Handle date changes on blur
+  const handleDateChange = (e) => {
+    if (onUpdate && e.target.value !== formattedDate) {
+      // Only send the bare minimum - id and new value
+      onUpdate({
+        id: field.id,
+        type: field.type?.toLowerCase(), // Normalize to lowercase
+        value: e.target.value
+      });
+    }
+  };
 
   return (
     <BaseField
@@ -59,6 +72,7 @@ export const DateField = ({
             className="element-value"
             defaultValue={formattedDate}
             placeholder={`Enter ${label || 'date'}`}
+            onChange={handleDateChange}
           />
         </div>
       </label>

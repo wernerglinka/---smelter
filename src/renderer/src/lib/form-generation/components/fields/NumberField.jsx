@@ -24,6 +24,7 @@ export const NumberField = ({
   field,
   onDuplicate,
   onDelete,
+  onUpdate,
   allowDuplication = !field?.noDuplication,
   allowDeletion = !field?.noDeletion
 }) => {
@@ -31,12 +32,21 @@ export const NumberField = ({
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
   
-  console.log('Rendering NumberField', { 
-    id: field.id, 
-    parentId: field.parentId,
-    hasDuplicateHandler: !!onDuplicate,
-    hasDeleteHandler: !!onDelete 
-  });
+  // Handle number value changes on blur
+  const handleNumberBlur = (e) => {
+    const newValue = e.target.value === '' ? '' : Number(e.target.value);
+    // Only update if value has changed
+    if (onUpdate && newValue !== field.value) {
+      // Only send the bare minimum - id and new value
+      // Fall back to field.name if field.id is undefined
+      onUpdate({
+        id: field.id || field.name,
+        name: field.name, // Always include name for fallback identification
+        type: field.type?.toLowerCase(), // Normalize to lowercase
+        value: newValue
+      });
+    }
+  };
 
   return (
     <BaseField
@@ -63,9 +73,11 @@ export const NumberField = ({
         <div>
           <input
             type="number"
+            name={field.name}
             className="element-value"
             defaultValue={field.value || ''}
             placeholder={`Enter ${label || 'number'}`}
+            onBlur={handleNumberBlur}
           />
         </div>
       </label>

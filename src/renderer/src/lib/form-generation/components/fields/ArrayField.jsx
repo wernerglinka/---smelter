@@ -42,6 +42,7 @@ export const ArrayField = ({
   onDelete,
   onFieldDuplicate,
   onFieldDelete,
+  onFieldUpdate,
   allowDuplication = true,
   allowDeletion = true,
   initiallyCollapsed = true
@@ -395,6 +396,29 @@ export const ArrayField = ({
 
               // Return false to prevent the event from bubbling up
               return false;
+            }}
+            onFieldUpdate={(updatedField) => {
+              if (onFieldUpdate) {
+                // Create a copy of the current items to update the specific field
+                setItems(currentItems => {
+                  const newItems = [...currentItems];
+                  // Update the specific item at this index
+                  newItems[index] = {
+                    ...newItems[index],
+                    ...updatedField
+                  };
+                  
+                  // Pass the entire updated field with all items to the parent handler
+                  setTimeout(() => {
+                    onFieldUpdate({
+                      ...field,
+                      items: newItems
+                    }, [{ type: 'array', index, fieldIndex: index }]);
+                  }, 0);
+                  
+                  return newItems;
+                });
+              }
             }}
             parentType="array"
           />

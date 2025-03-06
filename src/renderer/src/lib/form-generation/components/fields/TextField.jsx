@@ -35,21 +35,31 @@ export const TextField = ({
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
   
-  // Handle text value changes
-  const handleTextChange = (e) => {
-    if (onUpdate) {
+  // Handle text value changes on blur (when user finishes editing)
+  const handleTextBlur = (e) => {
+    // Only trigger update if value actually changed
+    if (onUpdate && e.target.value !== field.value) {
+      // Only send the bare minimum - id and new value
+      // Fall back to field.name if field.id is undefined
       onUpdate({
-        ...field,
+        id: field.id || field.name,
+        name: field.name, // Always include name for fallback identification
+        type: field.type?.toLowerCase(), // Normalize to lowercase
         value: e.target.value
       });
     }
   };
 
-  // Handle label changes when editable
-  const handleLabelChange = (e) => {
-    if (onUpdate && field._displayLabel !== undefined) {
+  // Handle label changes on blur when editable
+  const handleLabelBlur = (e) => {
+    if (onUpdate && field._displayLabel !== undefined && 
+        e.target.value !== field._displayLabel) {
+      // Only send the bare minimum - id and new display label
+      // Fall back to field.name if field.id is undefined
       onUpdate({
-        ...field,
+        id: field.id || field.name,
+        name: field.name, // Always include name for fallback identification
+        type: field.type?.toLowerCase(), // Normalize to lowercase
         _displayLabel: e.target.value
       });
     }
@@ -72,7 +82,7 @@ export const TextField = ({
             placeholder="Label Placeholder"
             defaultValue={label}
             readOnly={!field._displayLabel && !!label}
-            onChange={handleLabelChange}
+            onBlur={handleLabelBlur}
           />
         </div>
       </label>
@@ -85,7 +95,7 @@ export const TextField = ({
             className="element-value"
             defaultValue={field.value}
             placeholder={field.placeholder}
-            onChange={handleTextChange}
+            onBlur={handleTextBlur}
           />
         </div>
       </label>

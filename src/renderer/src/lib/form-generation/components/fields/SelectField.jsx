@@ -28,13 +28,52 @@ export const SelectField = ({
   field,
   onDuplicate,
   onDelete,
+  onUpdate,
   allowDuplication = !field?.noDuplication,
   allowDeletion = !field?.noDeletion
 }) => {
+  // Debug information about the field
+  console.log('SelectField received field:', {
+    id: field.id,
+    name: field.name,
+    type: field.type,
+    hasOptions: !!field.options,
+    optionsCount: field.options?.length
+  });
+  
   // Use _displayLabel for duplicated fields (with empty label but display text)
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
   const options = field.options || [];
+  
+  // Handle select changes - should register immediately 
+  const handleSelectChange = (e) => {
+    console.log('Select value changed:', {
+      originalValue: field.value,
+      newValue: e.target.value,
+      fieldId: field.id,
+      fieldType: field.type,
+      normalizedType: field.type?.toLowerCase()
+    });
+    
+    if (onUpdate && e.target.value !== field.value) {
+      // Get an identifier - use either id or name as fallback
+      const fieldId = field.id || field.name || `select_${Date.now()}`;
+      
+      // Create update object with required properties
+      const updateObject = {
+        id: fieldId,
+        name: field.name,
+        type: 'select', // Force the correct type
+        value: e.target.value
+      };
+      
+      console.log('Sending update with:', updateObject);
+      
+      // Only send the bare minimum with a valid ID
+      onUpdate(updateObject);
+    }
+  };
 
   return (
     <BaseField
@@ -63,6 +102,7 @@ export const SelectField = ({
             name={field.name}
             defaultValue={field.value}
             className="element-value"
+            onChange={handleSelectChange}
           >
             {options.map((option, index) => (
               <option key={index} value={option.value || option}>
