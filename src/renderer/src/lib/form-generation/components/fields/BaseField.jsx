@@ -31,7 +31,9 @@ export const BaseField = ({
   allowDeletion = !field?.noDeletion
 }) => {
   const labelExistsClass = field?.label ? 'label-exists' : '';
-  const fieldTypeClass = field?.type ? `is-${field.type}` : '';
+  let fieldTypeClass = field?.type ? `is-${ field.type }` : '';
+  // if name is `contents` add `is-contents` to `fieldTypeClass`
+  fieldTypeClass = `${ fieldTypeClass } ${ field?.name === 'contents' ? 'is-contents' : '' }`;
 
   return (
     <div className={`form-element ${fieldTypeClass} ${labelExistsClass} no-drop`} draggable="true">

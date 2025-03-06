@@ -161,6 +161,20 @@ fieldset {
   font-size: 0.8rem;
   transition: all 0.2s ease-in-out;
 
+  &.is-contents {
+    margin-top: 5rem;
+
+    &:before {
+      content: "markdown content";
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      position: absolute;
+      top: -3rem;
+      left: 0;
+    }
+  }
+
   .sort-handle {
     position: absolute;
     top: 50%;

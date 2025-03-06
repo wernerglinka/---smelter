@@ -18,7 +18,7 @@ export const processFrontmatter = async (frontmatter, content) => {
 
     // Add contents as a textarea field
     const contentsField = {
-      type: 'TEXTAREA',
+      type: 'textarea',
       name: 'contents',
       label: 'Contents',
       value: content,
