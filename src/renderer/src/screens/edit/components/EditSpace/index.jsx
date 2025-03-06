@@ -597,9 +597,15 @@ const EditSpace = ({ fileContent, $expanded }) => {
   useEffect(() => {
     const processContent = async () => {
       if (fileContent?.data?.frontmatter) {
+        // Determine if we should add contents field based on content existence
+        const hasContent = fileContent.data.content && fileContent.data.content.trim().length > 0;
+        const hasFrontmatter = Object.keys(fileContent.data.frontmatter).length > 0;
+        
+        // Only add contents field if there is actual content or if frontmatter is present
         const processedData = await processFrontmatter(
           fileContent.data.frontmatter,
-          fileContent.data.content || '' // Ensure we always pass at least an empty string for content
+          fileContent.data.content || '', // Ensure we always pass at least an empty string for content
+          { addContentsField: hasContent || hasFrontmatter }
         );
         // Clear previous form fields first to prevent persistence between files
         setFormFields(null);
@@ -858,6 +864,27 @@ const EditSpace = ({ fileContent, $expanded }) => {
                   index={index}
                   onFieldUpdate={(updatedField) => handleFieldUpdate(updatedField)}
                   onFieldDuplicate={(fieldToDuplicate) => {
+                    // Check if this field has noDuplication flag set
+                    if (fieldToDuplicate.noDuplication === true || 
+                        fieldToDuplicate.name === 'contents' || 
+                        fieldToDuplicate.id === 'markdown-contents') {
+                      console.log('Cannot duplicate field with noDuplication flag:', fieldToDuplicate.name);
+                      
+                      // Show a message to the user
+                      const messageElement = document.createElement('div');
+                      messageElement.className = 'snapshot-message error';
+                      messageElement.textContent = `Cannot duplicate the "${fieldToDuplicate.label || fieldToDuplicate.name}" field`;
+                      document.body.appendChild(messageElement);
+                      
+                      setTimeout(() => {
+                        if (messageElement.parentNode) {
+                          messageElement.parentNode.removeChild(messageElement);
+                        }
+                      }, 3000);
+                      
+                      return; // Don't proceed with duplication
+                    }
+                    
                     // Generate a unique identifier for the duplicate
                     const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
@@ -914,6 +941,27 @@ const EditSpace = ({ fileContent, $expanded }) => {
                     });
                   }}
                   onFieldDelete={(fieldToDelete) => {
+                    // Check if this field has noDeletion flag set
+                    if (fieldToDelete.noDeletion === true || 
+                        fieldToDelete.name === 'contents' || 
+                        fieldToDelete.id === 'markdown-contents') {
+                      console.log('Cannot delete field with noDeletion flag:', fieldToDelete.name);
+                      
+                      // Show a message to the user
+                      const messageElement = document.createElement('div');
+                      messageElement.className = 'snapshot-message error';
+                      messageElement.textContent = `Cannot delete the "${fieldToDelete.label || fieldToDelete.name}" field`;
+                      document.body.appendChild(messageElement);
+                      
+                      setTimeout(() => {
+                        if (messageElement.parentNode) {
+                          messageElement.parentNode.removeChild(messageElement);
+                        }
+                      }, 3000);
+                      
+                      return; // Don't proceed with deletion
+                    }
+                    
                     console.log('Deleting field', {
                       id: fieldToDelete.id,
                       index: index,

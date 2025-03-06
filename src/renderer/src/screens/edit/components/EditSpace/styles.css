@@ -178,6 +178,13 @@
   backdrop-filter: blur(5px);
 }
 
+/* Error variation */
+.snapshot-message.error {
+  background: rgba(255, 200, 200, 0.9);
+  border-color: #ff6b6b;
+  color: #800000;
+}
+
 @keyframes fadeInOut {
   0% { opacity: 0; transform: translateY(-20px); }
   10% { opacity: 1; transform: translateY(0); }
