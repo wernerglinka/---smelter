@@ -85,9 +85,10 @@ const processTemplateField = (key, value, parentId = '') => {
  */
 const EditSpace = ({ fileContent, $expanded }) => {
   const formRef = useRef(null);
-  const [formFields, setFormFields] = useState(null);
-  const [activeFilePath, setActiveFilePath] = useState(null);
-  const [fileName, setFileName] = useState(null);
+  const [ formFields, setFormFields ] = useState(null);
+  const [ activeFilePath, setActiveFilePath ] = useState(null);
+  const [ fileName, setFileName ] = useState( null );
+  const [ redoLevel, setRedoLevel ] = useState(0);
 
   // Setup editor when component mounts
   useEffect(() => {
@@ -209,12 +210,16 @@ const EditSpace = ({ fileContent, $expanded }) => {
         <span id="preview-button" className="btn" role="button" title="Open preview pane">
           <PreviewShowIcon />
         </span>
-        <span id="undo-button" className="btn" role="button" title="undo last form change">
-          <UndoIcon />
-        </span>
-        <span id="redo-button" className="btn" role="button" title="redo last form change">
-          <RedoIcon />
-        </span>
+        <div id="undo-redo-wrapper">
+          <span className="undo btn" role="button" title="undo last form change">
+            <UndoIcon />
+          </span>
+          <span className="undo-redo-count">{ redoLevel }</span>
+          <span className="redo btn" role="button" title="redo last form change">
+            <RedoIcon />
+          </span>
+        </div>
+
       </h2>
       <div id="content-container">
         {fileContent && (

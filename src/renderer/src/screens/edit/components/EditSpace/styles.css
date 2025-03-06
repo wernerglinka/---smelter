@@ -68,14 +68,11 @@
 }
 
 #undo-redo-wrapper {
-  position: absolute;
-  top: -3rem;
-  right: 0.4rem;
-  display: flex;
-  justify-content: flex-end;
+  display: inline-flex;
+  justify-content: flex-start;
   align-items: center;
   gap: 1rem;
-  z-index: 1000;
+  margin-left: 2rem;
 
   & .btn {
     padding: 0.5rem;
@@ -110,9 +107,10 @@
 
   & .undo-redo-message,
   & .undo-redo-count {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: 600;
     color: var(--message-color);
+    margin-left: 2rem;
   }
 }
 
