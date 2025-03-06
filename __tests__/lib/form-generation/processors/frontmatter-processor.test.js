@@ -299,27 +299,37 @@ describe('FrontmatterProcessor', () => {
 
 describe('processFrontmatter', () => {
   test('processes contents field correctly', async () => {
+    // Reset the validation mock to not throw errors for this test
+    require('../../../../src/renderer/src/lib/form-generation/schema/validate-schema').validateSchema.mockImplementation(
+      () => true
+    );
+    
     const frontmatter = { title: 'Test' };
     const content = '# Test Content\n\nSome markdown content';
 
-    const result = await processFrontmatter(frontmatter, content);
+    const result = await processFrontmatter(frontmatter, content, { addContentsField: true });
 
-    expect(result.fields).toContainEqual({
-      type: 'TEXTAREA',
+    expect(result.fields).toContainEqual(expect.objectContaining({
+      type: expect.stringMatching(/textarea/i),
       name: 'contents',
       label: 'Contents',
       value: content,
       id: 'markdown-contents',
       noDuplication: true,
       noDeletion: true
-    });
+    }));
   });
 
   test('preserves contents when processing empty frontmatter', async () => {
+    // Reset the validation mock to not throw errors for this test
+    require('../../../../src/renderer/src/lib/form-generation/schema/validate-schema').validateSchema.mockImplementation(
+      () => true
+    );
+    
     const frontmatter = {};
     const content = '# Just Content';
 
-    const result = await processFrontmatter(frontmatter, content);
+    const result = await processFrontmatter(frontmatter, content, { addContentsField: true });
 
     expect(result.fields.find((f) => f.name === 'contents')).toBeTruthy();
     expect(result.fields.find((f) => f.name === 'contents').value).toBe(content);

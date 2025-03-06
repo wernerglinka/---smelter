@@ -1,14 +1,23 @@
-import { handleFormSubmission } from '@lib/form-submission/submit-handler';
-import { preprocessFormData } from '@lib/form-submission/preprocess-form-data';
-import { validateSubmission } from '@lib/form-submission/validate';
+// Mock the yaml module first before importing any other modules
+jest.mock('yaml', () => ({
+  __esModule: true,
+  default: {
+    stringify: jest.fn().mockReturnValue('mocked-yaml-output')
+  }
+}));
+
+// Now import the submission handler
+import { handleFormSubmission } from '../../../../src/renderer/src/lib/form-submission/submit-handler';
+import { preprocessFormData } from '../../../../src/renderer/src/lib/form-submission/preprocess-form-data';
+import { validateSubmission } from '../../../../src/renderer/src/lib/form-submission/validate';
 import { createSimpleForm, createComplexForm, createInvalidForm } from '../fixtures/example-form';
 
 // Mock dependencies
-jest.mock('@lib/form-submission/preprocess-form-data', () => ({
+jest.mock('../../../../src/renderer/src/lib/form-submission/preprocess-form-data', () => ({
   preprocessFormData: jest.fn()
 }));
 
-jest.mock('@lib/form-submission/validate', () => ({
+jest.mock('../../../../src/renderer/src/lib/form-submission/validate', () => ({
   validateSubmission: jest.fn().mockReturnValue([])
 }));
 
@@ -17,6 +26,9 @@ global.window = Object.create(window);
 window.electronAPI = {
   files: {
     writeYAML: jest.fn().mockResolvedValue({ status: 'success' })
+  },
+  markdown: {
+    writeObject: jest.fn().mockResolvedValue({ status: 'success' })
   },
   dialog: {
     showCustomMessage: jest.fn().mockResolvedValue({ response: 0 })

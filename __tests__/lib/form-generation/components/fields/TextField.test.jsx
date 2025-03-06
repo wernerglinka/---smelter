@@ -106,21 +106,24 @@ describe('TextField', () => {
   });
 
   describe('field updates', () => {
-    test('calls onUpdate when text changes', () => {
+    test('calls onUpdate when text input loses focus with changed value', () => {
       render(<TextField {...defaultProps} />);
       
-      // Find the input field and change its value
+      // Find the input field, change its value and trigger blur event
       const inputField = screen.getByDisplayValue('Test Value');
       fireEvent.change(inputField, { target: { value: 'New Value' } });
+      fireEvent.blur(inputField);
       
       // Verify onUpdate was called with the correct field update
       expect(defaultProps.onUpdate).toHaveBeenCalledWith({
-        ...defaultProps.field,
+        id: defaultProps.field.id,
+        name: defaultProps.field.name,
+        type: defaultProps.field.type.toLowerCase(),
         value: 'New Value'
       });
     });
     
-    test('calls onUpdate when label changes if editable', () => {
+    test('calls onUpdate when label input loses focus if editable', () => {
       const props = {
         ...defaultProps,
         field: {
@@ -132,15 +135,29 @@ describe('TextField', () => {
       
       render(<TextField {...props} />);
       
-      // Find the label input and change its value
+      // Find the label input, change its value and trigger blur event
       const labelField = screen.getByTestId('base-field-content').querySelector('.element-label');
       fireEvent.change(labelField, { target: { value: 'New Label' } });
+      fireEvent.blur(labelField);
       
       // Verify onUpdate was called with the correct field update
       expect(defaultProps.onUpdate).toHaveBeenCalledWith({
-        ...props.field,
+        id: props.field.id,
+        name: props.field.name,
+        type: props.field.type.toLowerCase(),
         _displayLabel: 'New Label'
       });
+    });
+    
+    test('does not call onUpdate when value is unchanged', () => {
+      render(<TextField {...defaultProps} />);
+      
+      // Find the input field and blur it without changing value
+      const inputField = screen.getByDisplayValue('Test Value');
+      fireEvent.blur(inputField);
+      
+      // Verify onUpdate was not called
+      expect(defaultProps.onUpdate).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,4 +1,12 @@
-import { handleFormSubmission } from '@lib/form-submission/submit-handler';
+// Mock yaml first before importing
+jest.mock('yaml', () => ({
+  __esModule: true,
+  default: {
+    stringify: jest.fn().mockReturnValue('mocked-yaml-output')
+  }
+}));
+
+import { handleFormSubmission } from '../../../../src/renderer/src/lib/form-submission/submit-handler';
 import { createSimpleForm, createComplexForm, createInvalidForm } from '../fixtures/example-form';
 
 // Mock global window.electronAPI
@@ -6,6 +14,9 @@ global.window = Object.create(window);
 window.electronAPI = {
   files: {
     writeYAML: jest.fn().mockResolvedValue({ status: 'success' })
+  },
+  markdown: {
+    writeObject: jest.fn().mockResolvedValue({ status: 'success' })
   },
   dialog: {
     showCustomMessage: jest.fn().mockResolvedValue({ response: 0 })
@@ -19,6 +30,7 @@ describe('Form Submission Integration Tests', () => {
     
     // Reset default implementation
     window.electronAPI.files.writeYAML.mockResolvedValue({ status: 'success' });
+    window.electronAPI.markdown.writeObject.mockResolvedValue({ status: 'success' });
   });
   
   test('should handle end-to-end simple form submission', async () => {
