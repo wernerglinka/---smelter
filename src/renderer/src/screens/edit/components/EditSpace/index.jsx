@@ -4,7 +4,7 @@ import Dropzone from '@components/Dropzone';
 import { FormField } from '@lib/form-generation/components/FormField';
 import { processFrontmatter } from '@lib/form-generation/processors/frontmatter-processor';
 import { handleFormSubmission } from '@lib/form-submission/submit-handler';
-import { PreviewShowIcon } from '@components/icons';
+import { PreviewShowIcon, RedoIcon, UndoIcon } from '@components/icons';
 import { FIELD_TYPES } from '@lib/form-generation/schema/field-types';
 import { setupEditor } from './editor';
 import 'easymde/dist/easymde.min.css';
@@ -209,6 +209,12 @@ const EditSpace = ({ fileContent, $expanded }) => {
         <span id="preview-button" className="btn" role="button" title="Open preview pane">
           <PreviewShowIcon />
         </span>
+        <span id="undo-button" className="btn" role="button" title="undo last form change">
+          <UndoIcon />
+        </span>
+        <span id="redo-button" className="btn" role="button" title="redo last form change">
+          <RedoIcon />
+        </span>
       </h2>
       <div id="content-container">
         {fileContent && (
@@ -235,17 +241,17 @@ const EditSpace = ({ fileContent, $expanded }) => {
                   onFieldDuplicate={(fieldToDuplicate) => {
                     // Generate a unique identifier for the duplicate
                     const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-                    
+
                     // Handle label for duplicate properly, adding (Copy) suffix
                     let newLabel;
                     if (fieldToDuplicate.label) {
                       newLabel = `${fieldToDuplicate.label}${fieldToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
                     }
-                    
+
                     // Create duplicated field with unique ID
                     // Deep clone the field to avoid reference issues
                     const fieldCopy = JSON.parse(JSON.stringify(fieldToDuplicate));
-                    
+
                     // Set the label to empty string to make it editable
                     // This is all we need since readOnly={!!label} checks if label exists
                     const duplicatedField = {
@@ -254,18 +260,18 @@ const EditSpace = ({ fileContent, $expanded }) => {
                       name: `${fieldToDuplicate.name}_${uniqueId}`,
                       label: '' // Empty label makes readOnly={!!label} evaluate to false
                     };
-                    
+
                     // Store the label suggestion in a custom property
                     duplicatedField._displayLabel = newLabel;
-                    
-                    console.log('Duplicating field', { 
+
+                    console.log('Duplicating field', {
                       original: fieldToDuplicate.id,
                       duplicate: duplicatedField.id,
                       index: index,
                       originalLabel: fieldToDuplicate.label,
                       duplicateLabel: duplicatedField.label
                     });
-                    
+
                     // Use the index directly from the map function
                     setFormFields(prevFields => {
                       // Safety check - make sure index is valid
@@ -273,7 +279,7 @@ const EditSpace = ({ fileContent, $expanded }) => {
                         console.error('Invalid index for duplication:', index);
                         return prevFields;
                       }
-                      
+
                       const newFields = [...prevFields];
                       // Insert after the current index (no need to search by ID)
                       newFields.splice(index + 1, 0, duplicatedField);
@@ -281,12 +287,12 @@ const EditSpace = ({ fileContent, $expanded }) => {
                     });
                   }}
                   onFieldDelete={(fieldToDelete) => {
-                    console.log('Deleting field', { 
-                      id: fieldToDelete.id, 
-                      index: index, 
-                      clickedField: fieldToDelete 
+                    console.log('Deleting field', {
+                      id: fieldToDelete.id,
+                      index: index,
+                      clickedField: fieldToDelete
                     });
-                    
+
                     // Use the index parameter directly from the map function
                     // This ensures we delete exactly the item that was clicked
                     setFormFields(prevFields => {
@@ -295,18 +301,18 @@ const EditSpace = ({ fileContent, $expanded }) => {
                         console.error('Invalid index for deletion:', index);
                         return prevFields;
                       }
-                      
+
                       // Log the field we're about to delete to verify it's correct
-                      console.log('About to delete field at index', index, 
-                        'name:', prevFields[index].name, 
+                      console.log('About to delete field at index', index,
+                        'name:', prevFields[index].name,
                         'id:', prevFields[index].id);
-                      
+
                       // Create a new array without the field at the current index
                       const newFields = [
                         ...prevFields.slice(0, index),
                         ...prevFields.slice(index + 1)
                       ];
-                      
+
                       return newFields;
                     });
                   }}

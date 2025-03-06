@@ -19,3 +19,5 @@ export { default as MinusIcon } from './MinusIcon';
 export { default as PreviewShowIcon } from './PreviewShow';
 export { default as SidebarHideIcon } from './SidebarHide';
 export { default as SidebarShowIcon } from './SidebarShow';
+export { default as RedoIcon } from './RedoIcon';
+export { default as UndoIcon } from './UndoIcon';
