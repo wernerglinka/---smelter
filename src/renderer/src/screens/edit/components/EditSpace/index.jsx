@@ -4,7 +4,7 @@ import Dropzone from '@components/Dropzone';
 import { FormField } from '@lib/form-generation/components/FormField';
 import { processFrontmatter } from '@lib/form-generation/processors/frontmatter-processor';
 import { handleFormSubmission } from '@lib/form-submission/submit-handler';
-import { PreviewShowIcon, RedoIcon, UndoIcon } from '@components/icons';
+import { PreviewShowIcon, RedoIcon, UndoIcon, SnapshotIcon } from '@components/icons';
 import { FIELD_TYPES } from '@lib/form-generation/schema/field-types';
 import { setupEditor } from './editor';
 import 'easymde/dist/easymde.min.css';
@@ -217,6 +217,9 @@ const EditSpace = ({ fileContent, $expanded }) => {
           <span className="undo-redo-count">{ redoLevel }</span>
           <span className="redo btn" role="button" title="redo last form change">
             <RedoIcon />
+          </span>
+          <span className="snapshot btn" role="button" title="take snapshot of form">
+            <SnapshotIcon />
           </span>
         </div>
 
