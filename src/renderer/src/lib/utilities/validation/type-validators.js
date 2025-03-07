@@ -106,7 +106,7 @@ export const isArray = (value) => Array.isArray(value);
  * @param {*} value - Value to check
  * @returns {boolean} True if value is an object
  */
-export const isObject = (value) => 
+export const isObject = (value) =>
   typeof value === 'object' && !Array.isArray(value) && value !== null;
 
 /**

@@ -17,7 +17,7 @@ The form submission process involves several steps:
 The main entry point that orchestrates the submission process:
 
 ```javascript
-handleFormSubmission(form, filePath, schema = null)
+handleFormSubmission(form, filePath, (schema = null));
 ```
 
 - `form`: The HTML form element containing form data
@@ -29,7 +29,7 @@ handleFormSubmission(form, filePath, schema = null)
 Transforms the HTML form elements into a structured JavaScript object:
 
 ```javascript
-preprocessFormData(form)
+preprocessFormData(form);
 ```
 
 1. Adds temporary markers for structure parsing
@@ -42,10 +42,11 @@ preprocessFormData(form)
 Converts a collection of form elements into a structured object:
 
 ```javascript
-transformFormElementsToObject(allFormElements)
+transformFormElementsToObject(allFormElements);
 ```
 
 Handles various field types:
+
 - Simple fields (text, number, etc.)
 - Object fields (nested structures)
 - Array fields (collections)
@@ -56,7 +57,7 @@ Handles various field types:
 Validates the form data against an optional schema:
 
 ```javascript
-validateSubmission(formData, schema)
+validateSubmission(formData, schema);
 ```
 
 Returns an array of error messages if validation fails.
@@ -66,6 +67,7 @@ Returns an array of error messages if validation fails.
 The system handles both frontmatter (YAML metadata) and markdown content:
 
 1. **Reading Files**:
+
    - Frontmatter is parsed from between `---` markers
    - Content is everything after the closing `---` marker
 
@@ -117,7 +119,7 @@ const schema = {
 
 try {
   const result = await handleFormSubmission(form, filePath, schema);
-  
+
   if (result.success) {
     console.log('Form submitted successfully');
   } else {

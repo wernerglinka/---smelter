@@ -3,22 +3,22 @@
     <label for="layout">Layout</label>
     <input type="text" id="layout" name="layout" value="sections.njk" />
   </div>
-  
+
   <div class="field-group">
     <label for="draft">Draft</label>
     <input type="checkbox" id="draft" name="draft" />
   </div>
-  
+
   <div class="field-group">
     <label for="navLabel">Nav Label</label>
     <input type="text" id="navLabel" name="navLabel" value="Home" />
   </div>
-  
+
   <div class="field-group">
     <label for="bodyClasses">Body Classes</label>
     <input type="text" id="bodyClasses" name="bodyClasses" value="home-page" />
   </div>
-  
+
   <fieldset class="object-field" data-field="access">
     <legend>Access</legend>
     <div class="field-group">
@@ -30,7 +30,7 @@
       <input type="checkbox" id="access.noFollow" name="access.noFollow" />
     </div>
   </fieldset>
-  
+
   <fieldset class="object-field" data-field="seo">
     <legend>SEO</legend>
     <div class="field-group">
@@ -39,8 +39,12 @@
     </div>
     <div class="field-group">
       <label for="seo.description">Description</label>
-      <input type="text" id="seo.description" name="seo.description" 
-             value="Metalsmith First starter to build a static site with structured content" />
+      <input
+        type="text"
+        id="seo.description"
+        name="seo.description"
+        value="Metalsmith First starter to build a static site with structured content"
+      />
     </div>
     <div class="field-group">
       <label for="seo.socialImage">Social Image</label>
@@ -51,7 +55,7 @@
       <input type="text" id="seo.canonicalOverwrite" name="seo.canonicalOverwrite" value="" />
     </div>
   </fieldset>
-  
+
   <div class="array-field" data-field="sections">
     <label>Sections</label>
     <div class="array-items">
@@ -59,85 +63,141 @@
         <legend>Section 1</legend>
         <div class="field-group">
           <label for="sections[0].container">Container</label>
-          <input type="text" id="sections[0].container" name="sections[0].container" value="section" />
+          <input
+            type="text"
+            id="sections[0].container"
+            name="sections[0].container"
+            value="section"
+          />
         </div>
         <div class="field-group">
           <label for="sections[0].name">Name</label>
           <input type="text" id="sections[0].name" name="sections[0].name" value="text" />
         </div>
-        
+
         <fieldset class="object-field" data-field="sections[0].containerFields">
           <legend>Container Fields</legend>
           <div class="field-group">
             <label for="sections[0].containerFields.isDisabled">Is Disabled</label>
-            <input type="checkbox" id="sections[0].containerFields.isDisabled" 
-                   name="sections[0].containerFields.isDisabled" />
+            <input
+              type="checkbox"
+              id="sections[0].containerFields.isDisabled"
+              name="sections[0].containerFields.isDisabled"
+            />
           </div>
           <div class="field-group">
             <label for="sections[0].containerFields.isAnimated">Is Animated</label>
-            <input type="checkbox" id="sections[0].containerFields.isAnimated" 
-                   name="sections[0].containerFields.isAnimated" />
+            <input
+              type="checkbox"
+              id="sections[0].containerFields.isAnimated"
+              name="sections[0].containerFields.isAnimated"
+            />
           </div>
           <div class="field-group">
             <label for="sections[0].containerFields.containerId">Container ID</label>
-            <input type="text" id="sections[0].containerFields.containerId" 
-                   name="sections[0].containerFields.containerId" value="" />
+            <input
+              type="text"
+              id="sections[0].containerFields.containerId"
+              name="sections[0].containerFields.containerId"
+              value=""
+            />
           </div>
           <div class="field-group">
             <label for="sections[0].containerFields.containerClass">Container Class</label>
-            <input type="text" id="sections[0].containerFields.containerClass" 
-                   name="sections[0].containerFields.containerClass" value="" />
+            <input
+              type="text"
+              id="sections[0].containerFields.containerClass"
+              name="sections[0].containerFields.containerClass"
+              value=""
+            />
           </div>
           <div class="field-group">
             <label for="sections[0].containerFields.inContainer">In Container</label>
-            <input type="checkbox" id="sections[0].containerFields.inContainer" 
-                   name="sections[0].containerFields.inContainer" checked />
+            <input
+              type="checkbox"
+              id="sections[0].containerFields.inContainer"
+              name="sections[0].containerFields.inContainer"
+              checked
+            />
           </div>
           <div class="field-group">
             <label for="sections[0].containerFields.isNarrow">Is Narrow</label>
-            <input type="checkbox" id="sections[0].containerFields.isNarrow" 
-                   name="sections[0].containerFields.isNarrow" checked />
+            <input
+              type="checkbox"
+              id="sections[0].containerFields.isNarrow"
+              name="sections[0].containerFields.isNarrow"
+              checked
+            />
           </div>
-          
+
           <fieldset class="object-field" data-field="sections[0].containerFields.background">
             <legend>Background</legend>
             <div class="field-group">
               <label for="sections[0].containerFields.background.color">Color</label>
-              <input type="text" id="sections[0].containerFields.background.color" 
-                     name="sections[0].containerFields.background.color" value="" />
+              <input
+                type="text"
+                id="sections[0].containerFields.background.color"
+                name="sections[0].containerFields.background.color"
+                value=""
+              />
             </div>
             <div class="field-group">
               <label for="sections[0].containerFields.background.image">Image</label>
-              <input type="text" id="sections[0].containerFields.background.image" 
-                     name="sections[0].containerFields.background.image" value="" />
+              <input
+                type="text"
+                id="sections[0].containerFields.background.image"
+                name="sections[0].containerFields.background.image"
+                value=""
+              />
             </div>
             <div class="field-group">
               <label for="sections[0].containerFields.background.isDark">Is Dark</label>
-              <input type="checkbox" id="sections[0].containerFields.background.isDark" 
-                     name="sections[0].containerFields.background.isDark" />
+              <input
+                type="checkbox"
+                id="sections[0].containerFields.background.isDark"
+                name="sections[0].containerFields.background.isDark"
+              />
             </div>
           </fieldset>
         </fieldset>
-        
+
         <fieldset class="object-field" data-field="sections[0].text">
           <legend>Text</legend>
           <div class="field-group">
             <label for="sections[0].text.prefix">Prefix</label>
-            <input type="text" id="sections[0].text.prefix" name="sections[0].text.prefix" value="" />
+            <input
+              type="text"
+              id="sections[0].text.prefix"
+              name="sections[0].text.prefix"
+              value=""
+            />
           </div>
           <div class="field-group">
             <label for="sections[0].text.title">Title</label>
-            <input type="text" id="sections[0].text.title" name="sections[0].text.title" 
-                   value="Metalsmith First" />
+            <input
+              type="text"
+              id="sections[0].text.title"
+              name="sections[0].text.title"
+              value="Metalsmith First"
+            />
           </div>
           <div class="field-group">
             <label for="sections[0].text.header">Header</label>
-            <input type="text" id="sections[0].text.header" name="sections[0].text.header" value="h1" />
+            <input
+              type="text"
+              id="sections[0].text.header"
+              name="sections[0].text.header"
+              value="h1"
+            />
           </div>
           <div class="field-group">
             <label for="sections[0].text.subtitle">Subtitle</label>
-            <input type="text" id="sections[0].text.subtitle" name="sections[0].text.subtitle" 
-                   value="The only starter you'll need" />
+            <input
+              type="text"
+              id="sections[0].text.subtitle"
+              name="sections[0].text.subtitle"
+              value="The only starter you'll need"
+            />
           </div>
         </fieldset>
       </fieldset>

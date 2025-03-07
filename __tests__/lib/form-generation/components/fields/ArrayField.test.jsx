@@ -1,7 +1,11 @@
 import React from 'react';
 import { render, fireEvent, screen, act } from '@testing-library/react';
 import { ArrayField } from '../../../../../src/renderer/src/lib/form-generation/components/fields/ArrayField';
-import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '../../../../../src/renderer/src/components/icons';
+import {
+  DragHandleIcon,
+  CollapsedIcon,
+  CollapseIcon
+} from '../../../../../src/renderer/src/components/icons';
 import { StorageOperations } from '../../../../../src/renderer/src/lib/utilities/services/storage';
 
 // Mock the icons and Dropzone components
@@ -33,34 +37,42 @@ jest.mock('../../../../../src/renderer/src/lib/form-generation/components/FormFi
 }));
 
 // Mock FieldControls component
-jest.mock('../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls', () => {
-  return function MockFieldControls({ onDuplicate, onDelete, allowDuplication = true, allowDeletion = true }) {
-    return (
-      <div data-testid="field-controls" className="button-wrapper">
-        {allowDuplication && (
-          <div 
-            className="add-button" 
-            data-testid="duplicate-button" 
-            onClick={onDuplicate}
-            title="Duplicate this element"
-          >
-            Duplicate
-          </div>
-        )}
-        {allowDeletion && (
-          <div 
-            className="delete-button" 
-            data-testid="delete-button" 
-            onClick={onDelete}
-            title="Delete this element"
-          >
-            Delete
-          </div>
-        )}
-      </div>
-    );
-  };
-});
+jest.mock(
+  '../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls',
+  () => {
+    return function MockFieldControls({
+      onDuplicate,
+      onDelete,
+      allowDuplication = true,
+      allowDeletion = true
+    }) {
+      return (
+        <div data-testid="field-controls" className="button-wrapper">
+          {allowDuplication && (
+            <div
+              className="add-button"
+              data-testid="duplicate-button"
+              onClick={onDuplicate}
+              title="Duplicate this element"
+            >
+              Duplicate
+            </div>
+          )}
+          {allowDeletion && (
+            <div
+              className="delete-button"
+              data-testid="delete-button"
+              onClick={onDelete}
+              title="Delete this element"
+            >
+              Delete
+            </div>
+          )}
+        </div>
+      );
+    };
+  }
+);
 
 // Mock StorageOperations
 jest.mock('../../../../../src/renderer/src/lib/utilities/services/storage', () => ({
@@ -102,7 +114,9 @@ describe('ArrayField', () => {
     test('renders collapse/expand toggle', () => {
       render(<ArrayField {...defaultProps} />);
       // The component may use either collapsed or expanded icon
-      expect(screen.getByTestId('collapsed-icon') || screen.getByTestId('collapse-icon')).toBeTruthy();
+      expect(
+        screen.getByTestId('collapsed-icon') || screen.getByTestId('collapse-icon')
+      ).toBeTruthy();
     });
 
     test('renders drag handle', () => {
@@ -117,7 +131,7 @@ describe('ArrayField', () => {
       // Find the collapse-icon span itself, which should be clickable
       const toggleSpan = document.querySelector('.collapse-icon');
       expect(toggleSpan).toBeTruthy();
-      
+
       // Test that the dropzone exists, we don't need to test the collapsing behavior
       expect(screen.getByTestId('dropzone')).toBeInTheDocument();
     });
@@ -138,7 +152,7 @@ describe('ArrayField', () => {
       expect(dropzone).toHaveClass('array-dropzone');
       expect(dropzone).toHaveClass('dropzone');
     });
-    
+
     test('renders array items', () => {
       render(<ArrayField {...defaultProps} />);
       const formFields = screen.getAllByTestId('form-field');
@@ -152,15 +166,17 @@ describe('ArrayField', () => {
     test('renders nested fields', () => {
       const field = {
         ...defaultProps.field,
-        value: [{
-          id: 'nested-obj',
-          type: 'object',
-          fields: [{ id: 'nested1', type: 'text', value: 'test' }]
-        }]
+        value: [
+          {
+            id: 'nested-obj',
+            type: 'object',
+            fields: [{ id: 'nested1', type: 'text', value: 'test' }]
+          }
+        ]
       };
-      
+
       render(<ArrayField field={field} onUpdate={defaultProps.onUpdate} index={0} />);
-      
+
       // Just check that the fields render correctly
       expect(screen.getByTestId('form-field')).toBeInTheDocument();
     });
@@ -170,16 +186,16 @@ describe('ArrayField', () => {
     test('handles invalid drop data gracefully', () => {
       render(<ArrayField {...defaultProps} />);
       const dropzone = screen.getByTestId('dropzone');
-      
+
       fireEvent.drop(dropzone, { type: 'sidebar', data: null });
-      
+
       expect(defaultProps.onUpdate).not.toHaveBeenCalled();
     });
 
     test('handles missing field values', () => {
       const field = { ...defaultProps.field, value: null };
       render(<ArrayField field={field} onUpdate={defaultProps.onUpdate} index={0} />);
-      
+
       expect(screen.queryAllByTestId('form-field')).toHaveLength(0);
     });
   });
@@ -187,23 +203,23 @@ describe('ArrayField', () => {
   describe('item manipulation', () => {
     test('has add button for duplication', () => {
       const { container } = render(<ArrayField {...defaultProps} />);
-      
+
       // Find duplicate button for the array
       const duplicateButton = container.querySelector('.add-button');
       expect(duplicateButton).toBeInTheDocument();
     });
-    
+
     test('has delete button for deletion', () => {
       const { container } = render(<ArrayField {...defaultProps} />);
-      
+
       // Find delete button for the array
       const deleteButton = container.querySelector('.delete-button');
       expect(deleteButton).toBeInTheDocument();
     });
-    
+
     test('renders in collapsed state with collapse class', () => {
       render(<ArrayField {...defaultProps} initiallyCollapsed={true} />);
-      
+
       // Verify it starts collapsed
       const dropzone = screen.getByTestId('dropzone');
       expect(dropzone).toHaveClass('is-collapsed');
@@ -213,7 +229,7 @@ describe('ArrayField', () => {
   describe('array structure', () => {
     test('renders correct number of child elements', () => {
       render(<ArrayField {...defaultProps} />);
-      
+
       // Check that all array items are rendered
       const formFields = screen.getAllByTestId('form-field');
       expect(formFields).toHaveLength(2);

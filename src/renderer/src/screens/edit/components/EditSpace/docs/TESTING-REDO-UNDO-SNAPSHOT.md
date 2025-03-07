@@ -187,6 +187,7 @@ This document provides a comprehensive testing strategy for the undo/redo and sn
 ### Test Case 20: Specific Bug Scenarios
 
 1. Test the resolved "duplicate contents field" bug:
+
    - Load an empty page
    - Verify no contents field is automatically added
    - Add a contents field via template
@@ -210,6 +211,7 @@ While manual testing is essential for UI interactions, consider implementing:
 ## Notes on Test Results
 
 When documenting test results, include:
+
 1. Browser/environment details
 2. Steps to reproduce any issues
 3. Expected vs. actual behavior

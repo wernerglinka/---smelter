@@ -51,7 +51,7 @@ export const handleFormSubmission = async (form, filePath, schema = null) => {
       if ('contents' in formData) {
         delete frontmatterData.contents; // Ensure it's removed from frontmatterData too
       }
-      
+
       // Use regular writeYAML without the contents field
       result = await window.electronAPI.files.writeYAML({
         obj: frontmatterData,

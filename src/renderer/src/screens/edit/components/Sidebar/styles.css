@@ -68,21 +68,21 @@
 .sidebar-panes {
   position: relative;
   flex: 1;
-  min-height: 0;  /* This is important for flex containers */
+  min-height: 0; /* This is important for flex containers */
 }
 .sidebar-pane {
-  position: relative;  /* Changed from absolute */
+  position: relative; /* Changed from absolute */
   width: 100%;
-  height: auto;  /* Changed from 100% */
+  height: auto; /* Changed from 100% */
   transition: opacity 0.3s ease-in-out;
   opacity: 0;
   pointer-events: none;
-  display: none;  /* Hide inactive panes completely */
+  display: none; /* Hide inactive panes completely */
 
   &.active {
     opacity: 1;
     pointer-events: all;
-    display: block;  /* Show active pane */
+    display: block; /* Show active pane */
   }
 }
 
@@ -106,7 +106,7 @@
  * The add new folder/file buttons are the buttons that are displayed in the sidebar
  * to add new folders or files
  */
- .add-new {
+.add-new {
   display: flex;
   justify-content: flex-start;
   gap: 4rem;
@@ -118,8 +118,6 @@
   &.hidden {
     height: 0;
   }
-
-
 
   & li {
     display: flex;
@@ -164,7 +162,6 @@
     color: var(--text-color);
 
     &.folder.active {
-
       & .folder-name {
         color: red;
 
@@ -212,8 +209,9 @@
       }
 
       & .delete-wrapper {
-        display: none}
+        display: none;
       }
+    }
 
     &.open > ul {
       max-height: 100rem;
@@ -311,7 +309,7 @@
 
 /* Make sure the file tree can scroll if needed */
 .file-tree {
-  max-height: calc(100vh - 20rem);  /* Adjust value based on your header height */
+  max-height: calc(100vh - 20rem); /* Adjust value based on your header height */
   overflow-y: auto;
 }
 

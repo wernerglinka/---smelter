@@ -43,7 +43,7 @@ The `handleFormReset` function is critical for correctly restoring form state:
 
 1. User makes a change to a form field
 2. Change is added to history stack via `addHistoryEntry`
-3. History position is updated 
+3. History position is updated
 4. When undoing, system moves back in history and restores that state
 5. When redoing, system moves forward in history and restores that state
 
@@ -61,6 +61,7 @@ Snapshots provide named points in the editing history that users can return to a
 ### Implementation
 
 - Snapshots are stored as an array of objects with:
+
   - `name`: Human-readable name (with timestamp)
   - `state`: Serialized form state (JSON string)
   - `timestamp`: ISO timestamp for sorting
@@ -103,11 +104,13 @@ The UI provides visual indicators and controls:
 ### State Serialization
 
 All form states are serialized to JSON strings before being added to history:
+
 ```javascript
 const snapshot = JSON.stringify(formState);
 ```
 
 And deserialized when applying:
+
 ```javascript
 const restoredState = JSON.parse(history[historyPosition]);
 ```
@@ -115,6 +118,7 @@ const restoredState = JSON.parse(history[historyPosition]);
 ### DOM Updates
 
 The DOM update logic uses a sophisticated approach:
+
 1. First updates React state
 2. Gives React time to update the DOM (using setTimeout)
 3. Then finds all form elements that need updating
@@ -125,6 +129,7 @@ This ensures both the React state and actual DOM elements are in sync.
 ### Error Handling
 
 All history and snapshot operations are wrapped in try/catch blocks to prevent crashes if:
+
 - JSON parsing fails
 - DOM elements can't be found
 - State restoration encounters problems

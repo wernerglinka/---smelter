@@ -58,133 +58,154 @@ export const ObjectField = ({
 
   // Use _displayLabel for duplicated fields (with empty label but display text)
   // This allows the label to appear in the UI while still being editable
-  const displayLabel = field._displayLabel || field.fields?.find(f => f.name === 'sectionDescription')?.value || field.label;
+  const displayLabel =
+    field._displayLabel ||
+    field.fields?.find((f) => f.name === 'sectionDescription')?.value ||
+    field.label;
   const originalName = field.name; // Store the original field name
 
   /**
    * Handles drag and drop events for object fields
    */
-  const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
-    if (!data) return;
+  const handleDropzoneEvent = useCallback(
+    async ({ type, data, position }) => {
+      if (!data) return;
 
-    switch (type) {
-      case 'template': {
-        try {
-          const projectPath = await StorageOperations.getProjectPath();
-          if (!projectPath) {
-            throw new Error('Project path not found');
+      switch (type) {
+        case 'template': {
+          try {
+            const projectPath = await StorageOperations.getProjectPath();
+            if (!projectPath) {
+              throw new Error('Project path not found');
+            }
+
+            const templateUrl = data.url.replace(/^\/+|\/+$/g, '');
+            const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
+
+            const result = await window.electronAPI.files.read(templatePath);
+            if (result.status === 'failure') {
+              throw new Error(`Failed to read template: ${result.error}`);
+            }
+
+            const templateData =
+              typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+
+            const schema = await processFrontmatter(templateData, '');
+
+            setFields((currentFields) => [
+              ...currentFields,
+              {
+                ...schema,
+                id: `${field.id}_field_${currentFields.length}`
+              }
+            ]);
+          } catch (error) {
+            console.error('Error processing template in object:', error);
           }
-
-          const templateUrl = data.url.replace(/^\/+|\/+$/g, '');
-          const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
-
-          const result = await window.electronAPI.files.read(templatePath);
-          if (result.status === 'failure') {
-            throw new Error(`Failed to read template: ${result.error}`);
-          }
-
-          const templateData = typeof result.data === 'string' ?
-            JSON.parse(result.data) : result.data;
-
-          const schema = await processFrontmatter(templateData, '');
-
-          setFields(currentFields => [...currentFields, {
-            ...schema,
-            id: `${field.id}_field_${currentFields.length}`
-          }]);
-        } catch (error) {
-          console.error('Error processing template in object:', error);
+          break;
         }
-        break;
+        case 'sidebar': {
+          const fieldData = data.field || data;
+          setFields((currentFields) => [
+            ...currentFields,
+            {
+              ...fieldData,
+              id: `${field.id}_field_${currentFields.length}`
+            }
+          ]);
+          break;
+        }
+        case 'reorder': {
+          const { sourceIndex, targetIndex } = position;
+          setFields((currentFields) => {
+            const newFields = [...currentFields];
+            const [movedField] = newFields.splice(sourceIndex, 1);
+            newFields.splice(targetIndex, 0, movedField);
+            return newFields;
+          });
+          break;
+        }
       }
-      case 'sidebar': {
-        const fieldData = data.field || data;
-        setFields(currentFields => [...currentFields, {
-          ...fieldData,
-          id: `${field.id}_field_${currentFields.length}`
-        }]);
-        break;
-      }
-      case 'reorder': {
-        const { sourceIndex, targetIndex } = position;
-        setFields(currentFields => {
-          const newFields = [...currentFields];
-          const [movedField] = newFields.splice(sourceIndex, 1);
-          newFields.splice(targetIndex, 0, movedField);
-          return newFields;
-        });
-        break;
-      }
-    }
-  }, [field.id, fields.length]);
+    },
+    [field.id, fields.length]
+  );
 
   /**
    * Handles drag start event for the object container
    */
-  const handleDragStart = useCallback((e) => {
-    e.dataTransfer.setData('origin', 'dropzone');
-    e.dataTransfer.setData('application/json', JSON.stringify(field));
-  }, [field]);
+  const handleDragStart = useCallback(
+    (e) => {
+      e.dataTransfer.setData('origin', 'dropzone');
+      e.dataTransfer.setData('application/json', JSON.stringify(field));
+    },
+    [field]
+  );
 
   /**
    * Handles duplication of fields inside this object
    */
-  const handleFieldDuplicate = useCallback((fieldToDuplicate) => {
-    // Make sure the object stays expanded during duplication
-    forceExpand();
+  const handleFieldDuplicate = useCallback(
+    (fieldToDuplicate) => {
+      // Make sure the object stays expanded during duplication
+      forceExpand();
 
-    // Generate a unique identifier for the duplicate
-    const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      // Generate a unique identifier for the duplicate
+      const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-    // Handle label for duplicate properly, adding (Copy) suffix
-    let newLabel;
-    if (fieldToDuplicate.label) {
-      newLabel = `${fieldToDuplicate.label}${fieldToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
-    }
-
-    // Create duplicated field with unique ID (deep clone to avoid reference issues)
-    const duplicatedField = {
-      ...JSON.parse(JSON.stringify(fieldToDuplicate)),
-      id: `${fieldToDuplicate.id}_${uniqueId}`,
-      label: newLabel
-    };
-
-    setFields(currentFields => {
-      const index = currentFields.findIndex(f => f.id === fieldToDuplicate.id);
-      if (index !== -1) {
-        const newFields = [...currentFields];
-        newFields.splice(index + 1, 0, duplicatedField);
-        return newFields;
+      // Handle label for duplicate properly, adding (Copy) suffix
+      let newLabel;
+      if (fieldToDuplicate.label) {
+        newLabel = `${fieldToDuplicate.label}${fieldToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
       }
-      return currentFields;
-    });
-  }, [isCollapsed]);
+
+      // Create duplicated field with unique ID (deep clone to avoid reference issues)
+      const duplicatedField = {
+        ...JSON.parse(JSON.stringify(fieldToDuplicate)),
+        id: `${fieldToDuplicate.id}_${uniqueId}`,
+        label: newLabel
+      };
+
+      setFields((currentFields) => {
+        const index = currentFields.findIndex((f) => f.id === fieldToDuplicate.id);
+        if (index !== -1) {
+          const newFields = [...currentFields];
+          newFields.splice(index + 1, 0, duplicatedField);
+          return newFields;
+        }
+        return currentFields;
+      });
+    },
+    [isCollapsed]
+  );
 
   /**
    * Handles deletion of fields inside this object
    */
-  const handleFieldDelete = useCallback((fieldToDelete) => {
-    // Make sure the object stays expanded during deletion
-    forceExpand();
+  const handleFieldDelete = useCallback(
+    (fieldToDelete) => {
+      // Make sure the object stays expanded during deletion
+      forceExpand();
 
-    setFields(currentFields => {
-      // Find exact field to delete
-      const fieldIndex = currentFields.findIndex(f => f.id === fieldToDelete.id);
+      setFields((currentFields) => {
+        // Find exact field to delete
+        const fieldIndex = currentFields.findIndex((f) => f.id === fieldToDelete.id);
 
-      if (fieldIndex === -1) {
-        console.error('Field to delete not found:', fieldToDelete.id);
-        return currentFields;
-      }
+        if (fieldIndex === -1) {
+          console.error('Field to delete not found:', fieldToDelete.id);
+          return currentFields;
+        }
 
-      // Create new array without the specific field
-      const newFields = [
-        ...currentFields.slice(0, fieldIndex),
-        ...currentFields.slice(fieldIndex + 1)
-      ];
+        // Create new array without the specific field
+        const newFields = [
+          ...currentFields.slice(0, fieldIndex),
+          ...currentFields.slice(fieldIndex + 1)
+        ];
 
-      return newFields;
-    });
-  }, [forceExpand]);
+        return newFields;
+      });
+    },
+    [forceExpand]
+  );
 
   return (
     <div
@@ -196,7 +217,10 @@ export const ObjectField = ({
         <DragHandleIcon />
       </span>
       <label className="object-name label-wrapper label-exists">
-        <span>{field.label}<sup>*</sup></span>
+        <span>
+          {field.label}
+          <sup>*</sup>
+        </span>
         <input
           type="text"
           className="element-label"
@@ -257,7 +281,7 @@ export const ObjectField = ({
                 forceExpand();
 
                 // Insert after the index position directly
-                setFields(currentFields => {
+                setFields((currentFields) => {
                   if (fieldIndex >= 0 && fieldIndex < currentFields.length) {
                     const newFields = [...currentFields];
                     newFields.splice(fieldIndex + 1, 0, duplicatedField);
@@ -277,7 +301,7 @@ export const ObjectField = ({
               // Use the index from the map to directly delete the correct field
               // This is more reliable than searching by ID which might not be unique
               const deleteByIndex = () => {
-                setFields(currentFields => {
+                setFields((currentFields) => {
                   if (fieldIndex >= 0 && fieldIndex < currentFields.length) {
                     // Create a new array with the field at this specific index removed
                     return [
@@ -298,22 +322,25 @@ export const ObjectField = ({
             onFieldUpdate={(updatedField) => {
               if (onFieldUpdate) {
                 // Create a copy of the current fields to update the specific field
-                setFields(currentFields => {
+                setFields((currentFields) => {
                   const newFields = [...currentFields];
                   // Update the specific field at this index
                   newFields[fieldIndex] = {
                     ...newFields[fieldIndex],
                     ...updatedField
                   };
-                  
+
                   // Pass the entire updated object with all fields to the parent handler
                   setTimeout(() => {
-                    onFieldUpdate({
-                      ...field,
-                      fields: newFields
-                    }, [{ type: 'object', index: fieldIndex, fieldIndex }]);
+                    onFieldUpdate(
+                      {
+                        ...field,
+                        fields: newFields
+                      },
+                      [{ type: 'object', index: fieldIndex, fieldIndex }]
+                    );
                   }, 0);
-                  
+
                   return newFields;
                 });
               }

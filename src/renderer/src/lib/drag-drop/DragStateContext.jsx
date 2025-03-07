@@ -13,7 +13,6 @@ const initialState = {
 };
 
 function dragStateReducer(state, action) {
-
   switch (action.type) {
     case 'UPDATE_DRAG_STATE':
       return {

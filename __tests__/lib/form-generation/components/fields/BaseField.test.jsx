@@ -8,18 +8,21 @@ jest.mock('../../../../../src/renderer/src/components/icons', () => ({
   DragHandleIcon: () => <div data-testid="drag-handle">DragHandleIcon</div>
 }));
 
-jest.mock('../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls', () => {
-  return function MockFieldControls(props) {
-    return (
-      <div data-testid="field-controls">
-        <div data-testid="onDuplicate-prop">{String(!!props.onDuplicate)}</div>
-        <div data-testid="onDelete-prop">{String(!!props.onDelete)}</div>
-        <div data-testid="allowDuplication-prop">{String(props.allowDuplication)}</div>
-        <div data-testid="allowDeletion-prop">{String(props.allowDeletion)}</div>
-      </div>
-    );
-  };
-});
+jest.mock(
+  '../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls',
+  () => {
+    return function MockFieldControls(props) {
+      return (
+        <div data-testid="field-controls">
+          <div data-testid="onDuplicate-prop">{String(!!props.onDuplicate)}</div>
+          <div data-testid="onDelete-prop">{String(!!props.onDelete)}</div>
+          <div data-testid="allowDuplication-prop">{String(props.allowDuplication)}</div>
+          <div data-testid="allowDeletion-prop">{String(props.allowDeletion)}</div>
+        </div>
+      );
+    };
+  }
+);
 
 describe('BaseField', () => {
   const defaultProps = {
@@ -45,7 +48,7 @@ describe('BaseField', () => {
           <div>Field content</div>
         </BaseField>
       );
-      
+
       const fieldElement = screen.getByText('Field content').parentElement;
       expect(fieldElement).toHaveClass('form-element');
       expect(fieldElement).toHaveClass('is-text');
@@ -57,7 +60,7 @@ describe('BaseField', () => {
           <div>Field content</div>
         </BaseField>
       );
-      
+
       const fieldElement = screen.getByText('Field content').parentElement;
       expect(fieldElement).toHaveClass('label-exists');
     });
@@ -76,7 +79,7 @@ describe('BaseField', () => {
           <div>Field content</div>
         </BaseField>
       );
-      
+
       const fieldElement = screen.getByText('Field content').parentElement;
       expect(fieldElement).not.toHaveClass('label-exists');
     });
@@ -87,7 +90,7 @@ describe('BaseField', () => {
           <div data-testid="test-content">Test Content</div>
         </BaseField>
       );
-      
+
       expect(screen.getByTestId('test-content')).toBeInTheDocument();
     });
 
@@ -97,7 +100,7 @@ describe('BaseField', () => {
           <div>Field content</div>
         </BaseField>
       );
-      
+
       expect(screen.getByTestId('drag-handle')).toBeInTheDocument();
     });
   });
@@ -109,7 +112,7 @@ describe('BaseField', () => {
           <div>Field content</div>
         </BaseField>
       );
-      
+
       expect(screen.getByTestId('onDuplicate-prop').textContent).toBe('true');
       expect(screen.getByTestId('onDelete-prop').textContent).toBe('true');
     });
@@ -131,7 +134,7 @@ describe('BaseField', () => {
           <div>Field content</div>
         </BaseField>
       );
-      
+
       expect(screen.getByTestId('allowDuplication-prop').textContent).toBe('false');
     });
 
@@ -152,21 +155,17 @@ describe('BaseField', () => {
           <div>Field content</div>
         </BaseField>
       );
-      
+
       expect(screen.getByTestId('allowDeletion-prop').textContent).toBe('false');
     });
 
     test('respects allowDuplication and allowDeletion props', () => {
       render(
-        <BaseField 
-          {...defaultProps} 
-          allowDuplication={false}
-          allowDeletion={false}
-        >
+        <BaseField {...defaultProps} allowDuplication={false} allowDeletion={false}>
           <div>Field content</div>
         </BaseField>
       );
-      
+
       expect(screen.getByTestId('allowDuplication-prop').textContent).toBe('false');
       expect(screen.getByTestId('allowDeletion-prop').textContent).toBe('false');
     });

@@ -44,13 +44,7 @@ describe('FieldControls', () => {
     });
 
     test('renders no buttons when both actions are disallowed', () => {
-      render(
-        <FieldControls
-          {...defaultProps}
-          allowDuplication={false}
-          allowDeletion={false}
-        />
-      );
+      render(<FieldControls {...defaultProps} allowDuplication={false} allowDeletion={false} />);
 
       expect(screen.queryByTestId('add-icon')).not.toBeInTheDocument();
       expect(screen.queryByTestId('delete-icon')).not.toBeInTheDocument();

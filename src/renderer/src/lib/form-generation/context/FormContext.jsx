@@ -16,23 +16,23 @@ export const FormContext = createContext(null);
  */
 export const FormProvider = ({ children, initialData = {} }) => {
   const [formState, setFormState] = useState(initialData);
-  
+
   /**
    * Handles form submission
    */
   const handleSubmit = (event) => {
     event.preventDefault();
   };
-  
+
   /**
    * Updates form state based on operation type
    * @param {string} operationType - Type of operation to perform
    * @param {Object} data - Operation data
    */
   const updateFormState = (operationType, data) => {
-    switch(operationType) {
+    switch (operationType) {
       case 'setValue':
-        setFormState(prevState => ({
+        setFormState((prevState) => ({
           ...prevState,
           [data.field]: data.value
         }));
@@ -49,14 +49,14 @@ export const FormProvider = ({ children, initialData = {} }) => {
   };
 
   return (
-    <FormContext.Provider value={{ 
-      onSubmit: handleSubmit, 
-      formState,
-      updateFormState 
-    }}>
-      <form onSubmit={handleSubmit}>
-        {children}
-      </form>
+    <FormContext.Provider
+      value={{
+        onSubmit: handleSubmit,
+        formState,
+        updateFormState
+      }}
+    >
+      <form onSubmit={handleSubmit}>{children}</form>
     </FormContext.Provider>
   );
 };

@@ -122,7 +122,7 @@ const App = () => {
       StorageOperations.removeFromRecentProjects(project.projectPath);
 
       // Update the UI with fresh data
-      const updatedProjects = StorageOperations.getRecentProjects().map(project => ({
+      const updatedProjects = StorageOperations.getRecentProjects().map((project) => ({
         ...project,
         name: StorageOperations.getProjectName(project.projectPath)
       }));
@@ -184,10 +184,7 @@ const App = () => {
                 >
                   {project.name}
                 </Link>
-                <span
-                  className="delete-wrapper"
-                  onClick={() => handleRemoveRecentProject(project)}
-                >
+                <span className="delete-wrapper" onClick={() => handleRemoveRecentProject(project)}>
                   <DeleteIcon className="delete-icon" />
                 </span>
               </li>

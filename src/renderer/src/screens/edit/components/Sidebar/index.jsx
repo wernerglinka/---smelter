@@ -9,7 +9,7 @@ import { useCreateFile } from './hooks/useCreateFile';
 import { useCreateFolder } from './hooks/useCreateFolder';
 import { HelpText } from '@components/HelpText';
 import { projectFilesHelpText } from './help/project-files.js';
-import { baseFields } from '@src/baseFields';
+import { baseFields } from '@lib/form-generation/components/BaseFields';
 import { useDragStateDispatch } from '@src/lib/drag-drop/DragStateContext';
 import Templates from '@components/Templates';
 import { hasProjectTemplates } from '../../../../utils/template-utils';
@@ -60,10 +60,13 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
    * Handles file selection and propagates the selection to parent components
    * @param {string} filepath - Path of the selected file
    */
-  const handleFileSelect = useCallback((filepath) => {
-    setFileSelected(filepath);
-    onFileSelect(filepath);
-  }, [onFileSelect]);
+  const handleFileSelect = useCallback(
+    (filepath) => {
+      setFileSelected(filepath);
+      onFileSelect(filepath);
+    },
+    [onFileSelect]
+  );
 
   // Initialize file and folder creation hooks
   const createFile = useCreateFile(handleFileSelect, setFileSelected);
@@ -74,7 +77,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
    * @param {string} folderPath - Path of the folder to toggle
    */
   const handleFolderToggle = useCallback((folderPath) => {
-    setOpenFolders(prevOpenFolders => {
+    setOpenFolders((prevOpenFolders) => {
       const newOpenFolders = new Set(prevOpenFolders);
       if (newOpenFolders.has(folderPath)) {
         newOpenFolders.delete(folderPath);
@@ -141,10 +144,13 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
     const templateUrl = element.dataset.url;
 
     e.dataTransfer.setData('origin', 'template');
-    e.dataTransfer.setData('application/json', JSON.stringify({
-      type: 'template',
-      url: templateUrl
-    }));
+    e.dataTransfer.setData(
+      'application/json',
+      JSON.stringify({
+        type: 'template',
+        url: templateUrl
+      })
+    );
 
     e.dataTransfer.effectAllowed = 'copy';
   };
@@ -245,7 +251,7 @@ const Sidebar = memo(({ path, className = '', onFileSelect, onFileDelete }) => {
               <h3>Empty Fields</h3>
 
               <ul className="base-fields-list">
-                {baseFields.map(field => (
+                {baseFields.map((field) => (
                   <li
                     key={field.name}
                     className="component-selection"

@@ -10,26 +10,23 @@ import 'easymde/dist/easymde.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // Import handlers from separate modules
-import { 
-  handleFieldUpdate, 
-  handleFieldDuplicate, 
-  handleFieldDelete, 
-  handleDropzoneEvent, 
-  handleClearDropzone 
+import {
+  handleFieldUpdate,
+  handleFieldDuplicate,
+  handleFieldDelete,
+  handleDropzoneEvent,
+  handleClearDropzone
 } from './handlers/fieldHandlers';
 
-import { 
-  addToHistory, 
-  addHistoryEntry, 
-  handleFormReset, 
-  handleUndo, 
-  handleRedo 
+import {
+  addToHistory,
+  addHistoryEntry,
+  handleFormReset,
+  handleUndo,
+  handleRedo
 } from './history/historyHandlers';
 
-import { 
-  handleCreateSnapshot, 
-  handleRestoreSnapshot 
-} from './history/snapshotHandlers';
+import { handleCreateSnapshot, handleRestoreSnapshot } from './history/snapshotHandlers';
 
 import { processContent } from './handlers/contentHandlers';
 
@@ -118,131 +115,123 @@ const processTemplateField = (key, value, parentId = '') => {
  */
 const EditSpace = ({ fileContent, $expanded }) => {
   const formRef = useRef(null);
-  const [ formFields, setFormFields ] = useState(null);
-  const [ activeFilePath, setActiveFilePath ] = useState(null);
-  const [ fileName, setFileName ] = useState( null );
-  const [ redoLevel, setRedoLevel ] = useState(0);
+  const [formFields, setFormFields] = useState(null);
+  const [activeFilePath, setActiveFilePath] = useState(null);
+  const [fileName, setFileName] = useState(null);
+  const [redoLevel, setRedoLevel] = useState(0);
   const lastUpdateTimeRef = useRef(0); // Track last update time to debounce history entries
-  
+
   // History management for undo/redo
-  const [ history, setHistory ] = useState([]);
-  const [ historyPosition, setHistoryPosition ] = useState(-1);
-  const [ snapshots, setSnapshots ] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [historyPosition, setHistoryPosition] = useState(-1);
+  const [snapshots, setSnapshots] = useState([]);
   const MAX_HISTORY = 10;
-  
+
   // Memoized functions using the extracted handlers
-  const memoizedAddToHistory = useCallback((formState) => {
-    addToHistory(
-      formState,
-      history,
-      historyPosition,
-      MAX_HISTORY,
-      setHistory,
-      setHistoryPosition,
-      setRedoLevel
-    );
-  }, [history, historyPosition]);
-  
-  const memoizedAddHistoryEntry = useCallback((formState) => {
-    addHistoryEntry(
-      formState,
-      historyPosition,
-      MAX_HISTORY,
-      setHistory,
-      setHistoryPosition,
-      setRedoLevel
-    );
-  }, [historyPosition]);
-  
+  const memoizedAddToHistory = useCallback(
+    (formState) => {
+      addToHistory(
+        formState,
+        history,
+        historyPosition,
+        MAX_HISTORY,
+        setHistory,
+        setHistoryPosition,
+        setRedoLevel
+      );
+    },
+    [history, historyPosition]
+  );
+
+  const memoizedAddHistoryEntry = useCallback(
+    (formState) => {
+      addHistoryEntry(
+        formState,
+        historyPosition,
+        MAX_HISTORY,
+        setHistory,
+        setHistoryPosition,
+        setRedoLevel
+      );
+    },
+    [historyPosition]
+  );
+
   const memoizedHandleFormReset = useCallback((restoredState) => {
     handleFormReset(restoredState, formRef, setFormFields);
   }, []);
-  
+
   const memoizedHandleUndo = useCallback(() => {
-    handleUndo(
-      history,
-      historyPosition,
-      setHistoryPosition,
-      setRedoLevel,
-      memoizedHandleFormReset
-    );
+    handleUndo(history, historyPosition, setHistoryPosition, setRedoLevel, memoizedHandleFormReset);
   }, [history, historyPosition, memoizedHandleFormReset]);
-  
+
   const memoizedHandleRedo = useCallback(() => {
-    handleRedo(
-      history,
-      historyPosition,
-      setHistoryPosition,
-      setRedoLevel,
-      memoizedHandleFormReset
-    );
+    handleRedo(history, historyPosition, setHistoryPosition, setRedoLevel, memoizedHandleFormReset);
   }, [history, historyPosition, memoizedHandleFormReset]);
-  
+
   const memoizedHandleCreateSnapshot = useCallback(() => {
     handleCreateSnapshot(formFields, snapshots, setSnapshots);
   }, [formFields, snapshots]);
-  
-  const memoizedHandleRestoreSnapshot = useCallback((index) => {
-    handleRestoreSnapshot(
-      index,
-      snapshots,
-      historyPosition,
-      memoizedHandleFormReset,
-      setHistory,
-      setHistoryPosition,
-      setRedoLevel
-    );
-  }, [snapshots, historyPosition, memoizedHandleFormReset]);
-  
-  const memoizedHandleFieldUpdate = useCallback((updatedField, fieldPath = []) => {
-    handleFieldUpdate(
-      updatedField,
-      fieldPath,
-      setFormFields,
-      memoizedAddHistoryEntry
-    );
-  }, [memoizedAddHistoryEntry]);
-  
-  const memoizedHandleFieldDuplicate = useCallback((fieldToDuplicate, index) => {
-    return handleFieldDuplicate(
-      fieldToDuplicate,
-      index,
-      setFormFields,
-      memoizedAddHistoryEntry
-    );
-  }, [memoizedAddHistoryEntry]);
-  
-  const memoizedHandleFieldDelete = useCallback((fieldToDelete, index) => {
-    return handleFieldDelete(
-      fieldToDelete,
-      index,
-      setFormFields,
-      memoizedAddHistoryEntry
-    );
-  }, [memoizedAddHistoryEntry]);
-  
-  const memoizedHandleDropzoneEvent = useCallback((event) => {
-    handleDropzoneEvent(
-      event,
-      setFormFields,
-      memoizedAddHistoryEntry,
-      createFieldFromTemplate
-    );
-  }, [memoizedAddHistoryEntry]);
-  
-  const memoizedHandleClearDropzone = useCallback((e) => {
-    handleClearDropzone(e, setFormFields, memoizedAddHistoryEntry);
-  }, [memoizedAddHistoryEntry]);
-  
+
+  const memoizedHandleRestoreSnapshot = useCallback(
+    (index) => {
+      handleRestoreSnapshot(
+        index,
+        snapshots,
+        historyPosition,
+        memoizedHandleFormReset,
+        setHistory,
+        setHistoryPosition,
+        setRedoLevel
+      );
+    },
+    [snapshots, historyPosition, memoizedHandleFormReset]
+  );
+
+  const memoizedHandleFieldUpdate = useCallback(
+    (updatedField, fieldPath = []) => {
+      handleFieldUpdate(updatedField, fieldPath, setFormFields, memoizedAddHistoryEntry);
+    },
+    [memoizedAddHistoryEntry]
+  );
+
+  const memoizedHandleFieldDuplicate = useCallback(
+    (fieldToDuplicate, index) => {
+      return handleFieldDuplicate(fieldToDuplicate, index, setFormFields, memoizedAddHistoryEntry);
+    },
+    [memoizedAddHistoryEntry]
+  );
+
+  const memoizedHandleFieldDelete = useCallback(
+    (fieldToDelete, index) => {
+      return handleFieldDelete(fieldToDelete, index, setFormFields, memoizedAddHistoryEntry);
+    },
+    [memoizedAddHistoryEntry]
+  );
+
+  const memoizedHandleDropzoneEvent = useCallback(
+    (event) => {
+      handleDropzoneEvent(event, setFormFields, memoizedAddHistoryEntry, createFieldFromTemplate);
+    },
+    [memoizedAddHistoryEntry]
+  );
+
+  const memoizedHandleClearDropzone = useCallback(
+    (e) => {
+      handleClearDropzone(e, setFormFields, memoizedAddHistoryEntry);
+    },
+    [memoizedAddHistoryEntry]
+  );
+
   // State to control snapshot list visibility
   const [showSnapshotList, setShowSnapshotList] = useState(false);
 
   // Setup editor when component mounts
   useEffect(() => {
     const cleanupEditor = setupEditor();
-    
+
     // No need for click outside handler anymore since we're using hover behavior
-    
+
     // Cleanup when component unmounts
     return () => {
       cleanupEditor();
@@ -271,27 +260,27 @@ const EditSpace = ({ fileContent, $expanded }) => {
           <PreviewShowIcon />
         </span>
         <div id="undo-redo-wrapper">
-          <span 
-            className={`undo btn ${historyPosition <= 0 ? 'disabled' : ''}`} 
-            role="button" 
+          <span
+            className={`undo btn ${historyPosition <= 0 ? 'disabled' : ''}`}
+            role="button"
             title="undo last form change"
             onClick={memoizedHandleUndo}
           >
             <UndoIcon />
           </span>
-          <span className="undo-redo-count">{ redoLevel }</span>
-          <span 
-            className={`redo btn ${historyPosition >= history.length - 1 ? 'disabled' : ''}`} 
-            role="button" 
+          <span className="undo-redo-count">{redoLevel}</span>
+          <span
+            className={`redo btn ${historyPosition >= history.length - 1 ? 'disabled' : ''}`}
+            role="button"
             title="redo last form change"
             onClick={memoizedHandleRedo}
           >
             <RedoIcon />
           </span>
           <div className="snapshot-container">
-            <span 
-              className="snapshot btn" 
-              role="button" 
+            <span
+              className="snapshot btn"
+              role="button"
               title="take snapshot of form"
               onClick={() => {
                 // Only create a new snapshot
@@ -306,33 +295,33 @@ const EditSpace = ({ fileContent, $expanded }) => {
             >
               <SnapshotIcon />
             </span>
-            
+
             {snapshots.length > 0 && (
-              <div 
+              <div
                 className={`snapshot-list ${showSnapshotList ? 'visible' : ''}`}
                 onMouseLeave={() => setShowSnapshotList(false)}
               >
                 <div className="snapshot-list-header">Saved Snapshots</div>
                 {snapshots.map((snapshot, index) => (
-                  <div 
-                    key={snapshot.timestamp} 
+                  <div
+                    key={snapshot.timestamp}
                     className="snapshot-item"
                     onClick={(e) => {
                       e.stopPropagation();
-                      
+
                       // Show restoration message
                       const messageElement = document.createElement('div');
                       messageElement.className = 'snapshot-message';
                       messageElement.textContent = `Restoring: ${snapshot.name}`;
                       document.body.appendChild(messageElement);
-                      
+
                       // Remove message after 3 seconds
                       setTimeout(() => {
                         if (messageElement.parentNode) {
                           messageElement.parentNode.removeChild(messageElement);
                         }
                       }, 3000);
-                      
+
                       // Restore the snapshot
                       memoizedHandleRestoreSnapshot(index);
                       setShowSnapshotList(false);
@@ -345,7 +334,6 @@ const EditSpace = ({ fileContent, $expanded }) => {
             )}
           </div>
         </div>
-
       </h2>
       <div id="content-container">
         {fileContent && (
@@ -353,17 +341,17 @@ const EditSpace = ({ fileContent, $expanded }) => {
             ref={formRef}
             onSubmit={(e) => {
               e.preventDefault();
-              
+
               // Submit the form
               handleFormSubmission(formRef.current, activeFilePath);
-              
+
               // Reset history and snapshots after submission
               setHistory([]);
               setHistoryPosition(-1);
               setRedoLevel(0);
               setSnapshots([]);
               console.log('Form submitted, history and snapshots cleared');
-              
+
               // Re-initialize history with the current state (if form is still displayed)
               setTimeout(() => {
                 if (formFields) {
@@ -388,7 +376,9 @@ const EditSpace = ({ fileContent, $expanded }) => {
                   draggable
                   index={index}
                   onFieldUpdate={(updatedField) => memoizedHandleFieldUpdate(updatedField)}
-                  onFieldDuplicate={(fieldToDuplicate) => memoizedHandleFieldDuplicate(fieldToDuplicate, index)}
+                  onFieldDuplicate={(fieldToDuplicate) =>
+                    memoizedHandleFieldDuplicate(fieldToDuplicate, index)
+                  }
                   onFieldDelete={(fieldToDelete) => memoizedHandleFieldDelete(fieldToDelete, index)}
                 />
               ))}

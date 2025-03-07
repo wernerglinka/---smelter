@@ -28,12 +28,7 @@ npm install --save-dev jest @testing-library/react @testing-library/jest-dom
 
 ```javascript
 // historyHandlers.test.js
-import { 
-  addToHistory, 
-  addHistoryEntry, 
-  handleUndo, 
-  handleRedo 
-} from '../history/historyHandlers';
+import { addToHistory, addHistoryEntry, handleUndo, handleRedo } from '../history/historyHandlers';
 
 describe('History Handlers', () => {
   // Mock state and setters
@@ -41,17 +36,17 @@ describe('History Handlers', () => {
   const mockSetHistoryPosition = jest.fn();
   const mockSetRedoLevel = jest.fn();
   const mockHandleFormReset = jest.fn();
-  
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  
+
   test('addToHistory adds state to history and updates position', () => {
     const mockFormState = { fields: [{ name: 'test', value: 'value' }] };
     const mockHistory = ['state1'];
     const mockHistoryPosition = 0;
     const MAX_HISTORY = 10;
-    
+
     addToHistory(
       mockFormState,
       mockHistory,
@@ -61,7 +56,7 @@ describe('History Handlers', () => {
       mockSetHistoryPosition,
       mockSetRedoLevel
     );
-    
+
     // Check that setHistory was called with updated history
     expect(mockSetHistory).toHaveBeenCalled();
     // The callback passed to setHistory should add the new state
@@ -69,16 +64,16 @@ describe('History Handlers', () => {
     const newHistory = setHistoryCallback(mockHistory);
     expect(newHistory.length).toBe(2);
     expect(newHistory[1]).toBe(JSON.stringify(mockFormState));
-    
+
     // Check that position was updated
     expect(mockSetHistoryPosition).toHaveBeenCalled();
     expect(mockSetRedoLevel).toHaveBeenCalled();
   });
-  
+
   test('handleUndo decrements position and restores previous state', () => {
     const mockHistory = ['{"value":"old"}', '{"value":"new"}'];
     const mockHistoryPosition = 1;
-    
+
     handleUndo(
       mockHistory,
       mockHistoryPosition,
@@ -86,15 +81,15 @@ describe('History Handlers', () => {
       mockSetRedoLevel,
       mockHandleFormReset
     );
-    
+
     // Check position was decremented
     expect(mockSetHistoryPosition).toHaveBeenCalledWith(0);
     expect(mockSetRedoLevel).toHaveBeenCalledWith(0);
-    
+
     // Check form reset was called with correct state
     expect(mockHandleFormReset).toHaveBeenCalledWith({ value: 'old' });
   });
-  
+
   // Additional tests for handleRedo, addHistoryEntry, etc.
 });
 ```
@@ -103,10 +98,7 @@ describe('History Handlers', () => {
 
 ```javascript
 // snapshotHandlers.test.js
-import { 
-  handleCreateSnapshot, 
-  handleRestoreSnapshot 
-} from '../history/snapshotHandlers';
+import { handleCreateSnapshot, handleRestoreSnapshot } from '../history/snapshotHandlers';
 
 describe('Snapshot Handlers', () => {
   // Mock DOM methods
@@ -116,42 +108,42 @@ describe('Snapshot Handlers', () => {
     parentNode: { removeChild: jest.fn() }
   });
   document.body.appendChild = jest.fn();
-  
+
   // Mock state and setters
   const mockSetSnapshots = jest.fn();
   const mockSetHistory = jest.fn();
   const mockSetHistoryPosition = jest.fn();
   const mockSetRedoLevel = jest.fn();
   const mockHandleFormReset = jest.fn();
-  
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  
+
   test('handleCreateSnapshot adds a new snapshot', () => {
     const mockFormFields = [{ name: 'test', value: 'value' }];
     const mockSnapshots = [{ name: 'Snapshot 1', state: '{}' }];
-    
+
     handleCreateSnapshot(mockFormFields, mockSnapshots, mockSetSnapshots);
-    
+
     // Check snapshot was added
     expect(mockSetSnapshots).toHaveBeenCalled();
     const setSnapshotsCallback = mockSetSnapshots.mock.calls[0][0];
     const newSnapshots = setSnapshotsCallback(mockSnapshots);
     expect(newSnapshots.length).toBe(2);
     expect(newSnapshots[1].state).toBe(JSON.stringify(mockFormFields));
-    
+
     // Check notification was created
     expect(document.createElement).toHaveBeenCalledWith('div');
     expect(document.body.appendChild).toHaveBeenCalled();
   });
-  
+
   test('handleRestoreSnapshot restores state and adds to history', () => {
     const mockSnapshots = [
       { name: 'Snapshot 1', state: '{"fields":[{"name":"test","value":"snapshot"}]}' }
     ];
     const mockHistoryPosition = 0;
-    
+
     handleRestoreSnapshot(
       0,
       mockSnapshots,
@@ -161,18 +153,20 @@ describe('Snapshot Handlers', () => {
       mockSetHistoryPosition,
       mockSetRedoLevel
     );
-    
+
     // Check form was reset with snapshot state
-    expect(mockHandleFormReset).toHaveBeenCalledWith({"fields":[{"name":"test","value":"snapshot"}]});
-    
+    expect(mockHandleFormReset).toHaveBeenCalledWith({
+      fields: [{ name: 'test', value: 'snapshot' }]
+    });
+
     // Check history was updated
     expect(mockSetHistory).toHaveBeenCalled();
-    
+
     // Check positions were updated
     expect(mockSetHistoryPosition).toHaveBeenCalled();
     expect(mockSetRedoLevel).toHaveBeenCalled();
   });
-  
+
   // Additional tests
 });
 ```
@@ -211,60 +205,60 @@ describe('EditSpace Integration Tests', () => {
       content: 'Test content'
     }
   };
-  
+
   test('undo/redo buttons are initially disabled', async () => {
     render(<EditSpace fileContent={mockFileContent} />);
-    
+
     // Wait for content to process
     await waitFor(() => expect(screen.getByText('Original Title')).toBeInTheDocument());
-    
+
     // Initially, undo should be disabled and redo disabled
     const undoButton = screen.getByTitle('undo last form change');
     const redoButton = screen.getByTitle('redo last form change');
-    
+
     expect(undoButton).toHaveClass('disabled');
     expect(redoButton).toHaveClass('disabled');
   });
-  
+
   test('changing a field enables undo button', async () => {
     render(<EditSpace fileContent={mockFileContent} />);
-    
+
     // Wait for form to load
     await waitFor(() => expect(screen.getByDisplayValue('Original Title')).toBeInTheDocument());
-    
+
     // Change a field value
     const titleInput = screen.getByDisplayValue('Original Title');
     fireEvent.change(titleInput, { target: { value: 'New Title' } });
-    
+
     // Undo should now be enabled
     const undoButton = screen.getByTitle('undo last form change');
     expect(undoButton).not.toHaveClass('disabled');
   });
-  
+
   test('undo restores previous field value', async () => {
     render(<EditSpace fileContent={mockFileContent} />);
-    
+
     // Wait for form to load
     await waitFor(() => expect(screen.getByDisplayValue('Original Title')).toBeInTheDocument());
-    
+
     // Change a field value
     const titleInput = screen.getByDisplayValue('Original Title');
     fireEvent.change(titleInput, { target: { value: 'New Title' } });
-    
+
     // Click undo button
     const undoButton = screen.getByTitle('undo last form change');
     fireEvent.click(undoButton);
-    
+
     // Check field is restored
     await waitFor(() => {
       expect(screen.getByDisplayValue('Original Title')).toBeInTheDocument();
     });
-    
+
     // Redo should now be enabled
     const redoButton = screen.getByTitle('redo last form change');
     expect(redoButton).not.toHaveClass('disabled');
   });
-  
+
   // More tests for redo, snapshots, etc.
 });
 ```
@@ -304,21 +298,21 @@ test.describe('Form Editor Undo/Redo', () => {
     // Find a text field and change its value
     const titleField = await page.locator('input[name="title"]');
     await titleField.fill('Changed Title');
-    
+
     // Check that the value was updated
     await expect(titleField).toHaveValue('Changed Title');
-    
+
     // Click the undo button
     const undoButton = await page.locator('.undo.btn');
     await undoButton.click();
-    
+
     // Check the value was restored
     await expect(titleField).toHaveValue('Original Title');
-    
+
     // Click the redo button
     const redoButton = await page.locator('.redo.btn');
     await redoButton.click();
-    
+
     // Check the value was changed again
     await expect(titleField).toHaveValue('Changed Title');
   });
@@ -327,27 +321,27 @@ test.describe('Form Editor Undo/Redo', () => {
     // Change a field
     const titleField = await page.locator('input[name="title"]');
     await titleField.fill('Snapshot Test');
-    
+
     // Take a snapshot
     const snapshotButton = await page.locator('.snapshot.btn');
     await snapshotButton.click();
-    
+
     // Wait for the snapshot notification
     await page.waitForSelector('.snapshot-message');
-    
+
     // Change the field again
     await titleField.fill('After Snapshot');
-    
+
     // Hover over snapshot button to show dropdown
     await snapshotButton.hover();
-    
+
     // Click the first snapshot in the list
     await page.click('.snapshot-item');
-    
+
     // Verify field was restored to snapshot state
     await expect(titleField).toHaveValue('Snapshot Test');
   });
-  
+
   // More E2E tests
 });
 ```
@@ -357,11 +351,13 @@ test.describe('Form Editor Undo/Redo', () => {
 To maximize effectiveness while minimizing effort, focus on:
 
 1. **Unit tests** for core logic functions:
+
    - History management functions
    - Snapshot handling
    - Form state manipulation
 
 2. **Integration tests** for component interactions:
+
    - Undo/redo button state
    - History tracking
    - Snapshot UI behavior
@@ -396,11 +392,11 @@ For tests involving React state:
 // Mock React hooks
 const mockState = {};
 const mockSetState = jest.fn();
-jest.spyOn(React, 'useState').mockImplementation(initialValue => {
+jest.spyOn(React, 'useState').mockImplementation((initialValue) => {
   return [initialValue, mockSetState];
 });
 
-jest.spyOn(React, 'useRef').mockImplementation(value => ({ current: value }));
+jest.spyOn(React, 'useRef').mockImplementation((value) => ({ current: value }));
 ```
 
 ## Continuous Integration Setup
@@ -413,9 +409,9 @@ name: Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
@@ -445,8 +441,9 @@ jobs:
 ## Limitations and Manual Testing Needs
 
 Some aspects still require manual testing:
+
 - Visual feedback appearance (notifications, animations)
-- Hover interactions and visual states 
+- Hover interactions and visual states
 - Performance characteristics under real user conditions
 - Complex drag-and-drop operations
 - Browser-specific behaviors

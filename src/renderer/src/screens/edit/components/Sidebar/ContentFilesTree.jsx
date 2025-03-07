@@ -17,7 +17,7 @@ export const RenderContentFilesTree = ({
   fileSelected,
   onFileSelect,
   onFolderActivate,
-  activeFolder,  // Add this prop
+  activeFolder, // Add this prop
   onFolderToggle,
   openFolders
 }) => {
@@ -70,10 +70,11 @@ export const RenderContentFilesTree = ({
           if (Array.isArray(fileObj)) return;
 
           // Determine if current item is a folder
-          const isFolder = typeof fileObj === 'object' &&
+          const isFolder =
+            typeof fileObj === 'object' &&
             fileObj !== null &&
             (Array.isArray(Object.values(fileObj)[0]) ||
-            typeof Object.values(fileObj)[0] === 'object');
+              typeof Object.values(fileObj)[0] === 'object');
 
           if (isFolder) {
             // Process folder contents
@@ -87,7 +88,7 @@ export const RenderContentFilesTree = ({
 
             // Process files within the folder if contents are in array format
             if (Array.isArray(folderContents)) {
-              folderContents.forEach(file => {
+              folderContents.forEach((file) => {
                 // Each file is an object with one entry: { filename: filepath }
                 const [filename, filepath] = Object.entries(file)[0];
                 // Only process markdown files
@@ -112,7 +113,6 @@ export const RenderContentFilesTree = ({
 
       const processedTree = processFiles(data);
       setFileTree(processedTree);
-
     } catch (err) {
       setError(err.message);
       console.error('Error loading files:', err);

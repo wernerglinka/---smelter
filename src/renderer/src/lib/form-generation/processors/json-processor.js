@@ -17,7 +17,7 @@ export const processJsonData = (jsonData) => {
         })
       };
     }
-    
+
     if (typeof value === 'object' && value !== null) {
       return {
         id: key,
@@ -51,9 +51,7 @@ export const processJsonData = (jsonData) => {
     };
   };
 
-  const fields = Object.entries(jsonData).map(([key, value]) => 
-    createField(key, value)
-  );
+  const fields = Object.entries(jsonData).map(([key, value]) => createField(key, value));
 
   return {
     fields,

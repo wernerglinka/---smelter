@@ -4,8 +4,7 @@ import './styles.css';
 const PreviewPane = () => {
   return (
     <div className="preview-container">
-      <div className="preview-content">
-      </div>
+      <div className="preview-content"></div>
     </div>
   );
 };

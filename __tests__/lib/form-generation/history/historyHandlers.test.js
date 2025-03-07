@@ -33,12 +33,12 @@ describe('History Handler Functions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  
+
   describe('addToHistory', () => {
     it('should add form state to history array', () => {
       // Arrange
-      const formState = { 
-        fields: [{ id: 'test', name: 'title', value: 'Hello' }] 
+      const formState = {
+        fields: [{ id: 'test', name: 'title', value: 'Hello' }]
       };
       const history = ['previousState'];
       const historyPosition = 0;
@@ -46,7 +46,7 @@ describe('History Handler Functions', () => {
       const setHistory = jest.fn();
       const setHistoryPosition = jest.fn();
       const setRedoLevel = jest.fn();
-      
+
       // Act
       addToHistory(
         formState,
@@ -57,7 +57,7 @@ describe('History Handler Functions', () => {
         setHistoryPosition,
         setRedoLevel
       );
-      
+
       // Assert
       expect(setHistory).toHaveBeenCalled();
       // Test the callback given to setHistory
@@ -66,7 +66,7 @@ describe('History Handler Functions', () => {
       expect(newHistory).toHaveLength(2);
       expect(newHistory[1]).toBe(JSON.stringify(formState));
     });
-    
+
     it('should truncate history if not at the end', () => {
       // Arrange
       const formState = { fields: [{ id: 'test', name: 'title', value: 'New' }] };
@@ -76,7 +76,7 @@ describe('History Handler Functions', () => {
       const setHistory = jest.fn();
       const setHistoryPosition = jest.fn();
       const setRedoLevel = jest.fn();
-      
+
       // Act
       addToHistory(
         formState,
@@ -87,7 +87,7 @@ describe('History Handler Functions', () => {
         setHistoryPosition,
         setRedoLevel
       );
-      
+
       // Assert
       const setHistoryCallback = setHistory.mock.calls[0][0];
       const newHistory = setHistoryCallback(history);
@@ -100,13 +100,15 @@ describe('History Handler Functions', () => {
     it('should limit history to MAX_HISTORY entries', () => {
       // Arrange
       const formState = { fields: [{ id: 'test', name: 'title', value: 'Latest' }] };
-      const history = Array(10).fill().map((_, i) => `state${i}`);
+      const history = Array(10)
+        .fill()
+        .map((_, i) => `state${i}`);
       const historyPosition = 9;
       const MAX_HISTORY = 10;
       const setHistory = jest.fn();
       const setHistoryPosition = jest.fn();
       const setRedoLevel = jest.fn();
-      
+
       // Act
       addToHistory(
         formState,
@@ -117,7 +119,7 @@ describe('History Handler Functions', () => {
         setHistoryPosition,
         setRedoLevel
       );
-      
+
       // Assert
       const setHistoryCallback = setHistory.mock.calls[0][0];
       const newHistory = setHistoryCallback(history);
@@ -125,7 +127,7 @@ describe('History Handler Functions', () => {
       expect(newHistory[0]).toBe('state1'); // First item should be dropped
       expect(newHistory[9]).toBe(JSON.stringify(formState)); // Last should be new state
     });
-    
+
     it('should update history position after adding state', () => {
       // Arrange
       const formState = { fields: [{ id: 'test', name: 'title', value: 'Value' }] };
@@ -135,7 +137,7 @@ describe('History Handler Functions', () => {
       const setHistory = jest.fn();
       const setHistoryPosition = jest.fn();
       const setRedoLevel = jest.fn();
-      
+
       // Act
       addToHistory(
         formState,
@@ -146,18 +148,18 @@ describe('History Handler Functions', () => {
         setHistoryPosition,
         setRedoLevel
       );
-      
+
       // Assert
       // Should call position setter with callback
       expect(setHistoryPosition).toHaveBeenCalled();
       const positionCallback = setHistoryPosition.mock.calls[0][0];
       expect(positionCallback(1)).toBe(2);
-      
+
       // Should update redo level with the same value
       expect(setRedoLevel).toHaveBeenCalled();
     });
   });
-  
+
   describe('addHistoryEntry', () => {
     it('should add form state to history and update position', () => {
       // Arrange
@@ -167,7 +169,7 @@ describe('History Handler Functions', () => {
       const setHistory = jest.fn();
       const setHistoryPosition = jest.fn();
       const setRedoLevel = jest.fn();
-      
+
       // Act
       addHistoryEntry(
         formState,
@@ -177,12 +179,12 @@ describe('History Handler Functions', () => {
         setHistoryPosition,
         setRedoLevel
       );
-      
+
       // Assert
       expect(setHistory).toHaveBeenCalled();
       const setHistoryCallback = setHistory.mock.calls[0][0];
       expect(typeof setHistoryCallback).toBe('function');
-      
+
       // Can't easily test these because they're in setTimeout
       // Just verify the main history update happens
       const prevHistory = ['state1'];
@@ -199,22 +201,16 @@ describe('History Handler Functions', () => {
       const setHistoryPosition = jest.fn();
       const setRedoLevel = jest.fn();
       const handleFormReset = jest.fn();
-      
+
       // Act
-      handleUndo(
-        history,
-        historyPosition,
-        setHistoryPosition,
-        setRedoLevel,
-        handleFormReset
-      );
-      
+      handleUndo(history, historyPosition, setHistoryPosition, setRedoLevel, handleFormReset);
+
       // Assert
       expect(setHistoryPosition).not.toHaveBeenCalled();
       expect(setRedoLevel).not.toHaveBeenCalled();
       expect(handleFormReset).not.toHaveBeenCalled();
     });
-    
+
     it('should decrement position and restore previous state', () => {
       // Arrange
       const prevState = { fields: [{ name: 'test', value: 'old' }] };
@@ -223,22 +219,16 @@ describe('History Handler Functions', () => {
       const setHistoryPosition = jest.fn();
       const setRedoLevel = jest.fn();
       const handleFormReset = jest.fn();
-      
+
       // Act
-      handleUndo(
-        history,
-        historyPosition,
-        setHistoryPosition,
-        setRedoLevel,
-        handleFormReset
-      );
-      
+      handleUndo(history, historyPosition, setHistoryPosition, setRedoLevel, handleFormReset);
+
       // Assert
       expect(setHistoryPosition).toHaveBeenCalledWith(0);
       expect(setRedoLevel).toHaveBeenCalledWith(0);
       expect(handleFormReset).toHaveBeenCalledWith(prevState);
     });
-    
+
     it('should handle invalid JSON in history', () => {
       // Arrange
       const history = ['invalid json', '{"fields":[]}'];
@@ -247,26 +237,20 @@ describe('History Handler Functions', () => {
       const setRedoLevel = jest.fn();
       const handleFormReset = jest.fn();
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      
+
       // Act
-      handleUndo(
-        history,
-        historyPosition,
-        setHistoryPosition,
-        setRedoLevel,
-        handleFormReset
-      );
-      
+      handleUndo(history, historyPosition, setHistoryPosition, setRedoLevel, handleFormReset);
+
       // Assert
       expect(setHistoryPosition).toHaveBeenCalledWith(0);
       expect(setRedoLevel).toHaveBeenCalledWith(0);
       expect(handleFormReset).not.toHaveBeenCalled();
       expect(consoleErrorSpy).toHaveBeenCalled();
-      
+
       consoleErrorSpy.mockRestore();
     });
   });
-  
+
   describe('handleRedo', () => {
     it('should not do anything if at the end of history', () => {
       // Arrange
@@ -275,22 +259,16 @@ describe('History Handler Functions', () => {
       const setHistoryPosition = jest.fn();
       const setRedoLevel = jest.fn();
       const handleFormReset = jest.fn();
-      
+
       // Act
-      handleRedo(
-        history,
-        historyPosition,
-        setHistoryPosition,
-        setRedoLevel,
-        handleFormReset
-      );
-      
+      handleRedo(history, historyPosition, setHistoryPosition, setRedoLevel, handleFormReset);
+
       // Assert
       expect(setHistoryPosition).not.toHaveBeenCalled();
       expect(setRedoLevel).not.toHaveBeenCalled();
       expect(handleFormReset).not.toHaveBeenCalled();
     });
-    
+
     it('should increment position and restore next state', () => {
       // Arrange
       const nextState = { fields: [{ name: 'test', value: 'new' }] };
@@ -299,62 +277,56 @@ describe('History Handler Functions', () => {
       const setHistoryPosition = jest.fn();
       const setRedoLevel = jest.fn();
       const handleFormReset = jest.fn();
-      
+
       // Act
-      handleRedo(
-        history,
-        historyPosition,
-        setHistoryPosition,
-        setRedoLevel,
-        handleFormReset
-      );
-      
+      handleRedo(history, historyPosition, setHistoryPosition, setRedoLevel, handleFormReset);
+
       // Assert
       expect(setHistoryPosition).toHaveBeenCalledWith(1);
       expect(setRedoLevel).toHaveBeenCalledWith(1);
       expect(handleFormReset).toHaveBeenCalledWith(nextState);
     });
   });
-  
+
   describe('handleFormReset', () => {
     let mockFormRef;
     let mockForm;
-    
+
     beforeEach(() => {
       // Create a more complete mock form for testing form reset
       mockForm = {
         querySelector: jest.fn(),
         querySelectorAll: jest.fn()
       };
-      
+
       mockFormRef = { current: mockForm };
     });
-    
+
     it('should do nothing if form ref is not available', () => {
       // Arrange
       const restoredState = [{ name: 'test', value: 'value' }];
       const invalidFormRef = { current: null };
       const setFormFields = jest.fn();
-      
+
       // Act
       handleFormReset(restoredState, invalidFormRef, setFormFields);
-      
+
       // Assert
       expect(setFormFields).not.toHaveBeenCalled();
     });
-    
+
     it('should update form fields state', () => {
       // Arrange
       const restoredState = [{ name: 'test', value: 'value' }];
       const setFormFields = jest.fn();
-      
+
       // Act
       handleFormReset(restoredState, mockFormRef, setFormFields);
-      
+
       // Assert
       expect(setFormFields).toHaveBeenCalledWith(restoredState);
     });
-    
+
     it('should process field values after setTimeout', () => {
       // Arrange
       const restoredState = [
@@ -362,17 +334,17 @@ describe('History Handler Functions', () => {
         { name: 'checkbox', type: 'checkbox', value: true }
       ];
       const setFormFields = jest.fn();
-      
+
       // Mock DOM element finding
       const mockTextInput = { type: 'text', value: '' };
       const mockCheckbox = { type: 'checkbox', checked: false };
-      
+
       mockForm.querySelector.mockImplementation((selector) => {
         if (selector === '[name="text"]') return mockTextInput;
         if (selector === '[name="checkbox"]') return mockCheckbox;
         return null;
       });
-      
+
       // Fix for the Array.from(querySelectorAll) call
       const mockElements = [
         { getAttribute: () => 'text', type: 'text', value: '' },
@@ -380,18 +352,18 @@ describe('History Handler Functions', () => {
       ];
       mockElements.map = jest.fn().mockReturnValue(mockElements);
       mockForm.querySelectorAll.mockReturnValue(mockElements);
-      
+
       // Mock the setTimeout to execute immediately
       const originalSetTimeout = global.setTimeout;
-      global.setTimeout = jest.fn().mockImplementation(fn => fn());
-      
+      global.setTimeout = jest.fn().mockImplementation((fn) => fn());
+
       // Act
       handleFormReset(restoredState, mockFormRef, setFormFields);
-      
+
       // Assert - check DOM updates which should happen immediately with our mocked setTimeout
       expect(mockForm.querySelector).toHaveBeenCalledWith('[name="text"]');
       expect(mockForm.querySelector).toHaveBeenCalledWith('[name="checkbox"]');
-      
+
       // Restore setTimeout
       global.setTimeout = originalSetTimeout;
     });

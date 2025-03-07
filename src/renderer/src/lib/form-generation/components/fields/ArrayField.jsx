@@ -47,18 +47,20 @@ export const ArrayField = ({
   allowDeletion = true,
   initiallyCollapsed = true
 }) => {
-
   const [isCollapsed, setIsCollapsed] = useState(initiallyCollapsed);
   const [items, setItems] = useState(field.value || []);
 
   /**
    * Toggles the collapsed state of the array field
    */
-  const handleCollapse = useCallback((e) => {
-    // Stop event propagation to prevent bubble up
-    if (e) e.stopPropagation();
-    setIsCollapsed(prev => !prev);
-  }, [isCollapsed]);
+  const handleCollapse = useCallback(
+    (e) => {
+      // Stop event propagation to prevent bubble up
+      if (e) e.stopPropagation();
+      setIsCollapsed((prev) => !prev);
+    },
+    [isCollapsed]
+  );
 
   // Force open the container if it's closed - useful for operations that need to see the content
   const forceExpand = useCallback(() => {
@@ -78,107 +80,119 @@ export const ArrayField = ({
    * @param {number} [params.position.sourceIndex] - Original position for reorder
    * @param {number} [params.position.targetIndex] - Target position for reorder
    */
-  const handleDropzoneEvent = useCallback(async ({ type, data, position }) => {
-    if (!data) return;
+  const handleDropzoneEvent = useCallback(
+    async ({ type, data, position }) => {
+      if (!data) return;
 
-    switch (type) {
-      case 'template': {
-        try {
-          const projectPath = await StorageOperations.getProjectPath();
-          if (!projectPath) {
-            throw new Error('Project path not found');
-          }
+      switch (type) {
+        case 'template': {
+          try {
+            const projectPath = await StorageOperations.getProjectPath();
+            if (!projectPath) {
+              throw new Error('Project path not found');
+            }
 
-          const templateUrl = data.url.replace(/^\/+|\/+$/g, '');
-          const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
+            const templateUrl = data.url.replace(/^\/+|\/+$/g, '');
+            const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
 
-          const result = await window.electronAPI.files.read(templatePath);
+            const result = await window.electronAPI.files.read(templatePath);
 
-          if (result.status === 'failure') {
-            throw new Error(`Failed to read template: ${result.error}`);
-          }
+            if (result.status === 'failure') {
+              throw new Error(`Failed to read template: ${result.error}`);
+            }
 
-          const rawTemplate = typeof result.data === 'string' ?
-            JSON.parse(result.data) : result.data;
+            const rawTemplate =
+              typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
 
-          // Special handling for flex sections
-          if (rawTemplate.columns) {
-            setItems(currentItems => {
-              const newItems = [...currentItems];
-              // Create a columns array field
-              const columnsField = {
-                type: 'array',
-                label: 'columns',
-                id: `${field.id}_columns`,
-                value: rawTemplate.columns.map((column, colIndex) => ({
+            // Special handling for flex sections
+            if (rawTemplate.columns) {
+              setItems((currentItems) => {
+                const newItems = [...currentItems];
+                // Create a columns array field
+                const columnsField = {
                   type: 'array',
-                  label: `Column ${colIndex + 1}`,
-                  id: `${field.id}_column_${colIndex}`,
-                  name: 'column',
-                  value: column.column || []
-                }))
-              };
-              newItems.push(columnsField);
-              return newItems;
-            });
-          } else {
-            // Default template processing
-            const processedData = await processFrontmatter(
-              rawTemplate.frontMatter || rawTemplate,
-              rawTemplate.content || ''
-            );
+                  label: 'columns',
+                  id: `${field.id}_columns`,
+                  value: rawTemplate.columns.map((column, colIndex) => ({
+                    type: 'array',
+                    label: `Column ${colIndex + 1}`,
+                    id: `${field.id}_column_${colIndex}`,
+                    name: 'column',
+                    value: column.column || []
+                  }))
+                };
+                newItems.push(columnsField);
+                return newItems;
+              });
+            } else {
+              // Default template processing
+              const processedData = await processFrontmatter(
+                rawTemplate.frontMatter || rawTemplate,
+                rawTemplate.content || ''
+              );
 
-            setItems(currentItems => {
-              const newItems = [...currentItems, {
-                type: 'object',
-                label: rawTemplate.sectionDescription || 'New Section',
-                id: `${field.id}_item_${currentItems.length}`,
-                name: field.name, // Preserve the original array name
-                fields: processedData.fields
-              }];
-              return newItems;
-            });
+              setItems((currentItems) => {
+                const newItems = [
+                  ...currentItems,
+                  {
+                    type: 'object',
+                    label: rawTemplate.sectionDescription || 'New Section',
+                    id: `${field.id}_item_${currentItems.length}`,
+                    name: field.name, // Preserve the original array name
+                    fields: processedData.fields
+                  }
+                ];
+                return newItems;
+              });
+            }
+          } catch (error) {
+            console.error('Error processing template in array:', error);
           }
-        } catch (error) {
-          console.error('Error processing template in array:', error);
+          break;
         }
-        break;
-      }
-      case 'sidebar': {
-        const fieldData = data.field || data;
+        case 'sidebar': {
+          const fieldData = data.field || data;
 
-        const newItem = ensureFieldStructure({
-          ...fieldData,
-          id: `${field.id}_item_${items.length}`
-        }, field.id);
+          const newItem = ensureFieldStructure(
+            {
+              ...fieldData,
+              id: `${field.id}_item_${items.length}`
+            },
+            field.id
+          );
 
-        setItems(currentItems => {
-          const newItems = [...currentItems, newItem];
-          return newItems;
-        });
-        break;
+          setItems((currentItems) => {
+            const newItems = [...currentItems, newItem];
+            return newItems;
+          });
+          break;
+        }
+        case 'reorder': {
+          const { sourceIndex, targetIndex } = position;
+          setItems((currentItems) => {
+            const newItems = [...currentItems];
+            const [movedItem] = newItems.splice(sourceIndex, 1);
+            newItems.splice(targetIndex, 0, movedItem);
+            return newItems;
+          });
+          break;
+        }
       }
-      case 'reorder': {
-        const { sourceIndex, targetIndex } = position;
-        setItems(currentItems => {
-          const newItems = [...currentItems];
-          const [movedItem] = newItems.splice(sourceIndex, 1);
-          newItems.splice(targetIndex, 0, movedItem);
-          return newItems;
-        });
-        break;
-      }
-    }
-  }, [field.id, field.name, items.length]); // Add field.name to dependencies
+    },
+    [field.id, field.name, items.length]
+  ); // Add field.name to dependencies
 
   /**
    * Sets up drag data when starting to drag the array field
    * @param {DragEvent} e - The drag event
    */
-  const handleDragStart = useCallback((e) => {
-    e.dataTransfer.setData('origin', 'dropzone');
-    e.dataTransfer.setData('application/json', JSON.stringify(field));
-  }, [field]);
+  const handleDragStart = useCallback(
+    (e) => {
+      e.dataTransfer.setData('origin', 'dropzone');
+      e.dataTransfer.setData('application/json', JSON.stringify(field));
+    },
+    [field]
+  );
 
   /**
    * Processes an array item to ensure it has the correct structure
@@ -186,117 +200,133 @@ export const ArrayField = ({
    * @param {number} index - The index of the item in the array
    * @returns {Object} Processed item with correct structure
    */
-  const processArrayItem = useCallback((item, index) => {
-    if (item.type) return item;
+  const processArrayItem = useCallback(
+    (item, index) => {
+      if (item.type) return item;
 
-    if (typeof item === 'object' && item !== null) {
-      // Check if this is a column object
-      if (item.column || field.label === 'columns') {
+      if (typeof item === 'object' && item !== null) {
+        // Check if this is a column object
+        if (item.column || field.label === 'columns') {
+          return {
+            type: 'object',
+            label: toTitleCase(`Column ${index + 1}`), // Transform label
+            id: `${field.id}_column_${index + 1}`,
+            fields: Object.entries(item).map(([key, value]) => ({
+              type: typeof value === 'object' ? 'object' : 'text',
+              label: toTitleCase(key), // Transform label
+              id: `${field.id}_column_${index + 1}_${key}`,
+              name: `${field.id}[${index}][${key}]`,
+              defaultValue: value
+            }))
+          };
+        }
+
+        // Default object processing
         return {
           type: 'object',
-          label: toTitleCase(`Column ${index + 1}`),  // Transform label
-          id: `${field.id}_column_${index + 1}`,
+          label: toTitleCase(`${field.label} ${index + 1}`), // Transform label
+          id: `${field.id}_${index + 1}`,
           fields: Object.entries(item).map(([key, value]) => ({
             type: typeof value === 'object' ? 'object' : 'text',
             label: toTitleCase(key), // Transform label
-            id: `${field.id}_column_${index + 1}_${key}`,
+            id: `${field.id}_${index + 1}_${key}`,
             name: `${field.id}[${index}][${key}]`,
             defaultValue: value
           }))
         };
       }
 
-      // Default object processing
       return {
-        type: 'object',
+        type: 'text',
         label: toTitleCase(`${field.label} ${index + 1}`), // Transform label
         id: `${field.id}_${index + 1}`,
-        fields: Object.entries(item).map(([key, value]) => ({
-          type: typeof value === 'object' ? 'object' : 'text',
-          label: toTitleCase(key), // Transform label
-          id: `${field.id}_${index + 1}_${key}`,
-          name: `${field.id}[${index}][${key}]`,
-          defaultValue: value
-        }))
+        name: `${field.id}[${index}]`,
+        defaultValue: item
       };
-    }
-
-    return {
-      type: 'text',
-      label: toTitleCase(`${field.label} ${index + 1}`), // Transform label
-      id: `${field.id}_${index + 1}`,
-      name: `${field.id}[${index}]`,
-      defaultValue: item
-    };
-  }, [field.id, field.label]);
+    },
+    [field.id, field.label]
+  );
 
   /**
    * Handles duplication of items inside this array
    */
-  const handleFieldDuplicate = useCallback((itemToDuplicate) => {
-    // Make sure the array stays expanded during duplication
-    forceExpand();
+  const handleFieldDuplicate = useCallback(
+    (itemToDuplicate) => {
+      // Make sure the array stays expanded during duplication
+      forceExpand();
 
-    // Generate a unique identifier for the duplicate
-    const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      // Generate a unique identifier for the duplicate
+      const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-    // Handle label for duplicate properly, adding (Copy) suffix
-    let newLabel;
-    if (itemToDuplicate.label) {
-      newLabel = `${itemToDuplicate.label}${itemToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
-    }
-
-    // Create duplicated item with unique ID (deep clone to avoid reference issues)
-    const duplicatedItem = {
-      ...JSON.parse(JSON.stringify(itemToDuplicate)),
-      id: `${itemToDuplicate.id}_${uniqueId}`,
-      label: newLabel
-    };
-
-    setItems(currentItems => {
-      const index = currentItems.findIndex(item => item.id === itemToDuplicate.id);
-      if (index !== -1) {
-        const newItems = [...currentItems];
-        newItems.splice(index + 1, 0, duplicatedItem);
-        return newItems;
+      // Handle label for duplicate properly, adding (Copy) suffix
+      let newLabel;
+      if (itemToDuplicate.label) {
+        newLabel = `${itemToDuplicate.label}${itemToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
       }
-      return currentItems;
-    });
-  }, [isCollapsed]);
+
+      // Create duplicated item with unique ID (deep clone to avoid reference issues)
+      const duplicatedItem = {
+        ...JSON.parse(JSON.stringify(itemToDuplicate)),
+        id: `${itemToDuplicate.id}_${uniqueId}`,
+        label: newLabel
+      };
+
+      setItems((currentItems) => {
+        const index = currentItems.findIndex((item) => item.id === itemToDuplicate.id);
+        if (index !== -1) {
+          const newItems = [...currentItems];
+          newItems.splice(index + 1, 0, duplicatedItem);
+          return newItems;
+        }
+        return currentItems;
+      });
+    },
+    [isCollapsed]
+  );
 
   /**
    * Handles deletion of items inside this array
    */
-  const handleFieldDelete = useCallback((itemToDelete) => {
-    // Make sure the array stays expanded during deletion
-    forceExpand();
+  const handleFieldDelete = useCallback(
+    (itemToDelete) => {
+      // Make sure the array stays expanded during deletion
+      forceExpand();
 
-    setItems(currentItems => {
-      // Find exact item to delete
-      const itemIndex = currentItems.findIndex(item => item.id === itemToDelete.id);
+      setItems((currentItems) => {
+        // Find exact item to delete
+        const itemIndex = currentItems.findIndex((item) => item.id === itemToDelete.id);
 
-      if (itemIndex === -1) {
-        console.error('Item to delete not found:', itemToDelete.id);
-        return currentItems;
-      }
+        if (itemIndex === -1) {
+          console.error('Item to delete not found:', itemToDelete.id);
+          return currentItems;
+        }
 
-      // Create new array without the specific item
-      const newItems = [
-        ...currentItems.slice(0, itemIndex),
-        ...currentItems.slice(itemIndex + 1)
-      ];
+        // Create new array without the specific item
+        const newItems = [
+          ...currentItems.slice(0, itemIndex),
+          ...currentItems.slice(itemIndex + 1)
+        ];
 
-      return newItems;
-    });
-  }, [forceExpand]);
+        return newItems;
+      });
+    },
+    [forceExpand]
+  );
 
   return (
-    <div className="form-element is-array no-drop label-exists" draggable="true" onDragStart={handleDragStart}>
+    <div
+      className="form-element is-array no-drop label-exists"
+      draggable="true"
+      onDragStart={handleDragStart}
+    >
       <span className="sort-handle">
         <DragHandleIcon />
       </span>
       <label className="array-name label-wrapper">
-        <span>{field.label}<sup>*</sup></span>
+        <span>
+          {field.label}
+          <sup>*</sup>
+        </span>
         <input
           type="text"
           className="element-label"
@@ -359,7 +389,7 @@ export const ArrayField = ({
                 forceExpand();
 
                 // Insert after the index position directly
-                setItems(currentItems => {
+                setItems((currentItems) => {
                   if (index >= 0 && index < currentItems.length) {
                     const newItems = [...currentItems];
                     newItems.splice(index + 1, 0, duplicatedItem);
@@ -379,13 +409,10 @@ export const ArrayField = ({
               // Use the index from the map to directly delete the correct item
               // This is more reliable than searching by ID which might not be unique
               const deleteByIndex = () => {
-                setItems(currentItems => {
+                setItems((currentItems) => {
                   if (index >= 0 && index < currentItems.length) {
                     // Create a new array with the item at this specific index removed
-                    return [
-                      ...currentItems.slice(0, index),
-                      ...currentItems.slice(index + 1)
-                    ];
+                    return [...currentItems.slice(0, index), ...currentItems.slice(index + 1)];
                   }
                   return currentItems;
                 });
@@ -400,22 +427,25 @@ export const ArrayField = ({
             onFieldUpdate={(updatedField) => {
               if (onFieldUpdate) {
                 // Create a copy of the current items to update the specific field
-                setItems(currentItems => {
+                setItems((currentItems) => {
                   const newItems = [...currentItems];
                   // Update the specific item at this index
                   newItems[index] = {
                     ...newItems[index],
                     ...updatedField
                   };
-                  
+
                   // Pass the entire updated field with all items to the parent handler
                   setTimeout(() => {
-                    onFieldUpdate({
-                      ...field,
-                      items: newItems
-                    }, [{ type: 'array', index, fieldIndex: index }]);
+                    onFieldUpdate(
+                      {
+                        ...field,
+                        items: newItems
+                      },
+                      [{ type: 'array', index, fieldIndex: index }]
+                    );
                   }, 0);
-                  
+
                   return newItems;
                 });
               }

@@ -6,6 +6,7 @@ import { config } from 'dotenv';
 import { setupIPC } from './lib/ipc-handlers.js';
 import { FileSystem } from './lib/file-system.js';
 import { createApplicationMenu } from './lib/menu-handler.js';
+import { logger } from './lib/logger.js';
 import icon from '../../resources/icon.png?asset';
 import { createCustomDialog } from './custom-dialog/index.js';
 
@@ -81,6 +82,9 @@ const getWindow = () => mainWindow;
 
 // This method will be called when Electron has finished initialization
 app.whenReady().then(() => {
+  // Log application startup
+  logger.info('Application starting in environment:', process.env.NODE_ENV || 'undefined');
+  
   // Set app ID for Windows notifications
   electronApp.setAppUserModelId('com.electron');
 

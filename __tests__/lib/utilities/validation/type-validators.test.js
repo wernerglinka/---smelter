@@ -305,7 +305,7 @@ describe('type-validators', () => {
     test('handles special cases', () => {
       // Empty string with spaces should be considered empty
       expect(isEmpty('   ')).toBe(true);
-      
+
       // Empty object with own properties should not be considered empty
       const objWithProp = Object.create(null);
       objWithProp.test = 'value';

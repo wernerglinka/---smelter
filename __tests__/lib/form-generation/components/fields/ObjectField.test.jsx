@@ -1,7 +1,11 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import { ObjectField } from '../../../../../src/renderer/src/lib/form-generation/components/fields/ObjectField';
-import { DragHandleIcon, CollapsedIcon, CollapseIcon } from '../../../../../src/renderer/src/components/icons';
+import {
+  DragHandleIcon,
+  CollapsedIcon,
+  CollapseIcon
+} from '../../../../../src/renderer/src/components/icons';
 
 // Mock the icons and Dropzone components
 jest.mock('../../../../../src/renderer/src/components/icons', () => ({
@@ -32,34 +36,42 @@ jest.mock('../../../../../src/renderer/src/lib/form-generation/components/FormFi
 }));
 
 // Mock FieldControls component
-jest.mock('../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls', () => {
-  return function MockFieldControls({ onDuplicate, onDelete, allowDuplication = true, allowDeletion = true }) {
-    return (
-      <div data-testid="field-controls" className="button-wrapper">
-        {allowDuplication && (
-          <div 
-            className="add-button" 
-            data-testid="duplicate-button" 
-            onClick={onDuplicate}
-            title="Duplicate this element"
-          >
-            Duplicate
-          </div>
-        )}
-        {allowDeletion && (
-          <div 
-            className="delete-button" 
-            data-testid="delete-button" 
-            onClick={onDelete}
-            title="Delete this element"
-          >
-            Delete
-          </div>
-        )}
-      </div>
-    );
-  };
-});
+jest.mock(
+  '../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls',
+  () => {
+    return function MockFieldControls({
+      onDuplicate,
+      onDelete,
+      allowDuplication = true,
+      allowDeletion = true
+    }) {
+      return (
+        <div data-testid="field-controls" className="button-wrapper">
+          {allowDuplication && (
+            <div
+              className="add-button"
+              data-testid="duplicate-button"
+              onClick={onDuplicate}
+              title="Duplicate this element"
+            >
+              Duplicate
+            </div>
+          )}
+          {allowDeletion && (
+            <div
+              className="delete-button"
+              data-testid="delete-button"
+              onClick={onDelete}
+              title="Delete this element"
+            >
+              Delete
+            </div>
+          )}
+        </div>
+      );
+    };
+  }
+);
 
 describe('ObjectField', () => {
   const defaultProps = {
@@ -94,7 +106,9 @@ describe('ObjectField', () => {
     test('renders collapse/expand toggle', () => {
       render(<ObjectField {...defaultProps} />);
       // The component may use either collapsed or expanded icon
-      expect(screen.getByTestId('collapsed-icon') || screen.getByTestId('collapse-icon')).toBeTruthy();
+      expect(
+        screen.getByTestId('collapsed-icon') || screen.getByTestId('collapse-icon')
+      ).toBeTruthy();
     });
 
     test('renders drag handle', () => {
@@ -109,7 +123,7 @@ describe('ObjectField', () => {
       // Find the collapse-icon span itself, which should be clickable
       const toggleSpan = document.querySelector('.collapse-icon');
       expect(toggleSpan).toBeTruthy();
-      
+
       // Test that the dropzone exists, we don't need to test the collapsing behavior
       expect(screen.getByTestId('dropzone')).toBeInTheDocument();
     });
@@ -130,7 +144,7 @@ describe('ObjectField', () => {
       expect(dropzone).toHaveClass('object-dropzone');
       expect(dropzone).toHaveClass('dropzone');
     });
-    
+
     test('renders object fields', () => {
       render(<ObjectField {...defaultProps} />);
       const formFields = screen.getAllByTestId('form-field');
@@ -153,9 +167,9 @@ describe('ObjectField', () => {
           }
         ]
       };
-      
+
       render(<ObjectField field={field} onUpdate={defaultProps.onUpdate} index={0} />);
-      
+
       // Check if the field is rendered
       expect(screen.getByTestId('form-field')).toBeInTheDocument();
       expect(screen.getByTestId('form-field')).toHaveAttribute('data-field-id', 'nested-field');
@@ -166,16 +180,16 @@ describe('ObjectField', () => {
     test('handles invalid drop data gracefully', () => {
       render(<ObjectField {...defaultProps} />);
       const dropzone = screen.getByTestId('dropzone');
-      
+
       fireEvent.drop(dropzone, { type: 'sidebar', data: null });
-      
+
       expect(defaultProps.onUpdate).not.toHaveBeenCalled();
     });
 
     test('handles missing fields array', () => {
       const field = { ...defaultProps.field, fields: null };
       render(<ObjectField field={field} onUpdate={defaultProps.onUpdate} index={0} />);
-      
+
       expect(screen.queryAllByTestId('form-field')).toHaveLength(0);
     });
   });
@@ -183,23 +197,23 @@ describe('ObjectField', () => {
   describe('field manipulation', () => {
     test('has add button for duplication', () => {
       const { container } = render(<ObjectField {...defaultProps} />);
-      
+
       // Find duplicate button for the object
       const duplicateButton = container.querySelector('.add-button');
       expect(duplicateButton).toBeInTheDocument();
     });
-    
+
     test('has delete button for deletion', () => {
       const { container } = render(<ObjectField {...defaultProps} />);
-      
+
       // Find delete button for the object
       const deleteButton = container.querySelector('.delete-button');
       expect(deleteButton).toBeInTheDocument();
     });
-    
+
     test('shows dropzone when collapsed', () => {
       render(<ObjectField {...defaultProps} initiallyCollapsed={true} />);
-      
+
       // Verify it starts collapsed
       const dropzone = screen.getByTestId('dropzone');
       expect(dropzone).toHaveClass('is-collapsed');
@@ -213,24 +227,24 @@ describe('ObjectField', () => {
         label: '',
         _displayLabel: 'Custom Display Label'
       };
-      
+
       const { container } = render(<ObjectField {...defaultProps} field={customField} />);
-      
+
       // Check if the label input has the correct value
       const labelInput = container.querySelector('input.element-label');
       expect(labelInput).toBeInTheDocument();
       expect(labelInput).toHaveValue('Custom Display Label');
     });
-    
+
     test('preserves original field name with hidden input', () => {
       const customField = {
         ...defaultProps.field,
         name: 'originalName',
         value: 'test-value'
       };
-      
+
       const { container } = render(<ObjectField {...defaultProps} field={customField} />);
-      
+
       // Check if the hidden input exists with correct properties
       const hiddenInput = container.querySelector('input[type="hidden"]');
       expect(hiddenInput).toBeInTheDocument();

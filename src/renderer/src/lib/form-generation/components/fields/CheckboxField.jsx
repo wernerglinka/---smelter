@@ -28,7 +28,7 @@ export const CheckboxField = ({
   // Use _displayLabel for duplicated fields (with empty label but display text)
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
-  
+
   // Handle checkbox changes - these should update immediately
   const handleCheckboxChange = (e) => {
     if (onUpdate) {

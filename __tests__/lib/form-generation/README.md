@@ -42,6 +42,7 @@ Tests the `processFrontmatter` function, which is responsible for:
 - Preserving the hierarchical structure of complex data
 
 Key test cases:
+
 - Processing frontmatter with explicit schema
 - Handling nested object structures
 - Processing empty frontmatter
@@ -56,17 +57,20 @@ Key test cases:
 Tests the `convertToSchemaObject` function, which transforms JavaScript objects into a schema format used by the form generator. Test cases cover:
 
 - Input validation
+
   - Handling null/undefined inputs
   - Handling non-object inputs
   - Handling empty objects
 
 - Schema handling
+
   - Processing without schema
   - Processing with explicit schema
   - Handling invalid schemas
   - Handling array/object schemas
 
 - Field type inference
+
   - Basic types (string, number, boolean)
   - Arrays and objects
   - Complex nested structures
@@ -79,6 +83,7 @@ Tests the `convertToSchemaObject` function, which transforms JavaScript objects 
   - Fields with special characters
 
 Additionally, the tests cover helper functions like:
+
 - `matchSchemaField`: Finds a schema field definition that matches a given field name
 - `createField`: Creates a form field with the appropriate type and properties
 

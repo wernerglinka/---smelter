@@ -41,20 +41,12 @@ export const FieldControls = ({
   return (
     <div className="button-wrapper">
       {allowDuplication && (
-        <div
-          className="add-button"
-          title="Duplicate this element"
-          onClick={handleDuplicate}
-        >
+        <div className="add-button" title="Duplicate this element" onClick={handleDuplicate}>
           <AddIcon />
         </div>
       )}
       {allowDeletion && (
-        <div
-          className="delete-button"
-          title="Delete this element"
-          onClick={handleDelete}
-        >
+        <div className="delete-button" title="Delete this element" onClick={handleDelete}>
           <DeleteIcon />
         </div>
       )}

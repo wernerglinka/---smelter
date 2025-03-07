@@ -30,10 +30,13 @@ const Templates = memo(() => {
     const templateUrl = template.dataset.url;
 
     e.dataTransfer.setData('origin', 'template');
-    e.dataTransfer.setData('application/json', JSON.stringify({
-      type: 'template',
-      url: templateUrl
-    }));
+    e.dataTransfer.setData(
+      'application/json',
+      JSON.stringify({
+        type: 'template',
+        url: templateUrl
+      })
+    );
 
     e.dataTransfer.effectAllowed = 'copy';
   };
@@ -45,7 +48,7 @@ const Templates = memo(() => {
   return (
     <div className="templates-wrapper">
       <div className="template-tabs">
-        {templateTypes.map(type => (
+        {templateTypes.map((type) => (
           <button
             key={type}
             className={`template-tab ${activeType === type ? 'active' : ''}`}
@@ -57,11 +60,8 @@ const Templates = memo(() => {
       </div>
 
       <div className="template-list">
-        {templateTypes.map(type => (
-          <div
-            key={type}
-            className={`template-type-group ${activeType === type ? 'active' : ''}`}
-          >
+        {templateTypes.map((type) => (
+          <div key={type} className={`template-type-group ${activeType === type ? 'active' : ''}`}>
             <div>
               {groupedTemplates[type]?.map((template, index) => (
                 <div

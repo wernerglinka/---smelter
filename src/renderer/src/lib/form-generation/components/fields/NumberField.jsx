@@ -20,7 +20,7 @@ import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
  * @param {NumberFieldProps} props - Component properties
  * @returns {JSX.Element} Rendered field component
  */
-export const NumberField = ({ 
+export const NumberField = ({
   field,
   onDuplicate,
   onDelete,
@@ -31,7 +31,7 @@ export const NumberField = ({
   // Use _displayLabel for duplicated fields (with empty label but display text)
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
-  
+
   // Handle number value changes on blur
   const handleNumberBlur = (e) => {
     const newValue = e.target.value === '' ? '' : Number(e.target.value);

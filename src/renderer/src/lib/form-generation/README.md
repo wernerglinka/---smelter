@@ -29,6 +29,7 @@ Data Source → Processor → Schema → FormContainer → FormField → Field C
 ### Field Types
 
 #### Simple Fields
+
 - TextField
 - TextArea
 - NumberField
@@ -38,6 +39,7 @@ Data Source → Processor → Schema → FormContainer → FormField → Field C
 - UrlField
 
 #### Complex Fields
+
 - ObjectField: Renders nested object properties as fields
 - ArrayField: Renders a collection of similar items
 - ListField: Specialized array for simpler list structures
@@ -55,6 +57,7 @@ The schema system provides a structured way to define forms:
 ### Field Type Configuration
 
 Field types are defined in `field-types.js` and include:
+
 - Basic types: text, textarea, number, checkbox, date, select, url
 - Complex types: object, array, list (for nested structures)
 
@@ -63,6 +66,7 @@ Field types are defined in `field-types.js` and include:
 The form generation system uses React Context to manage state:
 
 1. **FormContext**: Provides form-wide state and methods:
+
    - Manages form values through `updateFormState`
    - Handles validation via `validate`
    - Manages form submission through `handleSubmit`
@@ -79,6 +83,7 @@ The form generation system uses React Context to manage state:
 Processors handle different data formats:
 
 1. **Available Processors**:
+
    - `frontmatter-processor.js`: Processes markdown frontmatter + content
    - `json-processor.js`: Handles JSON data
 

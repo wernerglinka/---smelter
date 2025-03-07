@@ -29,9 +29,11 @@ export const handleFileDelete = async (filepath, fileSelected, onFileClick) => {
       if (fileSelected === filepath) {
         onFileClick(null);
       }
-      window.dispatchEvent(new CustomEvent('fileDeleted', {
-        detail: { path: filepath }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('fileDeleted', {
+          detail: { path: filepath }
+        })
+      );
     } else {
       throw new Error(`Failed to delete file: ${result.error}`);
     }

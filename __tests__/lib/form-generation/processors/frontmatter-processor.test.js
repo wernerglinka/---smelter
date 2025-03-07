@@ -303,21 +303,23 @@ describe('processFrontmatter', () => {
     require('../../../../src/renderer/src/lib/form-generation/schema/validate-schema').validateSchema.mockImplementation(
       () => true
     );
-    
+
     const frontmatter = { title: 'Test' };
     const content = '# Test Content\n\nSome markdown content';
 
     const result = await processFrontmatter(frontmatter, content, { addContentsField: true });
 
-    expect(result.fields).toContainEqual(expect.objectContaining({
-      type: expect.stringMatching(/textarea/i),
-      name: 'contents',
-      label: 'Contents',
-      value: content,
-      id: 'markdown-contents',
-      noDuplication: true,
-      noDeletion: true
-    }));
+    expect(result.fields).toContainEqual(
+      expect.objectContaining({
+        type: expect.stringMatching(/textarea/i),
+        name: 'contents',
+        label: 'Contents',
+        value: content,
+        id: 'markdown-contents',
+        noDuplication: true,
+        noDeletion: true
+      })
+    );
   });
 
   test('preserves contents when processing empty frontmatter', async () => {
@@ -325,7 +327,7 @@ describe('processFrontmatter', () => {
     require('../../../../src/renderer/src/lib/form-generation/schema/validate-schema').validateSchema.mockImplementation(
       () => true
     );
-    
+
     const frontmatter = {};
     const content = '# Just Content';
 

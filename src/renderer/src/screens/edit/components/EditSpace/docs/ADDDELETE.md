@@ -17,6 +17,7 @@ The duplication and deletion functionality is implemented through a hierarchical
 Located at: `src/renderer/src/lib/form-generation/components/fields/FieldControls.jsx`
 
 This component:
+
 - Renders the duplicate (plus) and delete (trash) buttons
 - Handles click events with proper propagation stopping
 - Conditionally shows/hides buttons based on `allowDuplication` and `allowDeletion` props
@@ -28,6 +29,7 @@ This component:
 Located at: `src/renderer/src/lib/form-generation/components/fields/BaseField.jsx`
 
 This component:
+
 - Wraps all field types providing common functionality
 - Configures the FieldControls with appropriate handlers
 - Respects field-level duplication/deletion configuration via `noDuplication` and `noDeletion` props
@@ -40,10 +42,12 @@ Each field type handles duplication and deletion according to its specific needs
 #### ArrayField Implementation
 
 ArrayField is the most complex implementation, handling both:
+
 1. Duplication/deletion of the entire array
 2. Duplication/deletion of items within the array
 
 Key features:
+
 - Generates unique IDs for duplicated items using timestamps and random strings
 - Properly handles labels by adding "(Copy)" suffix to duplicated items
 - Maintains expansion state during operations (expands collapsed arrays)
@@ -75,12 +79,14 @@ Key features:
 
 ## Special Considerations
 
-1. **ID Generation**: The application uses a combination of timestamps and random strings to ensure uniqueness: 
+1. **ID Generation**: The application uses a combination of timestamps and random strings to ensure uniqueness:
+
    ```javascript
    const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
    ```
 
 2. **Reference Handling**: JSON.stringify/parse is used for deep cloning to avoid reference issues during duplication:
+
    ```javascript
    const duplicatedItem = {
      ...JSON.parse(JSON.stringify(itemToDuplicate)),
@@ -115,8 +121,8 @@ const duplicatedItem = {
 };
 
 // Insert the duplicated item
-setItems(currentItems => {
-  const index = currentItems.findIndex(item => item.id === itemToDuplicate.id);
+setItems((currentItems) => {
+  const index = currentItems.findIndex((item) => item.id === itemToDuplicate.id);
   if (index !== -1) {
     const newItems = [...currentItems];
     newItems.splice(index + 1, 0, duplicatedItem);
@@ -130,25 +136,25 @@ setItems(currentItems => {
 
 ```javascript
 // Handle deletion of items inside an array
-const handleFieldDelete = useCallback((itemToDelete) => {
-  console.log('Deleting item', { id: itemToDelete.id });
-  
-  setItems(currentItems => {
-    // Find exact item to delete
-    const itemIndex = currentItems.findIndex(item => item.id === itemToDelete.id);
-    
-    if (itemIndex === -1) {
-      console.error('Item to delete not found:', itemToDelete.id);
-      return currentItems;
-    }
-    
-    // Create new array without the specific item
-    const newItems = [
-      ...currentItems.slice(0, itemIndex),
-      ...currentItems.slice(itemIndex + 1)
-    ];
-    
-    return newItems;
-  });
-}, [forceExpand]);
+const handleFieldDelete = useCallback(
+  (itemToDelete) => {
+    console.log('Deleting item', { id: itemToDelete.id });
+
+    setItems((currentItems) => {
+      // Find exact item to delete
+      const itemIndex = currentItems.findIndex((item) => item.id === itemToDelete.id);
+
+      if (itemIndex === -1) {
+        console.error('Item to delete not found:', itemToDelete.id);
+        return currentItems;
+      }
+
+      // Create new array without the specific item
+      const newItems = [...currentItems.slice(0, itemIndex), ...currentItems.slice(itemIndex + 1)];
+
+      return newItems;
+    });
+  },
+  [forceExpand]
+);
 ```

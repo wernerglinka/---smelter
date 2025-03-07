@@ -74,44 +74,44 @@ describe('Field Duplication and Deletion', () => {
       const duplicateArrayItem = (items, itemToDuplicate) => {
         // Generate a unique identifier for the duplicate
         const uniqueId = `copy_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
-        
+
         // Handle label for duplicate properly, adding (Copy) suffix
         let newLabel;
         if (itemToDuplicate.label) {
           newLabel = `${itemToDuplicate.label}${itemToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
         }
-        
+
         // Create duplicated item with unique ID (deep clone to avoid reference issues)
         const duplicatedItem = {
           ...JSON.parse(JSON.stringify(itemToDuplicate)),
           id: `${itemToDuplicate.id}_${uniqueId}`,
           label: newLabel
         };
-        
+
         // Find the index of the original item
-        const index = items.findIndex(item => item.id === itemToDuplicate.id);
-        
+        const index = items.findIndex((item) => item.id === itemToDuplicate.id);
+
         // Insert the duplicate after the original
         if (index !== -1) {
           const newItems = [...items];
           newItems.splice(index + 1, 0, duplicatedItem);
           return newItems;
         }
-        
+
         return items;
       };
 
       // Test the duplication logic
       const itemToDuplicate = arrayField.value[0];
       const newItems = duplicateArrayItem(arrayField.value, itemToDuplicate);
-      
+
       // Verify the result contains the duplicated item
       expect(newItems.length).toBe(3);
-      
+
       // Verify the duplicated item has expected properties
       const originalItem = arrayField.value[0];
       const duplicatedItem = newItems[1]; // Should be inserted after original
-      
+
       expect(duplicatedItem.label).toContain('(Copy)');
       expect(duplicatedItem.id).toContain(originalItem.id);
       expect(duplicatedItem.id).not.toBe(originalItem.id);
@@ -135,23 +135,20 @@ describe('Field Duplication and Deletion', () => {
       // manually using the same logic in ArrayField component
       const deleteArrayItem = (items, itemToDelete) => {
         // Find exact item to delete
-        const itemIndex = items.findIndex(item => item.id === itemToDelete.id);
-        
+        const itemIndex = items.findIndex((item) => item.id === itemToDelete.id);
+
         if (itemIndex === -1) {
           return items;
         }
-        
+
         // Create new array without the specific item
-        return [
-          ...items.slice(0, itemIndex),
-          ...items.slice(itemIndex + 1)
-        ];
+        return [...items.slice(0, itemIndex), ...items.slice(itemIndex + 1)];
       };
 
       // Test the deletion logic
       const itemToDelete = arrayField.value[0];
       const newItems = deleteArrayItem(arrayField.value, itemToDelete);
-      
+
       // Verify the result has the item removed
       expect(newItems.length).toBe(1);
       expect(newItems[0].id).toBe('item2'); // The first item should be removed
@@ -199,43 +196,45 @@ describe('Field Duplication and Deletion', () => {
       // Verify the duplicate has unique IDs
       expect(duplicatedObject.id).not.toBe(complexObject.id);
       expect(duplicatedObject.id).toContain(complexObject.id);
-      
+
       // Verify it's a deep copy (all nested objects are new instances)
       expect(duplicatedObject.fields[0]).not.toBe(complexObject.fields[0]);
       expect(duplicatedObject.fields[1]).not.toBe(complexObject.fields[1]);
       expect(duplicatedObject.fields[1].fields[0]).not.toBe(complexObject.fields[1].fields[0]);
-      
+
       // Verify the structure is preserved
       expect(duplicatedObject.fields[0].label).toBe(complexObject.fields[0].label);
-      expect(duplicatedObject.fields[1].fields[0].value).toBe(complexObject.fields[1].fields[0].value);
+      expect(duplicatedObject.fields[1].fields[0].value).toBe(
+        complexObject.fields[1].fields[0].value
+      );
     });
 
     test('field controls call handlers correctly', () => {
       // Render field controls with mock handlers
       const onDuplicate = jest.fn();
       const onDelete = jest.fn();
-      
+
       render(
-        <FieldControls 
-          onDuplicate={onDuplicate} 
-          onDelete={onDelete} 
-          allowDuplication={true} 
-          allowDeletion={true} 
+        <FieldControls
+          onDuplicate={onDuplicate}
+          onDelete={onDelete}
+          allowDuplication={true}
+          allowDeletion={true}
         />
       );
-      
+
       // Test duplicate button
       const duplicateButton = screen.getByTitle('Duplicate this element');
       fireEvent.click(duplicateButton);
-      
+
       expect(onDuplicate).toHaveBeenCalled();
-      
+
       // Test delete button
       const deleteButton = screen.getByTitle('Delete this element');
       fireEvent.click(deleteButton);
-      
+
       expect(onDelete).toHaveBeenCalled();
-      
+
       // We can't easily test stopPropagation and preventDefault in JSDOM
       // because it doesn't fully simulate events, but we know from reviewing
       // the component code that they are called in the handlers

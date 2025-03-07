@@ -83,12 +83,7 @@ export const GhostElement = () => {
   }
 
   return (
-    <div
-      ref={ghostRef}
-      className="ghost-element"
-      style={ghostStyle}
-      data-testid="ghost-element"
-    >
+    <div ref={ghostRef} className="ghost-element" style={ghostStyle} data-testid="ghost-element">
       <div className="ghost-element-indicator" />
     </div>
   );

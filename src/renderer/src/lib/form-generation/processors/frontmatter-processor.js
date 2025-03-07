@@ -21,9 +21,10 @@ export const processFrontmatter = async (frontmatter, content, options = {}) => 
 
     // Only add the contents field if specifically requested by options
     // or if both frontmatter exists and content exists
-    const shouldAddContentsField = addContentsField || 
+    const shouldAddContentsField =
+      addContentsField ||
       (Object.keys(frontmatter).length > 0 && content && content.trim().length > 0);
-    
+
     if (shouldAddContentsField) {
       // Add contents as a textarea field
       const contentsField = {
@@ -36,14 +37,14 @@ export const processFrontmatter = async (frontmatter, content, options = {}) => 
         noDuplication: true,
         noDeletion: true
       };
-      
+
       // Combine schemas
       return {
         ...frontmatterSchema,
         fields: [...frontmatterSchema.fields, contentsField]
       };
     }
-    
+
     // Return just the frontmatter schema without contents field
     return frontmatterSchema;
   } catch (error) {

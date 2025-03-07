@@ -22,11 +22,13 @@ editor/
 ### Core Components
 
 #### 1. Editor Setup (`index.js`)
+
 - Exports the main `setupEditor` function
 - Coordinates the initialization of all editor components
 - Provides cleanup functionality to prevent memory leaks
 
 #### 2. Editor Initialization (`initializeEditor.js`)
+
 - Creates and configures the EasyMDE instance
 - Manages editor state and content
 - Handles toolbar customization
@@ -34,16 +36,19 @@ editor/
 - Prevents body scrolling when overlay is active
 
 #### 3. Overlay Management (`setupOverlay.js`)
+
 - Creates the DOM structure for the editor overlay
 - Adds necessary elements (textarea, close button)
 - Positions the overlay correctly in the viewport
 
 #### 4. Event Handling (`eventHandlers.js`)
+
 - Manages click events on textareas to trigger editor
 - Handles keyboard shortcuts and accessibility
 - Coordinates content synchronization between form and editor
 
 #### 5. Markdown Utilities (`markdownHelper.js`)
+
 - Provides parsing and formatting functions
 - Handles frontmatter extraction and combination
 - Offers helper methods for markdown manipulation
@@ -104,12 +109,23 @@ The editor uses a customized toolbar with the most relevant markdown formatting 
 
 ```javascript
 toolbar: [
-  'bold', 'italic', 'heading', '|',
-  'quote', 'unordered-list', 'ordered-list', '|',
-  'link', 'image', '|',
-  'preview', 'side-by-side', 'fullscreen', '|',
+  'bold',
+  'italic',
+  'heading',
+  '|',
+  'quote',
+  'unordered-list',
+  'ordered-list',
+  '|',
+  'link',
+  'image',
+  '|',
+  'preview',
+  'side-by-side',
+  'fullscreen',
+  '|',
   'guide'
-]
+];
 ```
 
 Additionally, a custom "Inline Styles" toggle button is added to allow users to view the markdown without styling applied.

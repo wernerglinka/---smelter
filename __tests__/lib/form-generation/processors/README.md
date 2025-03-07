@@ -48,39 +48,46 @@ schema/validate-schema
 ### Project Functions Used
 
 #### Form Generation
+
 - `createField(key, value)`: Creates field configurations for the form UI
 - `inferType(value)`: Determines appropriate field type from value
 - `processChildren(value)`: Handles nested array and object structures
 - `validateSchema(schema)`: Validates schema structure and types
 
 #### Form Submission
+
 - `transformFormDataToObject(formData)`: Converts form data back to object structure
 - `validateSubmission(data)`: Validates form submission data
 - `handleFileOperations(data, filePath)`: Manages file updates
 
 #### Type Validation
+
 - `isSimpleList(value)`: Checks for simple array types
 - `isDateObject(value)`: Validates date field structures
 
 ## Current Test Coverage
 
 1. **Simple Frontmatter**
+
    - Tests basic key-value pairs
    - Verifies correct field type assignment
    - Example: `{ layout: 'default.njk', title: 'Test Page' }`
 
 2. **Nested Objects**
+
    - Tests object hierarchy preservation
    - Verifies nested field structure
    - Ensures fields property generation
    - Example: `{ seo: { title: 'SEO Title', description: 'Description' } }`
 
 3. **Array Handling**
+
    - Tests array of primitives
    - Verifies dropzone configuration
    - Example: `{ tags: ['javascript', 'testing', 'jest'] }`
 
 4. **Complex Structures**
+
    - Tests nested arrays within objects
    - Verifies deep structure conversion
    - Validates form metadata generation
@@ -99,7 +106,7 @@ schema/validate-schema
              }
            }
          }
-       ]
+       ];
      }
      ```
 
@@ -121,6 +128,7 @@ schema/validate-schema
 ## Field Structure
 
 Each generated field includes:
+
 - `label`: Human-readable field name
 - `type`: Field type (text, checkbox, array, object, etc.)
 - `placeholder`: Helper text for empty fields

@@ -86,12 +86,14 @@ metallurgy/
 This project uses JSDoc for code documentation. All code should be documented following these guidelines:
 
 ### Components
+
 - Must have a component description
 - Must document all props using TypeDefs
 - Must specify return type
 - Must document any significant state or effects
 
 ### Functions
+
 - Must have a description
 - Must document all parameters
 - Must document return type
@@ -122,6 +124,7 @@ Run `npm run docs` to generate documentation in the `docs` directory.
 ### Required Project Structure
 
 For Smelter to work with a Metalsmith site, the site must have:
+
 - A `.metallurgy` folder in the project root
 - A `projectData.json` file in the `.metallurgy` folder
 - Properly configured content and data paths
@@ -131,11 +134,61 @@ See the Project Structure documentation for details.
 ### Development Notes
 
 Extensive development documentation is available in the `dev-notes` directory, covering:
+
 - Core concepts and architecture
 - User flows
 - Technical implementation details
 - Component documentation
 - Migration and refactoring plans
+
+### Logging System
+
+Smelter uses a structured logging system with environment-based controls:
+
+#### Log Levels
+
+- **DEBUG**: Detailed debugging information (development only)
+- **INFO**: Important events and state changes
+- **WARN**: Non-critical issues that might need attention
+- **ERROR**: Critical problems that require immediate attention
+
+#### Usage
+
+```javascript
+import { logger } from '../path/to/utilities/services/logger';
+
+// Use the appropriate level based on importance
+logger.debug('Detailed technical information'); // Development only
+logger.info('Important state change occurred');  // Important events
+logger.warn('Something unusual happened');      // Non-critical issues
+logger.error('Critical error occurred');        // Critical problems
+```
+
+#### Environment Controls
+
+The logging level is automatically set based on the environment:
+
+- **Development**: Shows all logs (DEBUG and above)
+- **Test**: Silent by default, shows only requested logs
+- **Production**: Shows only ERROR logs
+
+You can control logging with npm scripts:
+
+```bash
+# Normal development (shows all logs)
+npm run dev
+
+# Development with explicit DEBUG level
+npm run dev:debug
+
+# Testing with logs shown
+npm run test:debug
+
+# Production (ERROR logs only)
+npm run build
+```
+
+You can find more details about the logging configuration in the `CLAUDE.md` file.
 
 ## Contributing
 

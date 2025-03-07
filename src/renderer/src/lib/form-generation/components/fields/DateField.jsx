@@ -30,7 +30,7 @@ export const DateField = ({
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
   const formattedDate = formatDateForInput(field.value);
-  
+
   // Handle date changes on blur
   const handleDateChange = (e) => {
     if (onUpdate && e.target.value !== formattedDate) {

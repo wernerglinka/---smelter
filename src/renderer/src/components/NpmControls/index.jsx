@@ -124,7 +124,6 @@ const NpmControls = () => {
   };
 
   const handleStop = async () => {
-
     try {
       const result = await window.electronAPI.npm.stop();
       if (result.status === 'success') {

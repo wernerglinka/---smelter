@@ -23,8 +23,8 @@ import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
  * @param {TextFieldProps} props - Component properties
  * @returns {JSX.Element} Rendered field component
  */
-export const TextField = ({ 
-  field, 
+export const TextField = ({
+  field,
   onDuplicate,
   onDelete,
   onUpdate,
@@ -34,7 +34,7 @@ export const TextField = ({
   // Use _displayLabel for duplicated fields (with empty label but display text)
   // This allows the label to appear in the UI while still being editable
   const label = field._displayLabel || field.label || '';
-  
+
   // Handle text value changes on blur (when user finishes editing)
   const handleTextBlur = (e) => {
     // Only trigger update if value actually changed
@@ -52,8 +52,7 @@ export const TextField = ({
 
   // Handle label changes on blur when editable
   const handleLabelBlur = (e) => {
-    if (onUpdate && field._displayLabel !== undefined && 
-        e.target.value !== field._displayLabel) {
+    if (onUpdate && field._displayLabel !== undefined && e.target.value !== field._displayLabel) {
       // Only send the bare minimum - id and new display label
       // Fall back to field.name if field.id is undefined
       onUpdate({

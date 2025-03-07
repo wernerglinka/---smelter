@@ -10,8 +10,6 @@ import { HelpIcon } from '@components/icons';
  * @returns {JSX.Element} Rendered component
  */
 
-
-
 export const HelpText = ({ text }) => {
   const [show, setShow] = useState(false);
 
@@ -24,15 +22,16 @@ export const HelpText = ({ text }) => {
       <span onClick={toggleHelp}>
         <HelpIcon />
       </span>
-      {show && createPortal(
-        <>
-          <div className="help-text-backdrop" onClick={toggleHelp} />
-          <div className="help-text-overlay">
-            <ReactMarkdown>{text}</ReactMarkdown>
-          </div>
-        </>,
-        document.body
-      )}
+      {show &&
+        createPortal(
+          <>
+            <div className="help-text-backdrop" onClick={toggleHelp} />
+            <div className="help-text-overlay">
+              <ReactMarkdown>{text}</ReactMarkdown>
+            </div>
+          </>,
+          document.body
+        )}
     </div>
   );
 };
