@@ -1,6 +1,4 @@
 /**
- * @deprecated Use import { logger } from 'utils/services/logger' instead
- * 
  * Logger utility for consistent logging with environment-based controls
  * 
  * Provides different log levels (DEBUG, INFO, WARN, ERROR) with
@@ -11,11 +9,6 @@
 
 class Logger {
   constructor() {
-    // Default log level based on environment
-    this.level = process.env.LOG_LEVEL ||
-      (process.env.NODE_ENV === 'production' ? 'ERROR' : 
-       process.env.NODE_ENV === 'test' ? 'WARN' : 'DEBUG');
-
     this.levels = {
       DEBUG: 0,
       INFO: 1,
@@ -23,6 +16,30 @@ class Logger {
       ERROR: 3,
       NONE: 4
     };
+
+    // Determine environment - safely handle scenarios where process.env isn't available
+    let nodeEnv = 'development';
+    try {
+      // Check if we're in an environment with process.env access
+      if (typeof process !== 'undefined' && process.env) {
+        nodeEnv = process.env.NODE_ENV || 'development';
+      } 
+      // For browser environments without process access, check if window.__ENV__ exists
+      else if (typeof window !== 'undefined' && window.__ENV__) {
+        nodeEnv = window.__ENV__.NODE_ENV || 'development';
+      }
+    } catch (e) {
+      console.warn('Logger: Unable to determine environment, defaulting to development');
+    }
+    
+    // Set default log level based on environment
+    if (nodeEnv === 'production') {
+      this.level = 'ERROR';
+    } else if (nodeEnv === 'test') {
+      this.level = 'WARN';
+    } else {
+      this.level = 'DEBUG';
+    }
   }
 
   /**

@@ -8,6 +8,7 @@ module.exports = {
     '^@services/(.*)$': '<rootDir>/src/renderer/src/lib/utilities/services/$1',
     '^@lib/(.*)$': '<rootDir>/src/renderer/src/lib/$1',
     '^@screens/(.*)$': '<rootDir>/src/renderer/src/screens/$1',
+    '^@utils/(.*)$': '<rootDir>/src/renderer/src/utils/$1',
     // Handle static assets
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/__mocks__/fileMock.js',

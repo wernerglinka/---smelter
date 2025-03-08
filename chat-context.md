@@ -10,6 +10,57 @@
   - Drag-and-drop form building
   - Template management
 
+## Utility Reorganization Status (as of March 6, 2025)
+
+We've been implementing a utility reorganization and standardization for the Smelter Electron app. The main goal is to create a more organized, maintainable utility structure with consistent naming conventions.
+
+### What Has Been Implemented
+
+1. **New Directory Structure**
+   - Created domain-based organization in `/src/renderer/src/utils/`
+   - Domains include: file, format, validation, services, dom, transform
+
+2. **Function Organization**
+   - Moved file operations to `/utils/file/`
+   - Moved formatting utilities to `/utils/format/`
+   - Moved validation utilities to `/utils/validation/`
+   - Added DOM utilities in `/utils/dom/`
+   - Created transformation utilities in `/utils/transform/`
+
+3. **Naming Conventions**
+   - Standardized function naming with clear prefixes (get*, is*, format*, etc.)
+   - Updated function names while maintaining backward compatibility
+
+4. **Compatibility Layer**
+   - Added compatibility files in original locations that re-export from new locations
+   - Added deprecation notices to encourage migration to new import paths
+   - All old code still works through these compatibility layers
+
+### Important Files
+
+- `/src/renderer/src/utils/` - New utility structure
+- `/dev-notes/core/utility-reorganization.md` - Migration plan and progress tracking
+- `/dev-notes/core/architecture.md` - Updated architecture documentation
+- `/src/renderer/src/utils/README.md` - New utility structure documentation
+
+### Configuration
+
+- Vite: Uses `@utils` alias in `electron.vite.config.js` pointing to `/src/renderer/src/utils/`
+- Jest: Also configured with `@utils` alias in `jest.config.js` to handle testing
+
+### Current Status
+
+- All tests are now passing
+- The app is running correctly with no errors related to the reorganization
+- Migration is following the timeline in `utility-reorganization.md`
+
+### Next Steps
+
+1. Continue updating imports in components to use new utility structure directly
+2. Update test files to use the new structure instead of compatibility layers
+3. Eventually remove compatibility layers once migration is complete
+4. Expected completion by mid-March 2025 according to timeline
+
 ## Key Components
 
 1. EditSpace

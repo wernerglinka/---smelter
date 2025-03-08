@@ -1,10 +1,13 @@
-const getFolderName = (searchString, path) => {
-  if (!path) return '';
-  const startIndex = path.indexOf(searchString);
-  if (startIndex !== -1) {
-    return `/${path.substring(startIndex)}/`;
-  }
-  return '';
-};
+/**
+ * @deprecated Use import { extractFolderName } from '@utils/file/directory' instead
+ * 
+ * This file provides backward compatibility during the transition to the new
+ * utilities organization. It re-exports functionality from the new location.
+ * 
+ * @module utilities/get-folder-name
+ */
 
-export default getFolderName;
+import { extractFolderName } from '@utils/file/directory';
+
+// Re-export with old name for backward compatibility
+export default extractFolderName;

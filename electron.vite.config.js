@@ -26,6 +26,7 @@ export default defineConfig({
         '@services': resolve(__dirname, 'src/renderer/src/lib/utilities/services'),
         '@lib': resolve(__dirname, 'src/renderer/src/lib'),
         '@screens': resolve(__dirname, 'src/renderer/src/screens'),
+        '@utils': resolve(__dirname, 'src/renderer/src/utils'),
         '@formsContext': resolve(__dirname, 'src/renderer/src/lib/form-generation/context')
       }
     },

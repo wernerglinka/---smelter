@@ -1,58 +1,12 @@
-import { getMarkdownFile } from '@lib/utilities/file-ops/get-markdown-file';
+/**
+ * @deprecated Use import { FileLoaderService } from '@utils/file/loader' instead
+ * 
+ * This file provides backward compatibility during the transition to the new
+ * utilities organization. It re-exports functionality from the new location.
+ * 
+ * @module utilities/services/file-loader
+ */
 
-export class FileLoaderService {
-  static async loadFile(filepath) {
-    try {
-      // Return early if filepath is null
-      if (!filepath) {
-        return null;
-      }
+import { FileLoaderService } from '@utils/file/loader';
 
-      if (filepath.endsWith('.md')) {
-        return await this.loadMarkdownFile(filepath);
-      } else if (filepath.endsWith('.json')) {
-        return await this.loadJSONFile(filepath);
-      }
-      throw new Error('Unsupported file type');
-    } catch (error) {
-      console.error('Error loading file:', error);
-      throw error;
-    }
-  }
-
-  static async loadMarkdownFile(filepath) {
-    try {
-      const { frontmatter, content } = await getMarkdownFile(filepath);
-      return {
-        type: 'markdown',
-        data: {
-          frontmatter,
-          content
-        },
-        path: filepath
-      };
-    } catch (error) {
-      console.error('Error loading markdown file:', error);
-      throw error;
-    }
-  }
-
-  static async loadJSONFile(filepath) {
-    try {
-      const { status, data, error } = await window.electronAPI.files.read(filepath);
-
-      if (status === 'failure') {
-        throw new Error(`Failed to read JSON file: ${error}`);
-      }
-
-      return {
-        type: 'json',
-        data: data,
-        path: filepath
-      };
-    } catch (error) {
-      console.error('Error loading JSON file:', error);
-      throw error;
-    }
-  }
-}
+export { FileLoaderService };

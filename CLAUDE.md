@@ -1,5 +1,7 @@
 # Smelter Project Guide
 
+> Last updated: March 6, 2025 - Standardized utility function naming conventions
+
 ## Build & Development
 
 - Build: `npm run build`
@@ -21,13 +23,25 @@
 - JSX for UI components
 - JSDoc comments required for functions
 - Use camelCase for variables and functions, PascalCase for components
-- Files organized by feature in `/src/lib` directories
+- Files organized by feature in `/src/lib` directories with common utilities in `/src/utils`
 - Error handling with try/catch blocks and clear error messages
+
+### Utility Function Naming Conventions
+
+For consistent utility function naming, use:
+- `get*` for retrieval: `getDirectory`, `getJsonFile`
+- `is*` for boolean checks: `isExisting`, `isValidDate`
+- `create*` for creation: `createDirectory`
+- `save*` for saving: `saveJsonFile`
+- `format*` for formatting: `formatJson`
+- `select*` for selection operations: `selectFolder`
+
+See `src/renderer/src/utils/README.md` for full naming conventions.
 
 ## Logging
 
 - Use the logger utility instead of console.log/error
-- Import: `import { logger } from '../path/to/utilities/services/logger'` (renderer) or `import { logger } from './lib/logger.js'` (main)
+- Import: `import { logger } from '../utils/services/logger'` (renderer) or `import { logger } from './lib/logger.js'` (main)
 - Methods: `logger.debug()`, `logger.info()`, `logger.warn()`, `logger.error()`
 - Log levels based on environment (DEBUG in dev, ERROR in production)
 - Change log level with environment variables:

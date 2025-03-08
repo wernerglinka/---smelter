@@ -75,9 +75,14 @@ metallurgy/
 │   └── renderer/           # React application
 │       ├── src/
 │       │   ├── components/ # Reusable UI components
-│       │   ├── lib/        # Utility functions and helpers
+│       │   ├── lib/        # Business logic modules
+│       │   ├── utils/      # Utility functions
+│       │   │   ├── file/   # File operations
+│       │   │   ├── format/ # Formatting utilities
+│       │   │   ├── services/ # Application services
+│       │   │   └── ...     # Other utility categories
 │       │   ├── screens/    # Application screens
-│       │   └── contexts/   # React contexts
+│       │   └── hooks/      # Custom React hooks
 ├── dev-notes/              # Development documentation
 ```
 
@@ -141,6 +146,24 @@ Extensive development documentation is available in the `dev-notes` directory, c
 - Component documentation
 - Migration and refactoring plans
 
+## Utilities
+
+Smelter organizes utilities by domain for better maintainability:
+
+```javascript
+// File operations
+import { readDirectory, getMarkdownFile, readJsonFile } from 'utils/file';
+
+// Formatting utilities
+import { formatDate, toCamelCase, toTitleCase } from 'utils/format';
+
+// Validation utilities
+import { isString, isNumber, required, isValidEmail } from 'utils/validation';
+
+// Services
+import { logger, StorageOperations } from 'utils/services';
+```
+
 ### Logging System
 
 Smelter uses a structured logging system with environment-based controls:
@@ -155,7 +178,7 @@ Smelter uses a structured logging system with environment-based controls:
 #### Usage
 
 ```javascript
-import { logger } from '../path/to/utilities/services/logger';
+import { logger } from 'utils/services/logger';
 
 // Use the appropriate level based on importance
 logger.debug('Detailed technical information'); // Development only
