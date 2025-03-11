@@ -1,5 +1,5 @@
-import { isSimpleList, isDateObject } from '@lib/utilities/validation/type-validators.js';
-import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
+import { isSimpleList, isDateObject } from '@utils/validation/types';
+import { toTitleCase } from '@utils/format/string';
 
 /**
  * Infers the field type from a value

@@ -5,7 +5,7 @@ import Sidebar from './components/Sidebar';
 import { useProject } from '@hooks/useProject';
 import EditSpace from './components/EditSpace';
 import PreviewPane from './components/PreviewPane';
-import { FileLoaderService } from '@services/file-loader';
+import { FileLoaderService } from '@utils/file/loader';
 import { DragStateProvider } from '@lib/drag-drop/DragStateContext';
 import { GhostElement } from '@lib/drag-drop/GhostElement';
 

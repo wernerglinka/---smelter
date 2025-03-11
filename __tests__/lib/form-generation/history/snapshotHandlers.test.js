@@ -4,7 +4,7 @@
 import {
   handleCreateSnapshot,
   handleRestoreSnapshot
-} from '../../../../src/renderer/src/lib/form-generation/history/snapshotHandlers';
+} from '@lib/form-generation/history/snapshotHandlers';
 
 describe('Snapshot Handler Functions', () => {
   // Mock DOM methods

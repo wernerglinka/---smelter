@@ -1,12 +1,12 @@
 /**
  * Markdown file utilities
- * 
+ *
  * Provides functions for reading and parsing markdown files.
- * 
+ *
  * @module file/markdown
  */
 
-import { logger } from '../services/logger';
+import { logger } from '@utils/services/logger';
 
 /**
  * Reads and parses a markdown file

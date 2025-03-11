@@ -1,16 +1,14 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { BaseField } from '../../../../../src/renderer/src/lib/form-generation/components/fields/BaseField';
-import { DragHandleIcon } from '../../../../../src/renderer/src/components/icons';
+import { BaseField } from '@lib/form-generation/components/fields/BaseField';
+import { DragHandleIcon } from '@components/icons';
 
 // Mock the required components
-jest.mock('../../../../../src/renderer/src/components/icons', () => ({
+jest.mock('@components/icons', () => ({
   DragHandleIcon: () => <div data-testid="drag-handle">DragHandleIcon</div>
 }));
 
-jest.mock(
-  '../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls',
-  () => {
+jest.mock('@lib/form-generation/components/fields/FieldControls', () => {
     return function MockFieldControls(props) {
       return (
         <div data-testid="field-controls">

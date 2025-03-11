@@ -1,12 +1,12 @@
 /**
  * File loader utilities
- * 
+ *
  * Provides unified functions for loading various file types.
- * 
+ *
  * @module file/loader
  */
 
-import { logger } from '../services/logger';
+import { logger } from '@utils/services/logger';
 import { getMarkdownFile } from './markdown';
 
 /**

@@ -13,7 +13,7 @@ import {
   isNull,
   isUndefined,
   isEmpty
-} from '@lib/utilities/validation/type-validators';
+} from '@utils/validation/types';
 
 describe('type-validators', () => {
   describe('isSimpleList', () => {

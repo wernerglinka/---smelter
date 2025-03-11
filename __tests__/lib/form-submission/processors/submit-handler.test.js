@@ -7,17 +7,17 @@ jest.mock('yaml', () => ({
 }));
 
 // Now import the submission handler
-import { handleFormSubmission } from '../../../../src/renderer/src/lib/form-submission/submit-handler';
-import { preprocessFormData } from '../../../../src/renderer/src/lib/form-submission/preprocess-form-data';
-import { validateSubmission } from '../../../../src/renderer/src/lib/form-submission/validate';
+import { handleFormSubmission } from '@lib/form-submission/submit-handler';
+import { preprocessFormData } from '@lib/form-submission/preprocess-form-data';
+import { validateSubmission } from '@lib/form-submission/validate';
 import { createSimpleForm, createComplexForm, createInvalidForm } from '../fixtures/example-form';
 
 // Mock dependencies
-jest.mock('../../../../src/renderer/src/lib/form-submission/preprocess-form-data', () => ({
+jest.mock('@lib/form-submission/preprocess-form-data', () => ({
   preprocessFormData: jest.fn()
 }));
 
-jest.mock('../../../../src/renderer/src/lib/form-submission/validate', () => ({
+jest.mock('@lib/form-submission/validate', () => ({
   validateSubmission: jest.fn().mockReturnValue([])
 }));
 

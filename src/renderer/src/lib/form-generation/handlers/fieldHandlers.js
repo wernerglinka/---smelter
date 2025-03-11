@@ -2,7 +2,7 @@
  * Field handler functions for EditSpace component
  * Handles field updates, duplications, deletions, etc.
  */
-import { logger } from '../../../lib/utilities/services/logger';
+import { logger } from '@utils/services/logger';
 
 /**
  * Handles field value updates

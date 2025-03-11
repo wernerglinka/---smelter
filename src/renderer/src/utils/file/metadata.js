@@ -1,12 +1,12 @@
 /**
  * Metadata file utilities
- * 
+ *
  * Provides functions for reading and parsing metadata files.
- * 
+ *
  * @module file/metadata
  */
 
-import { logger } from '../services/logger';
+import { logger } from '@utils/services/logger';
 
 /**
  * Reads and parses a metadata file

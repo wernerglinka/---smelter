@@ -7,9 +7,9 @@ import {
   GithubIcon,
   DeleteIcon
 } from '../../components/icons';
-import { StorageOperations } from '@services/storage';
-import { ProjectOperations } from '@services/project';
-import { selectProject } from '@lib/utilities/select-project';
+import { StorageOperations } from '@utils/services/storage';
+import { ProjectOperations } from '@utils/services/project';
+import { selectProject } from '@utils/services/project';
 import { handleDeleteProject } from './handlers/delete-project';
 import { handleEditProject } from './handlers/edit-project';
 import { handleCloneGithub } from './handlers/clone-github';

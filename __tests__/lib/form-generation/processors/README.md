@@ -29,7 +29,7 @@ The tests use several mocks to isolate the processor functionality:
 
 ```javascript
 // Storage operations mock
-@services/storage.js
+@utils/services/storage
   - getProjectPath() → Returns mock project path
 
 // Schema handler mock

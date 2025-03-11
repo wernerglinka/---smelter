@@ -1,4 +1,4 @@
-import { StorageOperations } from '@services/storage';
+import { StorageOperations } from '@utils/services/storage';
 
 /**
  * Handles folder deletion with user confirmation

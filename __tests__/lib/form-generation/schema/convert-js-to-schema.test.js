@@ -1,7 +1,4 @@
-import {
-  convertToSchemaObject,
-  __test__
-} from '../../../../src/renderer/src/lib/form-generation/schema/convert-js-to-schema';
+import { convertToSchemaObject, __test__ } from '@lib/form-generation/schema/convert-js-to-schema';
 const { matchSchemaField, createField } = __test__;
 
 describe('convertToSchemaObject input validation', () => {

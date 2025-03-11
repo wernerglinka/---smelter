@@ -38,7 +38,7 @@ src/renderer/src/
 ├── styles/              # Global styles
 └── utils/               # Centralized utility functions
     ├── file/            # File operations
-    ├── format/          # Formatting utilities 
+    ├── format/          # Formatting utilities
     ├── validation/      # Validation utilities
     ├── services/        # Application services
     ├── dom/             # DOM utilities
@@ -127,7 +127,7 @@ Smelter uses a structured logging system with environment-based controls:
 - **Usage**:
   ```javascript
   import { logger } from '../utils/services/logger';
-  
+
   logger.debug('Detailed debugging information');
   logger.info('Important state change occurred');
   logger.warn('Non-critical issue happened');
@@ -158,8 +158,8 @@ Follow this order for imports:
 3. Local components and utilities (absolute paths preferred)
    ```javascript
    import Button from '../components/Button';
-   import { formatDate } from '../utils/format/date';
-   import { logger } from '../utils/services/logger';
+   import { formatDate } from '@utils/format/date';
+   import { logger } from '@utils/services/logger';
    ```
 
 4. Styles
@@ -174,7 +174,7 @@ Components and functions should be documented using JSDoc:
 ```javascript
 /**
  * Component that displays user information
- * 
+ *
  * @param {Object} props - Component props
  * @param {string} props.name - User's name
  * @param {number} props.age - User's age

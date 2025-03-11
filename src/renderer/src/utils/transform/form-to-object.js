@@ -1,12 +1,11 @@
 /**
  * Form to object transformation utilities
- * 
+ *
  * @module FormTransformation to JS Object
  */
 
-import { logger } from '../services/logger';
-import { toCamelCase } from '../format/string';
-import { toTitleCase } from '../format/string';
+import { logger } from '@utils/services/logger';
+import { toCamelCase, toTitleCase } from '@utils/format/string';
 
 /** @module FormTransformation to JS Object */
 

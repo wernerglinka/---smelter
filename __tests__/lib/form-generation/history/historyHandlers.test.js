@@ -7,7 +7,7 @@ import {
   handleFormReset,
   handleUndo,
   handleRedo
-} from '../../../../src/renderer/src/lib/form-generation/history/historyHandlers';
+} from '@lib/form-generation/history/historyHandlers';
 
 describe('History Handler Functions', () => {
   // Mock document methods for DOM testing

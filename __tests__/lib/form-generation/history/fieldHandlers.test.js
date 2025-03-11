@@ -5,7 +5,7 @@ import {
   handleFieldUpdate,
   handleFieldDuplicate,
   handleFieldDelete
-} from '../../../../src/renderer/src/lib/form-generation/handlers/fieldHandlers';
+} from '@lib/form-generation/handlers/fieldHandlers';
 
 describe('Field Handler Functions', () => {
   // Mock DOM methods for UI notifications

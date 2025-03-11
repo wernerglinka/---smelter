@@ -74,8 +74,8 @@ Import specific utilities directly from their modules:
 
 ```javascript
 // Import a specific utility
-import { formatDate } from '../utils/format/date';
-import { logger } from '../utils/services/logger';
+import { formatDate } from '@utils/format/date';
+import { logger } from '@utils/services/logger';
 
 // Usage
 formatDate(new Date());

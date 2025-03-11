@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { TextField } from '../../../../../src/renderer/src/lib/form-generation/components/fields/TextField';
+import { TextField } from '@lib/form-generation/components/fields/TextField';
 
 // Mock BaseField component
 jest.mock(
-  '../../../../../src/renderer/src/lib/form-generation/components/fields/BaseField',
+  '@lib/form-generation/components/fields/BaseField',
   () => ({
     BaseField: ({ children, field, onDuplicate, onDelete, allowDuplication, allowDeletion }) => (
       <div data-testid="base-field" className={`is-${field.type}`}>

@@ -3,7 +3,7 @@ import './styles.css';
 import { RenderContentFilesTree } from './ContentFilesTree';
 import { RenderDataFilesTree } from './DataFilesTree';
 import { FolderPlusIcon, FilePlusIcon, HelpIcon } from '@components/icons';
-import { StorageOperations } from '@services/storage';
+import { StorageOperations } from '@utils/services/storage';
 import { handleNewFileClick } from './click-handlers';
 import { useCreateFile } from './hooks/useCreateFile';
 import { useCreateFolder } from './hooks/useCreateFolder';

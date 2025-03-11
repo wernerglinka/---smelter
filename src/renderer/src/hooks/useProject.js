@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { StorageOperations } from '@services/storage';
+import { StorageOperations } from '@utils/services/storage';
 
 export const useProject = () => {
   const [projectName, setProjectName] = useState('');

@@ -1,4 +1,4 @@
-import { StorageOperations } from '@services/storage';
+import { StorageOperations } from '@utils/services/storage';
 
 /**
  * Handles the creation of a new file in the project structure

@@ -2,7 +2,7 @@
  * Drag and drop DOM utilities
  */
 
-import { logger } from '../services/logger';
+import { logger } from '@utils/services/logger';
 
 // Migrated from src/renderer/src/lib/drag-drop/utils.js
 export const getInsertionPoint = (dropzone, y) => {

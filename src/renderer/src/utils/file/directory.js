@@ -1,12 +1,12 @@
 /**
  * Directory utility functions
- * 
+ *
  * Provides functions for reading directory contents.
- * 
+ *
  * @module file/directory
  */
 
-import { logger } from '../services/logger';
+import { logger } from '@utils/services/logger';
 
 /**
  * Gets a directory's contents
@@ -69,11 +69,11 @@ export const createDirectory = async (directoryPath) => {
 
     // Create directory
     const { status, error } = await window.electronAPI.directories.create(directoryPath);
-    
+
     if (status === 'failure') {
       throw new Error(`Failed to create directory: ${error}`);
     }
-    
+
     return true;
   } catch (error) {
     logger.error('Error creating directory:', error);
@@ -97,11 +97,6 @@ export const extractFolderName = (searchString, path) => {
 };
 
 /**
- * @deprecated Use extractFolderName instead
- */
-export const getFolderName = extractFolderName;
-
-/**
  * Dialog configuration for folder selection
  */
 const FOLDER_DIALOG_CONFIG = {
@@ -123,7 +118,7 @@ export const selectFolder = async (folderType) => {
     // Import storage dynamically to avoid circular dependency
     const { getProjectPath } = await import('../services/storage');
     const projectFolder = getProjectPath();
-    
+
     if (!projectFolder) {
       logger.warn('No project folder found in storage');
     }

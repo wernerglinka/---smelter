@@ -1,7 +1,7 @@
 /**
  * History handlers for undo/redo functionality
  */
-import { logger } from '../../../lib/utilities/services/logger';
+import { logger } from '@utils/services/logger';
 
 /**
  * Add current state to history
@@ -186,7 +186,9 @@ export const handleFormReset = (restoredState, formRef, setFormFields) => {
                 try {
                   const elements = form.querySelectorAll(selector);
                   if (elements.length > 0) {
-                    logger.debug(`Found ${elements.length} elements matching selector: ${selector}`);
+                    logger.debug(
+                      `Found ${elements.length} elements matching selector: ${selector}`
+                    );
                     // Just use the first matching element for now
                     element = elements[0];
                     break;

@@ -1,13 +1,13 @@
 /**
  * Form validation utilities
- * 
+ *
  * Provides functions for validating form field values.
- * 
+ *
  * @module validation/form
  */
 
 import { isString, isNumber } from './types';
-import { logger } from '../services/logger';
+import { logger } from '@utils/services/logger';
 
 /**
  * Validates that a field is not empty
@@ -58,10 +58,12 @@ export const range = (min, max) => (value) => {
  * @param {string} [errorMessage] - Optional error message
  * @returns {Function} Validator function that returns true for valid, error message for invalid
  */
-export const pattern = (pattern, errorMessage = 'Invalid format') => (value) => {
-  if (!isString(value)) return errorMessage;
-  return pattern.test(value) ? true : errorMessage;
-};
+export const pattern =
+  (pattern, errorMessage = 'Invalid format') =>
+  (value) => {
+    if (!isString(value)) return errorMessage;
+    return pattern.test(value) ? true : errorMessage;
+  };
 
 /**
  * Validates an email address format
@@ -199,7 +201,7 @@ export const validateFormData = (data, schema = null) => {
 
 /**
  * Validates form data for submission
- * @param {Object} formData - Form data to validate 
+ * @param {Object} formData - Form data to validate
  * @param {Object|null} schema - Optional schema to validate against
  * @returns {string[]} Array of error messages (empty if valid)
  */

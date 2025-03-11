@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { ObjectField } from '../../../../../src/renderer/src/lib/form-generation/components/fields/ObjectField';
+import { ObjectField } from '@lib/form-generation/components/fields/ObjectField';
 import {
   DragHandleIcon,
   CollapsedIcon,
   CollapseIcon
-} from '../../../../../src/renderer/src/components/icons';
+} from '@components/icons';
 
 // Mock the icons and Dropzone components
-jest.mock('../../../../../src/renderer/src/components/icons', () => ({
+jest.mock('@components/icons', () => ({
   DragHandleIcon: () => <div data-testid="drag-handle">DragHandle</div>,
   CollapsedIcon: () => <div data-testid="collapsed-icon">CollapsedIcon</div>,
   CollapseIcon: () => <div data-testid="collapse-icon">CollapseIcon</div>,
@@ -16,7 +16,7 @@ jest.mock('../../../../../src/renderer/src/components/icons', () => ({
   DeleteIcon: () => <div data-testid="delete-icon">DeleteIcon</div>
 }));
 
-jest.mock('../../../../../src/renderer/src/components/Dropzone', () => {
+jest.mock('@components/Dropzone', () => {
   return function MockDropzone({ children, className, onDrop }) {
     return (
       <div data-testid="dropzone" className={className} onClick={() => onDrop && onDrop()}>
@@ -27,7 +27,7 @@ jest.mock('../../../../../src/renderer/src/components/Dropzone', () => {
 });
 
 // Mock FormField component that's used inside ObjectField
-jest.mock('../../../../../src/renderer/src/lib/form-generation/components/FormField', () => ({
+jest.mock('@lib/form-generation/components/FormField', () => ({
   FormField: ({ field }) => (
     <div data-testid="form-field" data-field-id={field.id}>
       {field.label || field.id}
@@ -37,7 +37,7 @@ jest.mock('../../../../../src/renderer/src/lib/form-generation/components/FormFi
 
 // Mock FieldControls component
 jest.mock(
-  '../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls',
+  '@lib/form-generation/components/fields/FieldControls',
   () => {
     return function MockFieldControls({
       onDuplicate,

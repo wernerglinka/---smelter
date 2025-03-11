@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { FieldControls } from '../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls';
-import { AddIcon, DeleteIcon } from '../../../../../src/renderer/src/components/icons';
+import { FieldControls } from '@lib/form-generation/components/fields/FieldControls';
+import { AddIcon, DeleteIcon } from '@components/icons';
 
 // Mock the icons
-jest.mock('../../../../../src/renderer/src/components/icons', () => ({
+jest.mock('@components/icons', () => ({
   AddIcon: () => <div data-testid="add-icon">AddIcon</div>,
   DeleteIcon: () => <div data-testid="delete-icon">DeleteIcon</div>
 }));

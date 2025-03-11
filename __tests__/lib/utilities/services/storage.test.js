@@ -1,4 +1,4 @@
-import { StorageOperations } from '@lib/utilities/services/storage';
+import { StorageOperations } from '@utils/services/storage';
 
 describe('StorageOperations', () => {
   // Mock localStorage before each test

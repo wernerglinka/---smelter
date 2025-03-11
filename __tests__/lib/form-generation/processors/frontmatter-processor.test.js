@@ -1,27 +1,25 @@
 // Import the actual module to mock
-const storageModule = require('@services/storage.js');
-const {
-  convertToSchemaObject
-} = require('../../../../src/renderer/src/lib/form-generation/schema/convert-js-to-schema');
+const storageModule = require('@utils/services/storage');
+const { convertToSchemaObject } = require('@lib/form-generation/schema/convert-js-to-schema');
 
 // Mock the storage operations
-jest.mock('@services/storage.js', () => ({
+jest.mock('@utils/services/storage', () => ({
   StorageOperations: {
     getProjectPath: jest.fn(() => '/mock/project/path')
   }
 }));
 
 // Mock schema-handler
-jest.mock('../../../../src/renderer/src/lib/form-generation/schema/schema-handler', () => ({
+jest.mock('@lib/form-generation/schema/schema-handler', () => ({
   getExplicitSchema: jest.fn().mockResolvedValue({})
 }));
 
 // Mock schema validation - now returns void instead of throwing
-jest.mock('../../../../src/renderer/src/lib/form-generation/schema/validate-schema', () => ({
+jest.mock('@lib/form-generation/schema/validate-schema', () => ({
   validateSchema: jest.fn()
 }));
 
-import { processFrontmatter } from '../../../../src/renderer/src/lib/form-generation/processors/frontmatter-processor';
+import { processFrontmatter } from '@lib/form-generation/processors/frontmatter-processor';
 
 describe('FrontmatterProcessor', () => {
   beforeEach(() => {

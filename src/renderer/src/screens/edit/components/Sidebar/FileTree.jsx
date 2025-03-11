@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { FolderIcon, FolderOpenIcon, MinusIcon } from '@components/icons';
-import { StorageOperations } from '@services/storage';
+import { StorageOperations } from '@utils/services/storage';
 
 /**
  * @typedef {Object.<string, string|Object>} FileTreeNode

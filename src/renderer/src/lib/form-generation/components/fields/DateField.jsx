@@ -1,6 +1,6 @@
 import React from 'react';
 import { BaseField } from './BaseField';
-import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
+import { toTitleCase } from '@utils/format/string';
 
 /**
  * Formats a date string to be compatible with HTML date input

@@ -6,7 +6,7 @@ jest.mock('yaml', () => ({
   }
 }));
 
-import { handleFormSubmission } from '../../../../src/renderer/src/lib/form-submission/submit-handler';
+import { handleFormSubmission } from '@lib/form-submission/submit-handler';
 import { createSimpleForm, createComplexForm, createInvalidForm } from '../fixtures/example-form';
 
 // Mock global window.electronAPI

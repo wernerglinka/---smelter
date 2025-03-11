@@ -1,5 +1,5 @@
-import { StorageOperations } from '@services/storage';
-import { toTitleCase } from '@lib/utilities/formatting/to-title-case';
+import { StorageOperations } from '@utils/services/storage';
+import { toTitleCase } from '@utils/format/string';
 
 // Helper function to extract filename from path or object
 const getFileName = (file) => {

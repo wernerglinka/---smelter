@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { StorageOperations } from '@services/storage';
-import { selectFolder } from '@lib/utilities/select-folder';
-import getFolderName from '@lib/utilities/get-folder-name';
+import { StorageOperations } from '@utils/services/storage';
+import { selectFolder, extractFolderName } from '@utils/file/directory';
 
 import './styles.css';
 
@@ -39,7 +38,7 @@ export default function NewProject() {
     const projectPath = StorageOperations.getProjectPath();
     if (!projectPath) return '';
 
-    return getFolderName(projectPath.split('/').pop(), path);
+    return extractFolderName(projectPath.split('/').pop(), path);
   };
 
   const handleSelectFolder = async (type) => {

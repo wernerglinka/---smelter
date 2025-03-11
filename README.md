@@ -152,16 +152,16 @@ Smelter organizes utilities by domain for better maintainability:
 
 ```javascript
 // File operations
-import { readDirectory, getMarkdownFile, readJsonFile } from 'utils/file';
+import { readDirectory, getMarkdownFile, readJsonFile } from '@utils/file';
 
 // Formatting utilities
-import { formatDate, toCamelCase, toTitleCase } from 'utils/format';
+import { formatDate, toCamelCase, toTitleCase } from '@utils/format';
 
 // Validation utilities
-import { isString, isNumber, required, isValidEmail } from 'utils/validation';
+import { isString, isNumber, required, isValidEmail } from '@utils/validation';
 
 // Services
-import { logger, StorageOperations } from 'utils/services';
+import { logger, StorageOperations } from '@utils/services';
 ```
 
 ### Logging System

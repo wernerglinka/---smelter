@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { ArrayField } from '../../../../../src/renderer/src/lib/form-generation/components/fields/ArrayField';
-import { ObjectField } from '../../../../../src/renderer/src/lib/form-generation/components/fields/ObjectField';
-import FieldControls from '../../../../../src/renderer/src/lib/form-generation/components/fields/FieldControls';
+import { ArrayField } from '@lib/form-generation/components/fields/ArrayField';
+import { ObjectField } from '@lib/form-generation/components/fields/ObjectField';
+import FieldControls from '@src/lib/form-generation/components/fields/FieldControls';
 
 // Mock the required components
-jest.mock('../../../../../src/renderer/src/components/icons', () => ({
+jest.mock('@components/icons', () => ({
   DragHandleIcon: () => <div data-testid="drag-handle">DragHandleIcon</div>,
   CollapsedIcon: () => <div data-testid="collapsed-icon">CollapsedIcon</div>,
   CollapseIcon: () => <div data-testid="collapse-icon">CollapseIcon</div>,
@@ -13,7 +13,7 @@ jest.mock('../../../../../src/renderer/src/components/icons', () => ({
   DeleteIcon: () => <div data-testid="delete-icon">DeleteIcon</div>
 }));
 
-jest.mock('../../../../../src/renderer/src/components/Dropzone', () => {
+jest.mock('@components/Dropzone', () => {
   return function MockDropzone({ children, className, onDrop }) {
     return (
       <div data-testid="dropzone" className={className}>
@@ -23,7 +23,7 @@ jest.mock('../../../../../src/renderer/src/components/Dropzone', () => {
   };
 });
 
-jest.mock('../../../../../src/renderer/src/lib/utilities/services/storage', () => ({
+jest.mock('@utils/services/storage', () => ({
   StorageOperations: {
     getProjectPath: jest.fn().mockResolvedValue('/mock/project/path')
   }

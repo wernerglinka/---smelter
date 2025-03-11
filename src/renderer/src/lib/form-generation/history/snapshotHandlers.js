@@ -1,7 +1,7 @@
 /**
  * Snapshot-related handlers for the form editor
  */
-import { logger } from '../../../lib/utilities/services/logger';
+import { logger } from '@utils/services/logger';
 
 /**
  * Handles creating a named snapshot

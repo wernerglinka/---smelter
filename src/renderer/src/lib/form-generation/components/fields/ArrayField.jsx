@@ -9,9 +9,9 @@ import {
 } from '@components/icons';
 import Dropzone from '@components/Dropzone';
 import { ensureFieldStructure } from '../../utilities/field-structure';
-import { StorageOperations } from '@services/storage';
+import { StorageOperations } from '@utils/services/storage';
 import { processFrontmatter } from '../../processors/frontmatter-processor';
-import { toTitleCase } from '../../../utilities/formatting/to-title-case';
+import { toTitleCase } from '@utils/format/string';
 import FieldControls from './FieldControls';
 
 /**

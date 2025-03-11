@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FileJsonIcon } from '@components/icons';
-import { StorageOperations } from '@services/storage';
+import { StorageOperations } from '@utils/services/storage';
 import { FileTreeBase } from './FileTree';
 
 export const RenderDataFilesTree = ({

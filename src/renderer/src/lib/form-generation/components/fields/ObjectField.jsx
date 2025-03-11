@@ -8,7 +8,7 @@ import {
   DeleteIcon
 } from '@components/icons';
 import Dropzone from '@components/Dropzone';
-import { StorageOperations } from '@services/storage';
+import { StorageOperations } from '@utils/services/storage';
 import { processFrontmatter } from '../../processors/frontmatter-processor';
 import FieldControls from './FieldControls';
 
