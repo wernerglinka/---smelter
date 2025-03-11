@@ -13,6 +13,10 @@ import { StorageOperations } from '@utils/services/storage';
 import { processFrontmatter } from '../../processors/frontmatter-processor';
 import { toTitleCase } from '@utils/format/string';
 import FieldControls from './FieldControls';
+import { useFormOperations } from '../../../../context/FormOperationsContext';
+import { useError } from '../../../../context/ErrorContext';
+import { useAsyncOperation } from '../../../../hooks/useAsyncOperation';
+import { logger } from '@utils/services/logger';
 
 /**
  * @typedef {Object} ArrayFieldProps
@@ -28,6 +32,46 @@ import FieldControls from './FieldControls';
  * @property {boolean} [allowDuplication] - Whether this array can be duplicated
  * @property {boolean} [allowDeletion] - Whether this array can be deleted
  */
+
+/**
+ * Styles for loading and error states
+ */
+const styles = `
+.form-element.is-array.is-loading .array-dropzone {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.form-element.is-array .loading-indicator {
+  background: rgba(0, 0, 0, 0.05);
+  color: #666;
+  padding: 8px;
+  text-align: center;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.form-element.is-array.has-error {
+  border-left: 3px solid #e74c3c;
+}
+
+.form-element.is-array .field-error {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: 4px;
+}
+`;
+
+// Add styles to the document
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = styles;
+  document.head.appendChild(styleElement);
+}
 
 /**
  * Renders an array field component that can contain multiple items of the same type.
@@ -80,6 +124,33 @@ export const ArrayField = ({
    * @param {number} [params.position.sourceIndex] - Original position for reorder
    * @param {number} [params.position.targetIndex] - Target position for reorder
    */
+  const { handleError } = useError();
+  
+  // Create an async operation for template loading
+  const { loading: templateLoading, execute: loadTemplate } = useAsyncOperation({
+    operation: async (templateUrl) => {
+      const projectPath = await StorageOperations.getProjectPath();
+      if (!projectPath) {
+        throw new Error('Project path not found');
+      }
+
+      const cleanTemplateUrl = templateUrl.replace(/^\/+|\/+$/g, '');
+      const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${cleanTemplateUrl}`;
+
+      const result = await window.electronAPI.files.read(templatePath);
+
+      if (result.status === 'failure') {
+        throw new Error(`Failed to read template: ${result.error}`);
+      }
+
+      return typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+    },
+    operationName: 'loadTemplate',
+    onError: (error) => {
+      logger.error('Failed to load template', error);
+    }
+  });
+  
   const handleDropzoneEvent = useCallback(
     async ({ type, data, position }) => {
       if (!data) return;
@@ -87,22 +158,8 @@ export const ArrayField = ({
       switch (type) {
         case 'template': {
           try {
-            const projectPath = await StorageOperations.getProjectPath();
-            if (!projectPath) {
-              throw new Error('Project path not found');
-            }
-
-            const templateUrl = data.url.replace(/^\/+|\/+$/g, '');
-            const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
-
-            const result = await window.electronAPI.files.read(templatePath);
-
-            if (result.status === 'failure') {
-              throw new Error(`Failed to read template: ${result.error}`);
-            }
-
-            const rawTemplate =
-              typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+            const rawTemplate = await loadTemplate(data.url);
+            if (!rawTemplate) return;
 
             // Special handling for flex sections
             if (rawTemplate.columns) {
@@ -145,42 +202,60 @@ export const ArrayField = ({
                 return newItems;
               });
             }
+            
+            logger.info('Template added to array field', { fieldId: field.id, template: data.url });
           } catch (error) {
-            console.error('Error processing template in array:', error);
+            handleError(error, 'dropzoneTemplate');
           }
           break;
         }
         case 'sidebar': {
-          const fieldData = data.field || data;
+          try {
+            const fieldData = data.field || data;
 
-          const newItem = ensureFieldStructure(
-            {
-              ...fieldData,
-              id: `${field.id}_item_${items.length}`
-            },
-            field.id
-          );
+            const newItem = ensureFieldStructure(
+              {
+                ...fieldData,
+                id: `${field.id}_item_${items.length}`
+              },
+              field.id
+            );
 
-          setItems((currentItems) => {
-            const newItems = [...currentItems, newItem];
-            return newItems;
-          });
+            setItems((currentItems) => {
+              const newItems = [...currentItems, newItem];
+              return newItems;
+            });
+            
+            logger.debug('Added new item from sidebar', { fieldId: field.id, itemType: fieldData.type });
+          } catch (error) {
+            handleError(error, 'dropzoneSidebar');
+          }
           break;
         }
         case 'reorder': {
-          const { sourceIndex, targetIndex } = position;
-          setItems((currentItems) => {
-            const newItems = [...currentItems];
-            const [movedItem] = newItems.splice(sourceIndex, 1);
-            newItems.splice(targetIndex, 0, movedItem);
-            return newItems;
-          });
+          try {
+            const { sourceIndex, targetIndex } = position;
+            setItems((currentItems) => {
+              const newItems = [...currentItems];
+              const [movedItem] = newItems.splice(sourceIndex, 1);
+              newItems.splice(targetIndex, 0, movedItem);
+              return newItems;
+            });
+            
+            logger.debug('Reordered array items', { 
+              fieldId: field.id, 
+              sourceIndex, 
+              targetIndex 
+            });
+          } catch (error) {
+            handleError(error, 'dropzoneReorder');
+          }
           break;
         }
       }
     },
-    [field.id, field.name, items.length]
-  ); // Add field.name to dependencies
+    [field.id, field.name, items.length, loadTemplate, handleError]
+  );
 
   /**
    * Sets up drag data when starting to drag the array field
@@ -248,40 +323,59 @@ export const ArrayField = ({
   );
 
   /**
+   * Access the FormOperationsContext for standardized operations
+   */
+  const { duplicateField, deleteField } = useFormOperations();
+  
+  /**
    * Handles duplication of items inside this array
    */
   const handleFieldDuplicate = useCallback(
     (itemToDuplicate) => {
-      // Make sure the array stays expanded during duplication
-      forceExpand();
+      try {
+        // Make sure the array stays expanded during duplication
+        forceExpand();
 
-      // Generate a unique identifier for the duplicate
-      const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        // Generate a unique identifier for the duplicate
+        const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-      // Handle label for duplicate properly, adding (Copy) suffix
-      let newLabel;
-      if (itemToDuplicate.label) {
-        newLabel = `${itemToDuplicate.label}${itemToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
-      }
-
-      // Create duplicated item with unique ID (deep clone to avoid reference issues)
-      const duplicatedItem = {
-        ...JSON.parse(JSON.stringify(itemToDuplicate)),
-        id: `${itemToDuplicate.id}_${uniqueId}`,
-        label: newLabel
-      };
-
-      setItems((currentItems) => {
-        const index = currentItems.findIndex((item) => item.id === itemToDuplicate.id);
-        if (index !== -1) {
-          const newItems = [...currentItems];
-          newItems.splice(index + 1, 0, duplicatedItem);
-          return newItems;
+        // Handle label for duplicate properly, adding (Copy) suffix
+        let newLabel;
+        if (itemToDuplicate.label) {
+          newLabel = `${itemToDuplicate.label}${itemToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
         }
-        return currentItems;
-      });
+
+        // Create duplicated item with unique ID (deep clone to avoid reference issues)
+        const duplicatedItem = {
+          ...JSON.parse(JSON.stringify(itemToDuplicate)),
+          id: `${itemToDuplicate.id}_${uniqueId}`,
+          label: newLabel
+        };
+
+        setItems((currentItems) => {
+          const index = currentItems.findIndex((item) => item.id === itemToDuplicate.id);
+          if (index !== -1) {
+            const newItems = [...currentItems];
+            newItems.splice(index + 1, 0, duplicatedItem);
+            
+            // Fire a custom event for duplication that the form operations context can listen for
+            duplicateField(field.id, index);
+            
+            logger.debug('Duplicated array item', { 
+              fieldId: field.id, 
+              index, 
+              itemId: itemToDuplicate.id 
+            });
+            
+            return newItems;
+          }
+          return currentItems;
+        });
+      } catch (error) {
+        handleError(error, 'handleFieldDuplicate');
+      }
     },
-    [isCollapsed]
+    [field.id, forceExpand, duplicateField, handleError]
   );
 
   /**
@@ -289,33 +383,52 @@ export const ArrayField = ({
    */
   const handleFieldDelete = useCallback(
     (itemToDelete) => {
-      // Make sure the array stays expanded during deletion
-      forceExpand();
+      try {
+        // Make sure the array stays expanded during deletion
+        forceExpand();
 
-      setItems((currentItems) => {
-        // Find exact item to delete
-        const itemIndex = currentItems.findIndex((item) => item.id === itemToDelete.id);
+        setItems((currentItems) => {
+          // Find exact item to delete
+          const itemIndex = currentItems.findIndex((item) => item.id === itemToDelete.id);
 
-        if (itemIndex === -1) {
-          console.error('Item to delete not found:', itemToDelete.id);
-          return currentItems;
-        }
+          if (itemIndex === -1) {
+            logger.warn('Item to delete not found', { itemId: itemToDelete.id });
+            return currentItems;
+          }
 
-        // Create new array without the specific item
-        const newItems = [
-          ...currentItems.slice(0, itemIndex),
-          ...currentItems.slice(itemIndex + 1)
-        ];
-
-        return newItems;
-      });
+          // Create new array without the specific item
+          const newItems = [
+            ...currentItems.slice(0, itemIndex),
+            ...currentItems.slice(itemIndex + 1)
+          ];
+          
+          // Fire a custom event for deletion that the form operations context can listen for
+          deleteField(field.id, itemIndex);
+          
+          logger.debug('Deleted array item', { 
+            fieldId: field.id, 
+            index: itemIndex, 
+            itemId: itemToDelete.id 
+          });
+          
+          return newItems;
+        });
+      } catch (error) {
+        handleError(error, 'handleFieldDelete');
+      }
     },
-    [forceExpand]
+    [field.id, forceExpand, deleteField, handleError]
   );
 
+  // Access validation errors from form operations context
+  const { validationErrors } = useFormOperations();
+  
+  // Check if this field has validation errors
+  const hasError = validationErrors && validationErrors[field.id];
+  
   return (
     <div
-      className="form-element is-array no-drop label-exists"
+      className={`form-element is-array no-drop label-exists ${hasError ? 'has-error' : ''} ${templateLoading ? 'is-loading' : ''}`}
       draggable="true"
       onDragStart={handleDragStart}
     >
@@ -325,7 +438,7 @@ export const ArrayField = ({
       <label className="array-name label-wrapper">
         <span>
           {field.label}
-          <sup>*</sup>
+          {field.required && <sup>*</sup>}
         </span>
         <input
           type="text"
@@ -339,12 +452,21 @@ export const ArrayField = ({
           {isCollapsed ? <CollapsedIcon /> : <CollapseIcon />}
         </span>
       </label>
+      
+      {templateLoading && (
+        <div className="loading-indicator">Loading template...</div>
+      )}
+      
+      {hasError && (
+        <div className="field-error">
+          {validationErrors[field.id]}
+        </div>
+      )}
+      
       <Dropzone
         className={`array-dropzone dropzone js-dropzone ${isCollapsed ? 'is-collapsed' : ''}`}
         data-wrapper="is-array"
-        onDrop={(event) => {
-          handleDropzoneEvent(event);
-        }}
+        onDrop={handleDropzoneEvent}
       >
         {items.map((item, index) => (
           <FormField
@@ -355,9 +477,8 @@ export const ArrayField = ({
               parentId: field.id // Add parent reference
             }}
             onFieldDuplicate={(itemToDuplicate) => {
-              // Use the index from the map to directly insert the duplicate after the correct item
-              // This is more reliable than searching by ID which might not be unique
-              const duplicateByIndex = () => {
+              try {
+                // Use the index from the map to directly insert the duplicate after the correct item
                 // Generate a unique identifier
                 const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
@@ -375,7 +496,6 @@ export const ArrayField = ({
                 if (itemCopy.readOnly) delete itemCopy.readOnly;
 
                 // Set the label to empty string to make it editable
-                // This is all we need since readOnly={!!label} checks if label exists
                 const duplicatedItem = {
                   ...itemCopy,
                   id: `${itemToDuplicate.id || field.id}_item_${index}_${uniqueId}`,
@@ -393,50 +513,71 @@ export const ArrayField = ({
                   if (index >= 0 && index < currentItems.length) {
                     const newItems = [...currentItems];
                     newItems.splice(index + 1, 0, duplicatedItem);
+                    
+                    // Notify form operations context
+                    duplicateField(`${field.name}[${index}]`, index);
+                    
+                    logger.debug('Duplicated nested item', { 
+                      fieldId: field.id, 
+                      index, 
+                      itemId: itemToDuplicate.id 
+                    });
+                    
                     return newItems;
                   }
                   return currentItems;
                 });
-              };
-
-              // Duplicate by index instead of searching by ID
-              duplicateByIndex();
-
-              // Return false to prevent the event from bubbling up
-              return false;
+                
+                // Return false to prevent the event from bubbling up
+                return false;
+              } catch (error) {
+                handleError(error, 'duplicateArrayItem');
+                return false;
+              }
             }}
             onFieldDelete={(itemToDelete) => {
-              // Use the index from the map to directly delete the correct item
-              // This is more reliable than searching by ID which might not be unique
-              const deleteByIndex = () => {
+              try {
+                // Use the index from the map to directly delete the correct item
+                // This is more reliable than searching by ID which might not be unique
                 setItems((currentItems) => {
                   if (index >= 0 && index < currentItems.length) {
                     // Create a new array with the item at this specific index removed
-                    return [...currentItems.slice(0, index), ...currentItems.slice(index + 1)];
+                    const newItems = [...currentItems.slice(0, index), ...currentItems.slice(index + 1)];
+                    
+                    // Notify form operations context
+                    deleteField(`${field.name}[${index}]`, index);
+                    
+                    logger.debug('Deleted nested item', { 
+                      fieldId: field.id, 
+                      index,
+                      itemId: itemToDelete.id 
+                    });
+                    
+                    return newItems;
                   }
                   return currentItems;
                 });
-              };
-
-              // Delete by index instead of searching by ID
-              deleteByIndex();
-
-              // Return false to prevent the event from bubbling up
-              return false;
+                
+                // Return false to prevent the event from bubbling up
+                return false;
+              } catch (error) {
+                handleError(error, 'deleteArrayItem');
+                return false;
+              }
             }}
             onFieldUpdate={(updatedField) => {
               if (onFieldUpdate) {
-                // Create a copy of the current items to update the specific field
-                setItems((currentItems) => {
-                  const newItems = [...currentItems];
-                  // Update the specific item at this index
-                  newItems[index] = {
-                    ...newItems[index],
-                    ...updatedField
-                  };
+                try {
+                  // Create a copy of the current items to update the specific field
+                  setItems((currentItems) => {
+                    const newItems = [...currentItems];
+                    // Update the specific item at this index
+                    newItems[index] = {
+                      ...newItems[index],
+                      ...updatedField
+                    };
 
-                  // Pass the entire updated field with all items to the parent handler
-                  setTimeout(() => {
+                    // Pass the entire updated field with all items to the parent handler
                     onFieldUpdate(
                       {
                         ...field,
@@ -444,17 +585,20 @@ export const ArrayField = ({
                       },
                       [{ type: 'array', index, fieldIndex: index }]
                     );
-                  }, 0);
 
-                  return newItems;
-                });
+                    return newItems;
+                  });
+                } catch (error) {
+                  handleError(error, 'updateArrayItem');
+                }
               }
             }}
             parentType="array"
           />
         ))}
       </Dropzone>
-      {/* Direct button implementation for better control */}
+      
+      {/* Field controls */}
       <div className="button-wrapper">
         {allowDuplication && (
           <div
@@ -463,7 +607,11 @@ export const ArrayField = ({
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              if (onDuplicate) onDuplicate();
+              try {
+                if (onDuplicate) onDuplicate();
+              } catch (error) {
+                handleError(error, 'duplicateArray');
+              }
             }}
           >
             <AddIcon />
@@ -476,19 +624,17 @@ export const ArrayField = ({
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              if (onDelete) onDelete();
+              try {
+                if (onDelete) onDelete();
+              } catch (error) {
+                handleError(error, 'deleteArray');
+              }
             }}
           >
             <DeleteIcon />
           </div>
         )}
       </div>
-      {/* Debug info
-      <div style={{display: 'none'}}>
-        Array debug ID: {debugId},
-        Handlers: Duplicate={!!onDuplicate}, Delete={!!onDelete}
-      </div>
-      */}
     </div>
   );
 };

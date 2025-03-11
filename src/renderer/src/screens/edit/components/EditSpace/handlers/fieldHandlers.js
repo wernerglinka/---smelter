@@ -375,7 +375,7 @@ export const handleDropzoneEvent = async (
   switch (type) {
     case 'template': {
       try {
-        const StorageOperations = await import('@lib/utilities/services/storage');
+        const StorageOperations = await import('@utils/services/storage');
         const projectPath = StorageOperations.getProjectPath();
         if (!projectPath) {
           throw new Error('Project path not found');

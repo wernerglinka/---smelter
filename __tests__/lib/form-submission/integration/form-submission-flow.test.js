@@ -37,9 +37,9 @@ describe('Form Submission Integration Tests', () => {
     const form = createSimpleForm();
     const filePath = '/path/to/simple-file.md';
 
-    const result = await handleFormSubmission(form, filePath);
+    const result = await handleFormSubmission({ form, filePath });
 
-    expect(result).toEqual({ success: true });
+    expect(result.success).toBe(true);
     expect(window.electronAPI.files.writeYAML).toHaveBeenCalledWith({
       obj: expect.objectContaining({
         title: 'Test Page Title',
@@ -54,9 +54,9 @@ describe('Form Submission Integration Tests', () => {
     const form = createComplexForm();
     const filePath = '/path/to/complex-file.md';
 
-    const result = await handleFormSubmission(form, filePath);
+    const result = await handleFormSubmission({ form, filePath });
 
-    expect(result).toEqual({ success: true });
+    expect(result.success).toBe(true);
     expect(window.electronAPI.files.writeYAML).toHaveBeenCalledWith({
       obj: expect.objectContaining({
         title: 'Complex Test Page',
@@ -81,7 +81,7 @@ describe('Form Submission Integration Tests', () => {
       }
     };
 
-    const result = await handleFormSubmission(form, filePath, schema);
+    const result = await handleFormSubmission({ form, filePath, schema });
 
     // Just verify the API was called correctly
     expect(window.electronAPI.files.writeYAML).toHaveBeenCalled();
@@ -96,7 +96,7 @@ describe('Form Submission Integration Tests', () => {
     const form = createSimpleForm();
     const filePath = '/path/to/protected-file.md';
 
-    const result = await handleFormSubmission(form, filePath);
+    const result = await handleFormSubmission({ form, filePath });
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('Failed to save file');
@@ -114,7 +114,7 @@ describe('Form Submission Integration Tests', () => {
       }
     };
 
-    const result = await handleFormSubmission(form, filePath, schema);
+    const result = await handleFormSubmission({ form, filePath, schema });
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('Validation failed');
@@ -127,7 +127,7 @@ describe('Form Submission Integration Tests', () => {
     const form = createSimpleForm();
     const filePath = '/path/to/network-file.md';
 
-    const result = await handleFormSubmission(form, filePath);
+    const result = await handleFormSubmission({ form, filePath });
 
     expect(result.success).toBe(false);
     expect(window.electronAPI.files.writeYAML).toHaveBeenCalled();

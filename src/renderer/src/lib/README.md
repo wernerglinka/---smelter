@@ -8,8 +8,7 @@ This directory contains the core business logic for the Smelter application. It 
 lib/
 ├── drag-drop/           # Drag and drop functionality
 ├── form-generation/     # Form building and rendering
-├── form-submission/     # Form submission and validation
-└── utilities/           # Shared utility functions
+└── form-submission/     # Form submission and validation
 ```
 
 ## Features
@@ -45,16 +44,6 @@ Key components:
 - **Submit Handler**: Manages the submission process
 
 See the [Form Submission README](./form-submission/README.md) for more details.
-
-### 🛠️ Utilities
-
-The `utilities` directory contains shared utility functions used across the application.
-
-Key utilities:
-- **File Operations**: Reading and writing files
-- **Formatting**: Date and string formatting utilities
-- **Services**: Storage, project, and file loading services
-- **Validation**: Type validators and other validation utilities
 
 ## Usage Guidelines
 

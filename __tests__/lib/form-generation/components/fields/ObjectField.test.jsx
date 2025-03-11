@@ -7,6 +7,48 @@ import {
   CollapseIcon
 } from '@components/icons';
 
+// Mock the FormOperationsContext
+jest.mock('../../../../../src/renderer/src/context/FormOperationsContext', () => ({
+  useFormOperations: () => ({
+    setValue: jest.fn(),
+    getValue: jest.fn(),
+    duplicateField: jest.fn(),
+    deleteField: jest.fn(),
+    validateField: jest.fn(),
+    getFormData: jest.fn(),
+    validationErrors: {}
+  })
+}));
+
+// Mock the ErrorContext
+jest.mock('../../../../../src/renderer/src/context/ErrorContext', () => ({
+  useError: () => ({
+    handleError: jest.fn(),
+    setError: jest.fn(),
+    clearError: jest.fn(),
+    error: null
+  })
+}));
+
+// Mock the useAsyncOperation hook
+jest.mock('../../../../../src/renderer/src/hooks/useAsyncOperation', () => ({
+  useAsyncOperation: ({ operation }) => ({
+    loading: false,
+    execute: operation,
+    result: null
+  })
+}));
+
+// Mock the logger
+jest.mock('@utils/services/logger', () => ({
+  logger: {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn()
+  }
+}));
+
 // Mock the icons and Dropzone components
 jest.mock('@components/icons', () => ({
   DragHandleIcon: () => <div data-testid="drag-handle">DragHandle</div>,

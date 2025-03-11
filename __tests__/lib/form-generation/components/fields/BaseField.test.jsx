@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BaseField } from '@lib/form-generation/components/fields/BaseField';
 import { DragHandleIcon } from '@components/icons';
+import { createMockContexts } from './test-helpers';
 
 // Mock the required components
 jest.mock('@components/icons', () => ({
@@ -23,11 +24,15 @@ jest.mock('@lib/form-generation/components/fields/FieldControls', () => {
 );
 
 describe('BaseField', () => {
+  // Create mock contexts
+  const { ContextWrapper, formOperationsMock } = createMockContexts();
+  
   const defaultProps = {
     field: {
       id: 'test-field',
       type: 'text',
-      label: 'Test Field'
+      label: 'Test Field',
+      name: 'testField'
     },
     onDuplicate: jest.fn(),
     onDelete: jest.fn(),
@@ -37,14 +42,18 @@ describe('BaseField', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Reset validation errors before each test
+    formOperationsMock.validationErrors = {};
   });
 
   describe('rendering', () => {
     test('renders with correct field type class', () => {
       render(
-        <BaseField {...defaultProps}>
-          <div>Field content</div>
-        </BaseField>
+        <ContextWrapper>
+          <BaseField {...defaultProps}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
       );
 
       const fieldElement = screen.getByText('Field content').parentElement;
@@ -54,9 +63,11 @@ describe('BaseField', () => {
 
     test('renders with label-exists class when label is provided', () => {
       render(
-        <BaseField {...defaultProps}>
-          <div>Field content</div>
-        </BaseField>
+        <ContextWrapper>
+          <BaseField {...defaultProps}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
       );
 
       const fieldElement = screen.getByText('Field content').parentElement;
@@ -73,20 +84,66 @@ describe('BaseField', () => {
       };
 
       render(
-        <BaseField {...props}>
-          <div>Field content</div>
-        </BaseField>
+        <ContextWrapper>
+          <BaseField {...props}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
       );
 
       const fieldElement = screen.getByText('Field content').parentElement;
       expect(fieldElement).not.toHaveClass('label-exists');
     });
 
+    test('renders with has-error class when there are validation errors', () => {
+      // Set up validation errors
+      formOperationsMock.validationErrors = { 'test-field': 'Error message' };
+      
+      render(
+        <ContextWrapper>
+          <BaseField {...defaultProps}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
+      );
+
+      const fieldElement = screen.getByText('Field content').parentElement;
+      expect(fieldElement).toHaveClass('has-error');
+    });
+
+    test('renders with has-error class when hasError prop is true', () => {
+      render(
+        <ContextWrapper>
+          <BaseField {...defaultProps} hasError={true}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
+      );
+
+      const fieldElement = screen.getByText('Field content').parentElement;
+      expect(fieldElement).toHaveClass('has-error');
+    });
+
+    test('renders with is-loading class when isLoading prop is true', () => {
+      render(
+        <ContextWrapper>
+          <BaseField {...defaultProps} isLoading={true}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
+      );
+
+      const fieldElement = screen.getByText('Field content').parentElement;
+      expect(fieldElement).toHaveClass('is-loading');
+    });
+
     test('renders children content', () => {
       render(
-        <BaseField {...defaultProps}>
-          <div data-testid="test-content">Test Content</div>
-        </BaseField>
+        <ContextWrapper>
+          <BaseField {...defaultProps}>
+            <div data-testid="test-content">Test Content</div>
+          </BaseField>
+        </ContextWrapper>
       );
 
       expect(screen.getByTestId('test-content')).toBeInTheDocument();
@@ -94,9 +151,11 @@ describe('BaseField', () => {
 
     test('renders drag handle', () => {
       render(
-        <BaseField {...defaultProps}>
-          <div>Field content</div>
-        </BaseField>
+        <ContextWrapper>
+          <BaseField {...defaultProps}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
       );
 
       expect(screen.getByTestId('drag-handle')).toBeInTheDocument();
@@ -106,9 +165,11 @@ describe('BaseField', () => {
   describe('field controls', () => {
     test('passes duplication handlers to FieldControls', () => {
       render(
-        <BaseField {...defaultProps}>
-          <div>Field content</div>
-        </BaseField>
+        <ContextWrapper>
+          <BaseField {...defaultProps}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
       );
 
       expect(screen.getByTestId('onDuplicate-prop').textContent).toBe('true');
@@ -128,9 +189,11 @@ describe('BaseField', () => {
       };
 
       render(
-        <BaseField {...props}>
-          <div>Field content</div>
-        </BaseField>
+        <ContextWrapper>
+          <BaseField {...props}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
       );
 
       expect(screen.getByTestId('allowDuplication-prop').textContent).toBe('false');
@@ -149,9 +212,11 @@ describe('BaseField', () => {
       };
 
       render(
-        <BaseField {...props}>
-          <div>Field content</div>
-        </BaseField>
+        <ContextWrapper>
+          <BaseField {...props}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
       );
 
       expect(screen.getByTestId('allowDeletion-prop').textContent).toBe('false');
@@ -159,9 +224,11 @@ describe('BaseField', () => {
 
     test('respects allowDuplication and allowDeletion props', () => {
       render(
-        <BaseField {...defaultProps} allowDuplication={false} allowDeletion={false}>
-          <div>Field content</div>
-        </BaseField>
+        <ContextWrapper>
+          <BaseField {...defaultProps} allowDuplication={false} allowDeletion={false}>
+            <div>Field content</div>
+          </BaseField>
+        </ContextWrapper>
       );
 
       expect(screen.getByTestId('allowDuplication-prop').textContent).toBe('false');

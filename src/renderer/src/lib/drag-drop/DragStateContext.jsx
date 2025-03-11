@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { setupGlobalDragListeners } from './utils';
 
-const DragStateContext = createContext();
-const DragStateDispatchContext = createContext();
+export const DragStateContext = createContext();
+export const DragStateDispatchContext = createContext();
 
 const initialState = {
   isDragging: false,

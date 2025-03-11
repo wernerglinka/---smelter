@@ -53,7 +53,7 @@ describe('Form Submission Handler', () => {
     const form = createSimpleForm();
     const filePath = '/path/to/file.md';
 
-    const result = await handleFormSubmission(form, filePath);
+    const result = await handleFormSubmission({ form, filePath });
 
     expect(preprocessFormData).toHaveBeenCalledWith(form);
     expect(validateSubmission).toHaveBeenCalled();
@@ -64,14 +64,14 @@ describe('Form Submission Handler', () => {
       },
       path: filePath
     });
-    expect(result).toEqual({ success: true });
+    expect(result.success).toBe(true);
   });
 
   test('should remove file:// protocol from file paths', async () => {
     const form = createSimpleForm();
     const filePath = 'file:///path/to/file.md';
 
-    await handleFormSubmission(form, filePath);
+    await handleFormSubmission({ form, filePath });
 
     expect(window.electronAPI.files.writeYAML).toHaveBeenCalledWith({
       obj: expect.any(Object),
@@ -80,33 +80,16 @@ describe('Form Submission Handler', () => {
   });
 
   test('should handle invalid form element gracefully', async () => {
-    // Mock the implementation to return an object instead of throwing
-    const originalHandleFormSubmission = handleFormSubmission;
-    const mockHandleFormSubmission = jest.fn().mockImplementation(async (form) => {
-      try {
-        if (!form || !(form instanceof HTMLFormElement)) {
-          return {
-            success: false,
-            error: 'Invalid form element provided'
-          };
-        }
-        return await originalHandleFormSubmission(form);
-      } catch (error) {
-        return {
-          success: false,
-          error: error.message
-        };
-      }
-    });
-
-    // Override the imported function for this test
     const notAForm = document.createElement('div');
-
-    const result = await mockHandleFormSubmission(notAForm, '/path/to/file.md');
+    
+    const result = await handleFormSubmission({ 
+      form: notAForm, 
+      filePath: '/path/to/file.md' 
+    });
 
     expect(result).toEqual({
       success: false,
-      error: 'Invalid form element provided'
+      error: expect.stringContaining('Invalid form provided')
     });
     expect(preprocessFormData).not.toHaveBeenCalled();
   });
@@ -117,7 +100,7 @@ describe('Form Submission Handler', () => {
     const form = createInvalidForm();
     const filePath = '/path/to/file.md';
 
-    const result = await handleFormSubmission(form, filePath);
+    const result = await handleFormSubmission({ form, filePath });
 
     expect(preprocessFormData).toHaveBeenCalled();
     expect(validateSubmission).toHaveBeenCalled();
@@ -137,7 +120,7 @@ describe('Form Submission Handler', () => {
     const form = createSimpleForm();
     const filePath = '/path/to/file.md';
 
-    const result = await handleFormSubmission(form, filePath);
+    const result = await handleFormSubmission({ form, filePath });
 
     expect(preprocessFormData).toHaveBeenCalled();
     expect(validateSubmission).toHaveBeenCalled();
@@ -154,7 +137,7 @@ describe('Form Submission Handler', () => {
     const form = createSimpleForm();
     const filePath = '/path/to/file.md';
 
-    const result = await handleFormSubmission(form, filePath);
+    const result = await handleFormSubmission({ form, filePath });
 
     expect(preprocessFormData).toHaveBeenCalled();
     expect(validateSubmission).not.toHaveBeenCalled();
@@ -179,19 +162,15 @@ describe('Form Submission Handler', () => {
       }
     };
 
-    const result = await handleFormSubmission(form, filePath, schema);
+    const result = await handleFormSubmission({ form, filePath, schema });
 
     expect(preprocessFormData).toHaveBeenCalledWith(form);
     expect(validateSubmission).toHaveBeenCalledWith(expect.any(Object), schema);
     expect(window.electronAPI.files.writeYAML).toHaveBeenCalled();
-    expect(result).toEqual({ success: true });
+    expect(result.success).toBe(true);
   });
 
   test('should handle unexpected errors during processing', async () => {
-    // Mock console.error to prevent test output pollution
-    const originalConsoleError = console.error;
-    console.error = jest.fn();
-
     // Cause an error during processing
     preprocessFormData.mockImplementationOnce(() => {
       throw new Error('Unexpected error');
@@ -200,16 +179,12 @@ describe('Form Submission Handler', () => {
     const form = createSimpleForm();
     const filePath = '/path/to/file.md';
 
-    const result = await handleFormSubmission(form, filePath);
+    const result = await handleFormSubmission({ form, filePath });
 
     expect(preprocessFormData).toHaveBeenCalled();
     expect(result).toEqual({
       success: false,
       error: 'Unexpected error'
     });
-    expect(console.error).toHaveBeenCalled();
-
-    // Restore console.error
-    console.error = originalConsoleError;
   });
 });

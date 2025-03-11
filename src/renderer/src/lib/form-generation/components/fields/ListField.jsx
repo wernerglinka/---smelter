@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   DragHandleIcon,
   AddIcon,
@@ -7,17 +7,54 @@ import {
   CollapsedIcon
 } from '@components/icons';
 import FieldControls from './FieldControls';
+import { useFormOperations } from '../../../../context/FormOperationsContext';
+import { useError } from '../../../../context/ErrorContext';
+import { logger } from '@utils/services/logger';
 
 /**
  * @typedef {Object} ListFieldProps
  * @property {Object} field - The field configuration object
+ * @property {string} field.id - Unique identifier for the field
+ * @property {string} field.name - Input field name
  * @property {string} [field.label] - Display label for the field
  * @property {Array<string>} [field.value] - Initial list values
  * @property {boolean} [allowDuplication=true] - Whether the list itself can be duplicated
  * @property {boolean} [allowDeletion=true] - Whether the list itself can be deleted
  * @property {Function} [onDuplicate] - Handler for duplicating this list field
  * @property {Function} [onDelete] - Handler for deleting this list field
+ * @property {Function} [onUpdate] - Handler for updating field value
  */
+
+/**
+ * Styles for loading and error states
+ */
+const styles = `
+.form-element.is-list.has-error {
+  border-left: 3px solid #e74c3c;
+}
+
+.form-element.is-list .field-error {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: 4px;
+}
+
+.list-item.has-error input {
+  border-color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.05);
+}
+`;
+
+// Add styles to the document
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = styles;
+  document.head.appendChild(styleElement);
+}
 
 /**
  * ListField component that renders a collapsible list of text inputs.
@@ -31,76 +68,185 @@ export const ListField = ({
   field = {},
   onDuplicate,
   onDelete,
-  allowDuplication = true,
-  allowDeletion = true
+  onUpdate,
+  allowDuplication = !field?.noDuplication,
+  allowDeletion = !field?.noDeletion
 }) => {
   // Track collapsed state of the list
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   // Initialize with at least one empty item if no values provided
   const [items, setItems] = useState(field.value || ['']);
+  
+  // Access form operations context and error context
+  const { setValue, validateField, validationErrors } = useFormOperations();
+  const { handleError } = useError();
+  
+  // Check if this field has validation errors
+  const hasError = validationErrors && validationErrors[field.id || field.name];
+
+  // When items change, update the form value
+  useEffect(() => {
+    try {
+      // Only update if field has a name
+      if (field.name) {
+        setValue(field.name, items);
+        
+        // Call the original onUpdate handler if provided
+        if (onUpdate) {
+          onUpdate({
+            id: field.id || field.name,
+            name: field.name,
+            type: field.type?.toLowerCase(),
+            value: items
+          });
+        }
+      }
+    } catch (error) {
+      handleError(error, 'listFieldEffect');
+    }
+  }, [items, field, setValue, onUpdate, handleError]);
 
   /**
    * Toggles the collapsed state of the list
    */
-  const handleCollapse = (e) => {
-    // Stop event propagation to prevent bubble up
-    if (e) e.stopPropagation();
-    setIsCollapsed(!isCollapsed);
-  };
+  const handleCollapse = useCallback((e) => {
+    try {
+      // Stop event propagation to prevent bubble up
+      if (e) e.stopPropagation();
+      setIsCollapsed(prev => !prev);
+    } catch (error) {
+      handleError(error, 'handleCollapse');
+    }
+  }, [handleError]);
 
   /**
    * Creates a copy of an existing item and inserts it after the source item
    * @param {number} index - Index of the item to duplicate
    */
-  const handleAddItem = (index) => {
-    // Make sure the list stays expanded during duplication
-    if (isCollapsed) {
-      setIsCollapsed(false);
-    }
-
-    console.log('List: Duplicating item at index', index);
-
-    const newItems = [...items];
-    const itemToClone = newItems[index];
-
-    // Generate the new item label with proper copy suffix
-    let newItemText = itemToClone;
-    if (typeof itemToClone === 'string') {
-      if (itemToClone.includes('Copy of')) {
-        newItemText = `Copy of ${itemToClone}`;
-      } else {
-        newItemText = `Copy of ${itemToClone}`;
+  const handleAddItem = useCallback((index) => {
+    try {
+      // Make sure the list stays expanded during duplication
+      if (isCollapsed) {
+        setIsCollapsed(false);
       }
-    }
 
-    newItems.splice(index + 1, 0, newItemText);
-    setItems(newItems);
-  };
+      const newItems = [...items];
+      const itemToClone = newItems[index];
+
+      // Generate the new item label with proper copy suffix
+      let newItemText = itemToClone;
+      if (typeof itemToClone === 'string') {
+        newItemText = itemToClone.includes('Copy of') ? `Copy of ${itemToClone}` : `Copy of ${itemToClone}`;
+      }
+
+      newItems.splice(index + 1, 0, newItemText);
+      setItems(newItems);
+      
+      logger.debug('List item duplicated', { 
+        fieldId: field.id || field.name,
+        index,
+        itemCount: newItems.length
+      });
+    } catch (error) {
+      handleError(error, 'handleAddItem');
+    }
+  }, [isCollapsed, items, field, handleError]);
 
   /**
    * Removes an item from the list if there's more than one item
    * @param {number} index - Index of the item to delete
    */
-  const handleDeleteItem = (index) => {
-    // Make sure the list stays expanded during deletion
-    if (isCollapsed) {
-      setIsCollapsed(false);
+  const handleDeleteItem = useCallback((index) => {
+    try {
+      // Make sure the list stays expanded during deletion
+      if (isCollapsed) {
+        setIsCollapsed(false);
+      }
+
+      if (items.length > 1) {
+        const newItems = [...items];
+        newItems.splice(index, 1);
+        setItems(newItems);
+        
+        logger.debug('List item deleted', { 
+          fieldId: field.id || field.name,
+          index,
+          itemCount: newItems.length
+        });
+      } else {
+        logger.warn('Cannot delete the last item in a list', {
+          fieldId: field.id || field.name
+        });
+      }
+    } catch (error) {
+      handleError(error, 'handleDeleteItem');
     }
-
-    console.log('List: Deleting item at index', index);
-
-    if (items.length > 1) {
+  }, [isCollapsed, items, field, handleError]);
+  
+  /**
+   * Handles item text changes
+   * @param {number} index - Index of the item being changed
+   * @param {Event} e - Change event
+   */
+  const handleItemChange = useCallback((index, e) => {
+    try {
+      const newValue = e.target.value;
       const newItems = [...items];
-      newItems.splice(index, 1);
+      
+      // Update the specific item
+      newItems[index] = newValue;
       setItems(newItems);
-    } else {
-      console.warn('Cannot delete the last item in a list');
+      
+      // Validate if needed
+      if (field.required && newItems.some(item => !item)) {
+        validateField(field.name, (value) => 
+          value.every(item => item) ? true : 'All list items must have a value'
+        );
+      }
+      
+      logger.debug('List item updated', { 
+        fieldId: field.id || field.name,
+        index,
+        value: newValue
+      });
+    } catch (error) {
+      handleError(error, 'handleItemChange');
     }
-  };
+  }, [items, field, validateField, handleError]);
+  
+  // Handle label changes on blur when editable
+  const handleLabelBlur = useCallback((e) => {
+    try {
+      const newLabel = e.target.value;
+      
+      if (field._displayLabel !== undefined && newLabel !== field._displayLabel) {
+        // Call the original onUpdate handler if provided
+        if (onUpdate) {
+          onUpdate({
+            id: field.id || field.name,
+            name: field.name,
+            type: field.type?.toLowerCase(),
+            _displayLabel: newLabel
+          });
+        }
+        
+        logger.debug('List field label updated', {
+          fieldId: field.id || field.name,
+          name: field.name,
+          label: newLabel
+        });
+      }
+    } catch (error) {
+      handleError(error, 'handleLabelBlur');
+    }
+  }, [field, onUpdate, handleError]);
 
   return (
-    <div className="form-element is-list label-exists no-drop" draggable="true">
+    <div 
+      className={`form-element is-list label-exists no-drop ${hasError ? 'has-error' : ''}`} 
+      draggable="true"
+    >
       {/* Drag handle for reordering the entire list field */}
       <span className="sort-handle">
         <DragHandleIcon />
@@ -114,12 +260,19 @@ export const ListField = ({
           className="element-label"
           placeholder="Label Placeholder"
           defaultValue={field._displayLabel || field.label || ''}
-          readOnly={!!field.label}
+          readOnly={!field._displayLabel && !!field.label}
+          onBlur={handleLabelBlur}
         />
         <span className="collapse-icon" onClick={handleCollapse}>
           {isCollapsed ? <CollapsedIcon /> : <CollapseIcon />}
         </span>
       </label>
+
+      {hasError && (
+        <div className="field-error">
+          {validationErrors[field.id || field.name]}
+        </div>
+      )}
 
       {/* List items container with collapse support */}
       <div
@@ -129,7 +282,12 @@ export const ListField = ({
         <ul>
           {items.map((item, index) => (
             <li key={`${index}-${item}`} className="list-item">
-              <input type="text" defaultValue={item || ''} />
+              <input 
+                type="text" 
+                name={`${field.name}[${index}]`}
+                defaultValue={item || ''} 
+                onChange={(e) => handleItemChange(index, e)}
+              />
               {/* Item action buttons */}
               <div className="button-wrapper">
                 <div

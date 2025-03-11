@@ -342,8 +342,11 @@ const EditSpace = ({ fileContent, $expanded }) => {
             onSubmit={(e) => {
               e.preventDefault();
 
-              // Submit the form
-              handleFormSubmission(formRef.current, activeFilePath);
+              // Submit the form with new object-based API
+              handleFormSubmission({
+                form: formRef.current,
+                filePath: activeFilePath
+              });
 
               // Reset history and snapshots after submission
               setHistory([]);

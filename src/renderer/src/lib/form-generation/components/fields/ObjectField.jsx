@@ -11,6 +11,50 @@ import Dropzone from '@components/Dropzone';
 import { StorageOperations } from '@utils/services/storage';
 import { processFrontmatter } from '../../processors/frontmatter-processor';
 import FieldControls from './FieldControls';
+import { useFormOperations } from '../../../../context/FormOperationsContext';
+import { useError } from '../../../../context/ErrorContext';
+import { useAsyncOperation } from '../../../../hooks/useAsyncOperation';
+import { logger } from '@utils/services/logger';
+
+/**
+ * Styles for loading and error states
+ */
+const styles = `
+.form-element.is-object.is-loading .object-dropzone {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.form-element.is-object .loading-indicator {
+  background: rgba(0, 0, 0, 0.05);
+  color: #666;
+  padding: 8px;
+  text-align: center;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.form-element.is-object.has-error {
+  border-left: 3px solid #e74c3c;
+}
+
+.form-element.is-object .field-error {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: 4px;
+}
+`;
+
+// Add styles to the document
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = styles;
+  document.head.appendChild(styleElement);
+}
 
 /**
  * Renders an object field that can contain multiple fields of different types
@@ -65,6 +109,40 @@ export const ObjectField = ({
   const originalName = field.name; // Store the original field name
 
   /**
+   * Access error handling and form operations from context
+   */
+  const { handleError } = useError();
+  
+  /**
+   * Create an async operation for template loading
+   */
+  const { loading: templateLoading, execute: loadTemplate } = useAsyncOperation({
+    operation: async (templateUrl) => {
+      const projectPath = await StorageOperations.getProjectPath();
+      if (!projectPath) {
+        throw new Error('Project path not found');
+      }
+
+      const cleanTemplateUrl = templateUrl.replace(/^\/+|\/+$/g, '');
+      const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${cleanTemplateUrl}`;
+
+      const result = await window.electronAPI.files.read(templatePath);
+      if (result.status === 'failure') {
+        throw new Error(`Failed to read template: ${result.error}`);
+      }
+
+      const templateData = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+      const schema = await processFrontmatter(templateData, '');
+      
+      return schema;
+    },
+    operationName: 'loadObjectTemplate',
+    onError: (error) => {
+      logger.error('Failed to load template for object field', error);
+    }
+  });
+  
+  /**
    * Handles drag and drop events for object fields
    */
   const handleDropzoneEvent = useCallback(
@@ -74,24 +152,9 @@ export const ObjectField = ({
       switch (type) {
         case 'template': {
           try {
-            const projectPath = await StorageOperations.getProjectPath();
-            if (!projectPath) {
-              throw new Error('Project path not found');
-            }
-
-            const templateUrl = data.url.replace(/^\/+|\/+$/g, '');
-            const templatePath = `${projectPath}/.metallurgy/frontMatterTemplates/templates/${templateUrl}`;
-
-            const result = await window.electronAPI.files.read(templatePath);
-            if (result.status === 'failure') {
-              throw new Error(`Failed to read template: ${result.error}`);
-            }
-
-            const templateData =
-              typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
-
-            const schema = await processFrontmatter(templateData, '');
-
+            const schema = await loadTemplate(data.url);
+            if (!schema) return;
+            
             setFields((currentFields) => [
               ...currentFields,
               {
@@ -99,35 +162,60 @@ export const ObjectField = ({
                 id: `${field.id}_field_${currentFields.length}`
               }
             ]);
+            
+            logger.info('Template added to object field', { 
+              fieldId: field.id, 
+              template: data.url 
+            });
           } catch (error) {
-            console.error('Error processing template in object:', error);
+            handleError(error, 'objectDropzoneTemplate');
           }
           break;
         }
         case 'sidebar': {
-          const fieldData = data.field || data;
-          setFields((currentFields) => [
-            ...currentFields,
-            {
-              ...fieldData,
-              id: `${field.id}_field_${currentFields.length}`
-            }
-          ]);
+          try {
+            const fieldData = data.field || data;
+            setFields((currentFields) => [
+              ...currentFields,
+              {
+                ...fieldData,
+                id: `${field.id}_field_${currentFields.length}`
+              }
+            ]);
+            
+            logger.debug('Added new field from sidebar', { 
+              fieldId: field.id, 
+              fieldType: fieldData.type 
+            });
+          } catch (error) {
+            handleError(error, 'objectDropzoneSidebar');
+          }
           break;
         }
         case 'reorder': {
-          const { sourceIndex, targetIndex } = position;
-          setFields((currentFields) => {
-            const newFields = [...currentFields];
-            const [movedField] = newFields.splice(sourceIndex, 1);
-            newFields.splice(targetIndex, 0, movedField);
-            return newFields;
-          });
+          try {
+            const { sourceIndex, targetIndex } = position;
+            setFields((currentFields) => {
+              const newFields = [...currentFields];
+              const [movedField] = newFields.splice(sourceIndex, 1);
+              newFields.splice(targetIndex, 0, movedField);
+              
+              logger.debug('Reordered object fields', { 
+                fieldId: field.id, 
+                sourceIndex, 
+                targetIndex 
+              });
+              
+              return newFields;
+            });
+          } catch (error) {
+            handleError(error, 'objectDropzoneReorder');
+          }
           break;
         }
       }
     },
-    [field.id, fields.length]
+    [field.id, loadTemplate, handleError]
   );
 
   /**
@@ -142,40 +230,59 @@ export const ObjectField = ({
   );
 
   /**
+   * Access FormOperationsContext for standardized operations
+   */
+  const { duplicateField, deleteField } = useFormOperations();
+  
+  /**
    * Handles duplication of fields inside this object
    */
   const handleFieldDuplicate = useCallback(
     (fieldToDuplicate) => {
-      // Make sure the object stays expanded during duplication
-      forceExpand();
+      try {
+        // Make sure the object stays expanded during duplication
+        forceExpand();
 
-      // Generate a unique identifier for the duplicate
-      const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        // Generate a unique identifier for the duplicate
+        const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-      // Handle label for duplicate properly, adding (Copy) suffix
-      let newLabel;
-      if (fieldToDuplicate.label) {
-        newLabel = `${fieldToDuplicate.label}${fieldToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
-      }
-
-      // Create duplicated field with unique ID (deep clone to avoid reference issues)
-      const duplicatedField = {
-        ...JSON.parse(JSON.stringify(fieldToDuplicate)),
-        id: `${fieldToDuplicate.id}_${uniqueId}`,
-        label: newLabel
-      };
-
-      setFields((currentFields) => {
-        const index = currentFields.findIndex((f) => f.id === fieldToDuplicate.id);
-        if (index !== -1) {
-          const newFields = [...currentFields];
-          newFields.splice(index + 1, 0, duplicatedField);
-          return newFields;
+        // Handle label for duplicate properly, adding (Copy) suffix
+        let newLabel;
+        if (fieldToDuplicate.label) {
+          newLabel = `${fieldToDuplicate.label}${fieldToDuplicate.label.includes('(Copy)') ? ' (Copy)' : ' (Copy)'}`;
         }
-        return currentFields;
-      });
+
+        // Create duplicated field with unique ID (deep clone to avoid reference issues)
+        const duplicatedField = {
+          ...JSON.parse(JSON.stringify(fieldToDuplicate)),
+          id: `${fieldToDuplicate.id}_${uniqueId}`,
+          label: newLabel
+        };
+
+        setFields((currentFields) => {
+          const index = currentFields.findIndex((f) => f.id === fieldToDuplicate.id);
+          if (index !== -1) {
+            const newFields = [...currentFields];
+            newFields.splice(index + 1, 0, duplicatedField);
+            
+            // Notify form operations context
+            duplicateField(field.id, index);
+            
+            logger.debug('Duplicated object field', { 
+              fieldId: field.id, 
+              index, 
+              fieldId: fieldToDuplicate.id 
+            });
+            
+            return newFields;
+          }
+          return currentFields;
+        });
+      } catch (error) {
+        handleError(error, 'handleObjectFieldDuplicate');
+      }
     },
-    [isCollapsed]
+    [field.id, forceExpand, duplicateField, handleError]
   );
 
   /**
@@ -183,33 +290,52 @@ export const ObjectField = ({
    */
   const handleFieldDelete = useCallback(
     (fieldToDelete) => {
-      // Make sure the object stays expanded during deletion
-      forceExpand();
+      try {
+        // Make sure the object stays expanded during deletion
+        forceExpand();
 
-      setFields((currentFields) => {
-        // Find exact field to delete
-        const fieldIndex = currentFields.findIndex((f) => f.id === fieldToDelete.id);
+        setFields((currentFields) => {
+          // Find exact field to delete
+          const fieldIndex = currentFields.findIndex((f) => f.id === fieldToDelete.id);
 
-        if (fieldIndex === -1) {
-          console.error('Field to delete not found:', fieldToDelete.id);
-          return currentFields;
-        }
+          if (fieldIndex === -1) {
+            logger.warn('Field to delete not found', { fieldId: fieldToDelete.id });
+            return currentFields;
+          }
 
-        // Create new array without the specific field
-        const newFields = [
-          ...currentFields.slice(0, fieldIndex),
-          ...currentFields.slice(fieldIndex + 1)
-        ];
+          // Create new array without the specific field
+          const newFields = [
+            ...currentFields.slice(0, fieldIndex),
+            ...currentFields.slice(fieldIndex + 1)
+          ];
+          
+          // Notify form operations context
+          deleteField(field.id, fieldIndex);
+          
+          logger.debug('Deleted object field', { 
+            fieldId: field.id, 
+            index: fieldIndex, 
+            fieldId: fieldToDelete.id 
+          });
 
-        return newFields;
-      });
+          return newFields;
+        });
+      } catch (error) {
+        handleError(error, 'handleObjectFieldDelete');
+      }
     },
-    [forceExpand]
+    [field.id, forceExpand, deleteField, handleError]
   );
 
+  // Access validation errors from form operations context
+  const { validationErrors } = useFormOperations();
+  
+  // Check if this field has validation errors
+  const hasError = validationErrors && validationErrors[field.id];
+  
   return (
     <div
-      className="form-element is-object no-drop label-exists"
+      className={`form-element is-object no-drop label-exists ${hasError ? 'has-error' : ''} ${templateLoading ? 'is-loading' : ''}`}
       draggable="true"
       onDragStart={handleDragStart}
     >
@@ -219,7 +345,7 @@ export const ObjectField = ({
       <label className="object-name label-wrapper label-exists">
         <span>
           {field.label}
-          <sup>*</sup>
+          {field.required && <sup>*</sup>}
         </span>
         <input
           type="text"
@@ -233,6 +359,17 @@ export const ObjectField = ({
           {isCollapsed ? <CollapsedIcon /> : <CollapseIcon />}
         </span>
       </label>
+      
+      {templateLoading && (
+        <div className="loading-indicator">Loading template...</div>
+      )}
+      
+      {hasError && (
+        <div className="field-error">
+          {validationErrors[field.id]}
+        </div>
+      )}
+      
       <Dropzone
         className={`object-dropzone dropzone js-dropzone ${isCollapsed ? 'is-collapsed' : ''}`}
         data-wrapper="is-object"
@@ -247,9 +384,7 @@ export const ObjectField = ({
               parentId: field.id // Add parent reference
             }}
             onFieldDuplicate={(fieldToDuplicate) => {
-              // Use the index from the map to directly insert the duplicate after the correct field
-              // This is more reliable than searching by ID which might not be unique
-              const duplicateByIndex = () => {
+              try {
                 // Generate a unique identifier
                 const uniqueId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
@@ -267,7 +402,6 @@ export const ObjectField = ({
                 if (fieldCopy.readOnly) delete fieldCopy.readOnly;
 
                 // Set the label to empty string to make it editable
-                // This is all we need since readOnly={!!label} checks if label exists
                 const duplicatedField = {
                   ...fieldCopy,
                   id: `${fieldToDuplicate.id || field.id}_field_${fieldIndex}_${uniqueId}`,
@@ -285,53 +419,73 @@ export const ObjectField = ({
                   if (fieldIndex >= 0 && fieldIndex < currentFields.length) {
                     const newFields = [...currentFields];
                     newFields.splice(fieldIndex + 1, 0, duplicatedField);
+                    
+                    // Notify form operations context
+                    duplicateField(`${field.name}[${fieldIndex}]`, fieldIndex);
+                    
+                    logger.debug('Duplicated nested field', { 
+                      parentId: field.id, 
+                      index: fieldIndex, 
+                      fieldId: fieldToDuplicate.id 
+                    });
+                    
                     return newFields;
                   }
                   return currentFields;
                 });
-              };
-
-              // Duplicate by index instead of searching by ID
-              duplicateByIndex();
-
-              // Return false to prevent the event from bubbling up
-              return false;
+                
+                // Return false to prevent the event from bubbling up
+                return false;
+              } catch (error) {
+                handleError(error, 'duplicateNestedField');
+                return false;
+              }
             }}
             onFieldDelete={(fieldToDelete) => {
-              // Use the index from the map to directly delete the correct field
-              // This is more reliable than searching by ID which might not be unique
-              const deleteByIndex = () => {
+              try {
+                // Delete field by index instead of searching by ID
                 setFields((currentFields) => {
                   if (fieldIndex >= 0 && fieldIndex < currentFields.length) {
                     // Create a new array with the field at this specific index removed
-                    return [
+                    const newFields = [
                       ...currentFields.slice(0, fieldIndex),
                       ...currentFields.slice(fieldIndex + 1)
                     ];
+                    
+                    // Notify form operations context
+                    deleteField(`${field.name}[${fieldIndex}]`, fieldIndex);
+                    
+                    logger.debug('Deleted nested field', { 
+                      parentId: field.id, 
+                      index: fieldIndex,
+                      fieldId: fieldToDelete.id 
+                    });
+                    
+                    return newFields;
                   }
                   return currentFields;
                 });
-              };
-
-              // Delete by index instead of searching by ID
-              deleteByIndex();
-
-              // Return false to prevent the event from bubbling up
-              return false;
+                
+                // Return false to prevent the event from bubbling up
+                return false;
+              } catch (error) {
+                handleError(error, 'deleteNestedField');
+                return false;
+              }
             }}
             onFieldUpdate={(updatedField) => {
               if (onFieldUpdate) {
-                // Create a copy of the current fields to update the specific field
-                setFields((currentFields) => {
-                  const newFields = [...currentFields];
-                  // Update the specific field at this index
-                  newFields[fieldIndex] = {
-                    ...newFields[fieldIndex],
-                    ...updatedField
-                  };
+                try {
+                  // Create a copy of the current fields to update the specific field
+                  setFields((currentFields) => {
+                    const newFields = [...currentFields];
+                    // Update the specific field at this index
+                    newFields[fieldIndex] = {
+                      ...newFields[fieldIndex],
+                      ...updatedField
+                    };
 
-                  // Pass the entire updated object with all fields to the parent handler
-                  setTimeout(() => {
+                    // Pass the entire updated object with all fields to the parent handler
                     onFieldUpdate(
                       {
                         ...field,
@@ -339,17 +493,20 @@ export const ObjectField = ({
                       },
                       [{ type: 'object', index: fieldIndex, fieldIndex }]
                     );
-                  }, 0);
 
-                  return newFields;
-                });
+                    return newFields;
+                  });
+                } catch (error) {
+                  handleError(error, 'updateNestedField');
+                }
               }
             }}
             parentType="object"
           />
         ))}
       </Dropzone>
-      {/* Direct button implementation for better control */}
+      
+      {/* Field controls */}
       <div className="button-wrapper">
         {allowDuplication && (
           <div
@@ -358,7 +515,11 @@ export const ObjectField = ({
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              if (onDuplicate) onDuplicate();
+              try {
+                if (onDuplicate) onDuplicate();
+              } catch (error) {
+                handleError(error, 'duplicateObject');
+              }
             }}
           >
             <AddIcon />
@@ -371,19 +532,18 @@ export const ObjectField = ({
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              if (onDelete) onDelete();
+              try {
+                if (onDelete) onDelete();
+              } catch (error) {
+                handleError(error, 'deleteObject');
+              }
             }}
           >
             <DeleteIcon />
           </div>
         )}
       </div>
-      {/* Debug info
-      <div style={{display: 'none'}}>
-        Object debug ID: {debugId},
-        Handlers: Duplicate={!!onDuplicate}, Delete={!!onDelete}
-      </div>
-      */}
+      
       <input type="hidden" name={originalName} value={field.value} />
     </div>
   );
