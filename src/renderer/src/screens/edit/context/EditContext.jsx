@@ -545,14 +545,38 @@ export const EditProvider = ({ children }) => {
         logger.error('Error processing content:', error);
       }
     } else {
-      // Reset form fields when no content is loaded
-      setFormFields(null);
-      setActiveFilePath(null);
-      setFileName(null);
-      
-      // Call reset history callback
-      if (onResetHistory) {
-        onResetHistory(null);
+      // For files without frontmatter (like new JSON files)
+      try {
+        logger.debug('Processing file without frontmatter', { path: fileContent.path });
+        
+        // Always preserve the file path even for empty files
+        if (fileContent.path) {
+          setActiveFilePath(fileContent.path);
+          setFileName(fileContent.path.split('/').pop());
+        }
+        
+        // Initialize with empty fields array instead of null
+        const emptyFields = [];
+        
+        // Call reset history callback
+        if (onResetHistory) {
+          onResetHistory(emptyFields);
+        }
+        
+        // Set empty fields
+        setFormFields(emptyFields);
+        
+      } catch (error) {
+        logger.error('Error processing file without frontmatter:', {
+          error: error.message,
+          path: fileContent?.path
+        });
+        
+        // Don't clear the path in case of error
+        if (fileContent?.path) {
+          setActiveFilePath(fileContent.path);
+          setFileName(fileContent.path.split('/').pop());
+        }
       }
     }
   }, []);

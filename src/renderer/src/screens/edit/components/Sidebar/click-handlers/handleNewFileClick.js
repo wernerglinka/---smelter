@@ -1,4 +1,5 @@
 import { StorageOperations } from '@utils/services/storage';
+import { logger } from '@utils/services/logger';
 
 /**
  * Handles the creation of a new file in the project structure
@@ -37,9 +38,11 @@ export const handleNewFileClick = async (
     }
 
     // Show dialog to get file name
+    const fileTypeDisplay = extension === '.md' ? 'Markdown' : 'JSON';
+
     const { response } = await window.electronAPI.dialog.showCustomMessage({
       type: 'custom',
-      message: 'Enter file name without extension:',
+      message: `Enter file name for your new ${fileTypeDisplay} file (${extension} will be added automatically):`,
       buttons: ['Create', 'Cancel'],
       input: true
     });
@@ -51,20 +54,43 @@ export const handleNewFileClick = async (
     const fileName = response.value.split('.')[0];
 
     // Determine the base path and relative path based on the active folder
-    // If we're in the data directory, use dataPath as base
-    // If we're in the content directory, use contentPath as base
+    // Extract folder names from the content and data paths
+    const contentFolderName = contentPath.split('/').pop();
+    const dataFolderName = dataPath.split('/').pop();
+
+    // Log the extracted folder names for debugging
+    logger.debug('File path determination:', {
+      contentFolderName,
+      dataFolderName,
+      activeFolder
+    });
+
     let basePath;
     let relativePath;
 
-    if (activeFolder.startsWith('data')) {
+    // Check if the active folder starts with the data folder name
+    if (activeFolder.startsWith(dataFolderName)) {
       basePath = dataPath;
-      // Remove 'data' prefix to get relative path
+      // Remove data folder name prefix to get relative path
+      relativePath = activeFolder.replace(dataFolderName, '');
+    }
+    // Check if active folder starts with content folder name
+    else if (activeFolder.startsWith(contentFolderName)) {
+      basePath = contentPath;
+      // Remove content folder name prefix to get relative path
+      relativePath = activeFolder.replace(contentFolderName, '');
+    }
+    // Fallback to checking for hardcoded 'data' or 'src' prefixes
+    else if (activeFolder.startsWith('data')) {
+      basePath = dataPath;
       relativePath = activeFolder.replace('data', '');
     } else {
       basePath = contentPath;
-      // Remove 'src' prefix to get relative path
       relativePath = activeFolder.replace('src', '');
     }
+
+    // Files should be empty so users can drag fields into them
+    const initialContent = '';
 
     // Create full folder path by combining base path and relative path
     // Clean up any double slashes that might occur during path combination
@@ -81,10 +107,7 @@ export const handleNewFileClick = async (
       return;
     }
 
-    // Create initial content based on file type
-    const initialContent = '';
-
-    // Write file
+    // Write file with the prepared initial content
     const writeResult = await window.electronAPI.files.write({
       obj: initialContent,
       path: filePath,
@@ -105,8 +128,10 @@ export const handleNewFileClick = async (
       throw new Error(`Failed to create file: ${writeResult.error}`);
     }
   } catch (error) {
-    console.error('Error in handleNewFileClick:', error);
-    console.error('Error stack:', error.stack);
+    logger.error('Error in handleNewFileClick:', {
+      message: error.message,
+      stack: error.stack
+    });
     await window.electronAPI.dialog.showCustomMessage({
       type: 'error',
       message: `Failed to create file: ${error.message}`,

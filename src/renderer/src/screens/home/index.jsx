@@ -6,7 +6,7 @@ import {
   FolderMinusIcon,
   GithubIcon,
   DeleteIcon
-} from '../../components/icons';
+} from '@components/icons';
 import { HomeProvider, useHome } from './context/HomeContext';
 
 import './styles.css';
@@ -42,8 +42,8 @@ const RecentProjectsList = () => {
           >
             {project.name}
           </Link>
-          <span 
-            className="delete-wrapper" 
+          <span
+            className="delete-wrapper"
             onClick={() => removeRecentProject(project)}
           >
             <DeleteIcon className="delete-icon" />
@@ -139,7 +139,7 @@ const HomeContent = () => {
   return (
     <main className="welcome">
       <h1>Smelter</h1>
-      <p>Content Management for Metalsmith refined</p>
+      <p>The Metallurgy Content Management System Editor</p>
 
       <ul className="projects">
         <ActionsList />
