@@ -89,7 +89,8 @@ export const FileSystem = {
         return { status: 'success', data: `Directory ${dirPath} does not exist` };
       }
 
-      fs.rmdirSync(dirPath, { recursive: true });
+      // Use rmSync with force:true and recursive:true to delete non-empty directories
+      fs.rmSync(dirPath, { recursive: true, force: true });
       return { status: 'success', data: `Directory ${dirPath} deleted` };
     } catch (error) {
       return { status: 'failure', error: error.message };

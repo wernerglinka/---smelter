@@ -116,8 +116,8 @@ export const selectFolder = async (folderType) => {
     }
 
     // Import storage dynamically to avoid circular dependency
-    const { getProjectPath } = await import('../services/storage');
-    const projectFolder = getProjectPath();
+    const { StorageOperations } = await import('../services/storage');
+    const projectFolder = StorageOperations.getProjectPath();
 
     if (!projectFolder) {
       logger.warn('No project folder found in storage');
