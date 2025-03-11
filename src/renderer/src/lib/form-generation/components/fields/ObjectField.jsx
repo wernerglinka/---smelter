@@ -83,6 +83,11 @@ export const ObjectField = ({
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(initiallyCollapsed);
   const [fields, setFields] = useState(field.fields || []);
+  
+  // Sync fields when field.fields changes
+  React.useEffect(() => {
+    setFields(field.fields || []);
+  }, [field.fields]);
 
   // Toggle collapse state when the collapse icon is clicked
   const handleCollapse = (e) => {
@@ -476,26 +481,26 @@ export const ObjectField = ({
             onFieldUpdate={(updatedField) => {
               if (onFieldUpdate) {
                 try {
-                  // Create a copy of the current fields to update the specific field
-                  setFields((currentFields) => {
-                    const newFields = [...currentFields];
-                    // Update the specific field at this index
-                    newFields[fieldIndex] = {
-                      ...newFields[fieldIndex],
-                      ...updatedField
-                    };
-
-                    // Pass the entire updated object with all fields to the parent handler
-                    onFieldUpdate(
-                      {
-                        ...field,
-                        fields: newFields
-                      },
-                      [{ type: 'object', index: fieldIndex, fieldIndex }]
-                    );
-
-                    return newFields;
-                  });
+                  // Create a new array with the updated field
+                  const newFields = [...fields];
+                  newFields[fieldIndex] = {
+                    ...newFields[fieldIndex],
+                    ...updatedField
+                  };
+                  
+                  // First notify the parent handler
+                  onFieldUpdate(
+                    {
+                      ...field,
+                      fields: newFields
+                    },
+                    [{ type: 'object', index: fieldIndex, fieldIndex }]
+                  );
+                  
+                  // Then update local state in a separate render cycle
+                  setTimeout(() => {
+                    setFields(newFields);
+                  }, 0);
                 } catch (error) {
                   handleError(error, 'updateNestedField');
                 }

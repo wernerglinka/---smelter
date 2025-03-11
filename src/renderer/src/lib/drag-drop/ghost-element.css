@@ -1,0 +1,8 @@
+.ghost-indicator {
+  position: absolute;
+  z-index: 9999;
+  height: 4px;
+  background-color: #4a9eff;
+  box-shadow: 0 0 4px rgba(74, 158, 255, 0.5);
+  pointer-events: none;
+}
