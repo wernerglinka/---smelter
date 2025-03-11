@@ -66,6 +66,12 @@ export const ValidationProvider = ({ children }) => {
    * @param {string} errorMessage - Error message
    */
   const setFieldError = useCallback((fieldName, errorMessage) => {
+    // Safeguard against undefined fieldNames
+    if (!fieldName) {
+      logger.warn('Attempted to set validation error for undefined field name');
+      return;
+    }
+    
     setErrors((prev) => ({
       ...prev,
       [fieldName]: errorMessage

@@ -4,6 +4,8 @@
 
 The Smelter application features a standardized validation system for form fields, providing consistent error handling, feedback, and validation rules. This document explains how to use the validation system in your components and forms.
 
+> **Update (March 2025)**: The validation system now includes performance optimizations and safeguards against infinite update loops. See the "Performance Considerations" section below for details.
+
 ## Components & Hooks
 
 The validation system consists of the following parts:
@@ -222,3 +224,47 @@ const validationRules = {
   }
 };
 ```
+
+## Performance Considerations
+
+The validation system has been optimized to prevent infinite update loops and unnecessary re-renders, especially when loading forms with many field components. Key optimizations include:
+
+1. **Skipping Initial Validation**: 
+   Fields can skip validation on initial load by setting the `skipEmptyCheck` parameter to true:
+
+   ```javascript
+   validateField('fieldName', value, true); // Skip validation if value is empty
+   ```
+
+2. **Missing Field Protection**:
+   The system safely handles validating fields that don't exist in the DOM yet:
+
+   ```javascript
+   // In FormOperationsContext
+   validateField(name, validationFn, skipIfMissing = true)
+   ```
+
+3. **Debounced Validation**:
+   For fields that update frequently (like text inputs), validation is debounced to prevent performance issues:
+
+   ```javascript
+   // Example in a component
+   const debouncedValidate = useCallback(
+     debounce((value) => {
+       validateField(fieldName, value);
+     }, 300),
+     [validateField, fieldName]
+   );
+   ```
+
+4. **Intelligent Error Tracking**:
+   The system tracks which fields have errors and only updates when errors change:
+
+   ```javascript
+   // In ValidationContext
+   if (prevErrors[fieldName] === errorMessage) {
+     return; // Skip update if error hasn't changed
+   }
+   ```
+
+When working with forms that have many fields or complex validation rules, consider using these performance features to maintain smooth user experiences.

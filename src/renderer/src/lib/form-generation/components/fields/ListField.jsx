@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   DragHandleIcon,
   AddIcon,
@@ -85,21 +85,48 @@ export const ListField = ({
   // Check if this field has validation errors
   const hasError = validationErrors && validationErrors[field.id || field.name];
 
+  // Track if this is the initial render
+  const isInitialRender = React.useRef(true);
+  
+  // Track last item value to avoid unnecessary updates
+  const lastItemsRef = useRef(null);
+  
   // When items change, update the form value
   useEffect(() => {
     try {
-      // Only update if field has a name
+      // Skip effect on initial render to prevent loops with existing data
+      if (isInitialRender.current) {
+        isInitialRender.current = false;
+        lastItemsRef.current = JSON.stringify(items);
+        return;
+      }
+
+      // Only update if field has a name and items actually changed
       if (field.name) {
+        const currentItemsJson = JSON.stringify(items);
+        
+        // Skip update if there's no real change
+        if (lastItemsRef.current === currentItemsJson) {
+          return;
+        }
+        
+        // Update the last items ref
+        lastItemsRef.current = currentItemsJson;
+        
+        // Update form value
         setValue(field.name, items);
         
-        // Call the original onUpdate handler if provided
+        // Call the original onUpdate handler if provided, with a small delay
         if (onUpdate) {
-          onUpdate({
-            id: field.id || field.name,
-            name: field.name,
-            type: field.type?.toLowerCase(),
-            value: items
-          });
+          // Wait until next frame to avoid update loops
+          setTimeout(() => {
+            onUpdate({
+              id: field.id || field.name,
+              name: field.name,
+              type: field.type?.toLowerCase(),
+              value: items
+            });
+          }, 0);
         }
       }
     } catch (error) {

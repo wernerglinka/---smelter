@@ -72,13 +72,23 @@ export const FormOperationsProvider = ({ children, formId = 'form' }) => {
    * Set value in a form field
    * @param {string} name - Field name
    * @param {any} value - Value to set
+   * @returns {boolean} - Whether the field was found and updated
    */
   const setValue = useCallback((name, value) => {
     try {
+      // Guard against undefined or null names
+      if (!name) {
+        logger.warn('Attempted to set value for undefined field name');
+        return false;
+      }
+      
       const field = getField(name);
       if (!field) {
-        logger.warn(`Field not found: ${name}`);
-        return;
+        // Just a debug message instead of warning to reduce noise during initial form loading
+        if (process.env.NODE_ENV === 'development') {
+          logger.debug(`Field not found in DOM: ${name}`, { attemptedValue: value });
+        }
+        return false;
       }
 
       // Handle different field types
@@ -104,8 +114,11 @@ export const FormOperationsProvider = ({ children, formId = 'form' }) => {
           return updated;
         });
       }
+      
+      return true;
     } catch (error) {
       handleError(error, 'setValue');
+      return false;
     }
   }, [getField, handleError, validationErrors]);
 
@@ -159,11 +172,35 @@ export const FormOperationsProvider = ({ children, formId = 'form' }) => {
    * Validate a specific field
    * @param {string} name - Field name
    * @param {Function} validationFn - Validation function
+   * @param {boolean} [skipIfMissing=true] - Skip validation if field is not found
    * @returns {boolean} - Validation result
    */
-  const validateField = useCallback((name, validationFn) => {
+  const validateField = useCallback((name, validationFn, skipIfMissing = true) => {
     try {
+      // Guard against undefined field names
+      if (!name) {
+        logger.warn('Attempted to validate undefined field name');
+        return false;
+      }
+      
+      // Check if field exists in DOM
+      const field = getField(name);
+      if (!field && skipIfMissing) {
+        // Skip validation for fields not in DOM (likely not rendered yet)
+        if (process.env.NODE_ENV === 'development') {
+          logger.debug(`Skipping validation for field not in DOM: ${name}`);
+        }
+        return true;
+      }
+      
       const value = getValue(name);
+      
+      // Skip validation if no validation function provided
+      if (typeof validationFn !== 'function') {
+        logger.warn(`Invalid validation function for field: ${name}`);
+        return true;
+      }
+      
       const validationResult = validationFn(value);
       
       if (validationResult !== true) {
@@ -189,7 +226,7 @@ export const FormOperationsProvider = ({ children, formId = 'form' }) => {
       handleError(error, 'validateField');
       return false;
     }
-  }, [getValue, handleError, validationErrors]);
+  }, [getField, getValue, handleError, validationErrors]);
 
   /**
    * Get all form data

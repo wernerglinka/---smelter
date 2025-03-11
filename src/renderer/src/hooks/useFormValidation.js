@@ -53,9 +53,10 @@ export function useFormValidation({
    * Validate a single field
    * @param {string} fieldName - Field name
    * @param {*} value - Field value
+   * @param {boolean} [skipEmptyCheck=false] - Skip validation if value is empty (useful on initial load)
    * @returns {boolean} Whether the field is valid
    */
-  const validateField = useCallback((fieldName, value) => {
+  const validateField = useCallback((fieldName, value, skipEmptyCheck = false) => {
     try {
       // Mark form as dirty once validation starts
       if (!isDirty) {
@@ -66,6 +67,13 @@ export function useFormValidation({
       const fieldRules = validationRules[fieldName];
       if (!fieldRules) {
         return true; // No rules = valid
+      }
+      
+      // Skip validation for empty values when skipEmptyCheck is true
+      // This prevents showing validation errors for empty fields on initial form load
+      if (skipEmptyCheck && (value === '' || value === null || value === undefined || 
+          (Array.isArray(value) && value.length === 0))) {
+        return true;
       }
       
       // Use ValidationContext for validation

@@ -19,7 +19,14 @@ export const handleFieldUpdate = (updatedField, fieldPath = [], setFormFields, a
     path: fieldPath
   });
 
-  // Update the form field state with the new value
+  // Check if the field is likely to be found in the form
+  // This helps prevent infinite loops when trying to update a field that doesn't exist
+  if (!updatedField.id && !updatedField.name) {
+    console.error('Field update failed: Missing field identifier', updatedField);
+    return;
+  }
+  
+  // Use the state setter function
   setFormFields((prevFields) => {
     if (!prevFields) return prevFields;
 
@@ -108,21 +115,32 @@ export const handleFieldUpdate = (updatedField, fieldPath = [], setFormFields, a
       return newFields;
     }
 
-    // Check if we have an ID or name to identify the field
-    if (!updatedField.id && !updatedField.name) {
-      console.error('Field update failed: Missing field identifier', updatedField);
+    // Check if this field exists before continuing - prevent updating non-existent fields
+    const fieldExists = prevFields.some(field => 
+      (updatedField.id && field.id === updatedField.id) || 
+      (field.name === updatedField.name)
+    );
+    
+    if (!fieldExists) {
+      console.debug('Field not found in form fields, skipping update', {
+        fieldId: updatedField.id,
+        fieldName: updatedField.name,
+        fieldType: updatedField.type
+      });
       return prevFields;
     }
 
-    // Log all field IDs and names in the form for debugging
-    console.log(
-      'Available fields:',
-      prevFields.map((f) => ({
-        id: f.id,
-        name: f.name,
-        type: f.type
-      }))
-    );
+    // Log all field IDs and names in the form for debugging (only if needed)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(
+        'Available fields:',
+        prevFields.map((f) => ({
+          id: f.id,
+          name: f.name,
+          type: f.type
+        }))
+      );
+    }
 
     // Top-level field update - update only the value, not replace the entire field
     const updatedFields = prevFields.map((field) => {
@@ -131,12 +149,15 @@ export const handleFieldUpdate = (updatedField, fieldPath = [], setFormFields, a
       const nameMatch = field.name === updatedField.name;
 
       if (idMatch || nameMatch) {
-        console.log(`Found matching field by ${idMatch ? 'ID' : 'name'}:`, {
-          fieldId: field.id,
-          fieldName: field.name,
-          fieldType: field.type,
-          updatedType: updatedField.type
-        });
+        // Only log this in development to reduce console noise
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`Found matching field by ${idMatch ? 'ID' : 'name'}:`, {
+            fieldId: field.id,
+            fieldName: field.name,
+            fieldType: field.type,
+            updatedType: updatedField.type
+          });
+        }
 
         // Normalize field types to lowercase for comparison
         const normalizedFieldType = field.type?.toLowerCase();
@@ -144,7 +165,9 @@ export const handleFieldUpdate = (updatedField, fieldPath = [], setFormFields, a
 
         // For select fields, we need special handling
         if (normalizedUpdatedType === 'select') {
-          console.log('Special handling for select field update');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Special handling for select field update');
+          }
           return {
             ...field,
             value: updatedField.value // Just update the value
@@ -179,8 +202,11 @@ export const handleFieldUpdate = (updatedField, fieldPath = [], setFormFields, a
       return field;
     });
 
-    // Add to history after update
-    setTimeout(() => addHistoryEntry(updatedFields), 0);
+    // Only add to history if the fields were actually updated
+    const hasChanges = JSON.stringify(updatedFields) !== JSON.stringify(prevFields);
+    if (hasChanges) {
+      setTimeout(() => addHistoryEntry(updatedFields), 0);
+    }
 
     return updatedFields;
   });
