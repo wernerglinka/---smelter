@@ -57,7 +57,10 @@ export const handleFormSubmission = async ({ form, filePath, schema = null }) =>
     const hasContent = contents && contents.trim() !== '';
     let result;
 
-    // Use the appropriate method based on whether we have content
+    // Use the appropriate method based on whether we have content and file extension
+    const isMarkdown = cleanPath.toLowerCase().endsWith('.md');
+    const isJson = cleanPath.toLowerCase().endsWith('.json');
+    
     if (hasContent) {
       logger.debug('Saving markdown with frontmatter and content');
       // Use writeObject that can handle both frontmatter and content
@@ -66,8 +69,15 @@ export const handleFormSubmission = async ({ form, filePath, schema = null }) =>
         obj: frontmatterData, // Contents is passed separately, not in frontmatter
         content: contents
       });
+    } else if (isJson) {
+      logger.debug('Saving as JSON file');
+      // For JSON files, use the JSON writer
+      result = await window.electronAPI.files.write({
+        obj: frontmatterData,
+        path: cleanPath
+      });
     } else {
-      logger.debug('Saving frontmatter only (no content)');
+      logger.debug('Saving as YAML with frontmatter');
       // No content or empty content - don't include contents field at all
       // If contents exists but is empty, delete it from the data
       if ('contents' in formData) {

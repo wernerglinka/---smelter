@@ -109,8 +109,8 @@ function createField(key, value, schema = []) {
 }
 
 /**
- * Converts a JSON object into a form schema object
- * @param {Object} json - Source JSON object to convert
+ * Converts a JSON object or array into a form schema object
+ * @param {Object|Array} data - Source JSON object or array to convert
  * @param {Array} schema - Optional array of field definitions
  * @returns {Object} Form schema object with fields array
  *
@@ -120,15 +120,59 @@ function createField(key, value, schema = []) {
  * const result = await convertToSchemaObject(json, schema);
  * // Returns: { fields: [{ name: "name", type: "text", ... }, { name: "age", type: "number", ... }] }
  */
-export const convertToSchemaObject = async (json, schema = []) => {
-  // Handle null, undefined, non-object inputs
-  if (!json || typeof json !== 'object' || Array.isArray(json)) {
+export const convertToSchemaObject = async (data, schema = []) => {
+  // Handle null or undefined inputs
+  if (data === null || data === undefined) {
     return { fields: [] };
   }
 
-  // Now we can safely use Object.entries since we've validated the input
+  // Handle arrays at the root level
+  if (Array.isArray(data)) {
+    // Create a wrapper field for the root array
+    const rootArrayField = {
+      label: 'Items',
+      name: 'items',
+      type: 'array',
+      value: data.map((item, index) => {
+        // Handle object items
+        if (typeof item === 'object' && item !== null) {
+          return {
+            type: 'object',
+            label: `Item ${index + 1}`,
+            id: `item_${index}`,
+            fields: Object.entries(item).map(([k, v]) => createField(k, v, schema))
+          };
+        }
+        // Handle primitive items
+        return {
+          type: inferType(item),
+          label: `Item ${index + 1}`,
+          name: `item_${index}`,
+          value: item
+        };
+      })
+    };
+
+    return {
+      fields: [rootArrayField]
+    };
+  }
+
+  // Handle regular objects
+  if (typeof data === 'object') {
+    return {
+      fields: Object.entries(data).map(([key, value]) => createField(key, value, schema))
+    };
+  }
+
+  // Handle primitive types (shouldn't normally happen at root level)
   return {
-    fields: Object.entries(json).map(([key, value]) => createField(key, value, schema))
+    fields: [{
+      type: inferType(data),
+      label: 'Value',
+      name: 'value',
+      value: data
+    }]
   };
 };
 

@@ -4,6 +4,41 @@ import matter from 'gray-matter';
 import yaml from 'yaml';
 import { createDialogOperations } from './dialog.js';
 import { fileURLToPath } from 'url';
+
+/**
+ * Clean an object by removing empty strings
+ * @param {Object} obj - Object to clean
+ * @returns {Object} Cleaned object
+ */
+const cleanObjectEmptyStrings = (obj) => {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+  
+  // Handle arrays
+  if (Array.isArray(obj)) {
+    return obj.map(item => cleanObjectEmptyStrings(item));
+  }
+  
+  // Handle objects
+  const result = {};
+  Object.entries(obj).forEach(([key, value]) => {
+    // If value is an empty string, set to null to avoid "" in YAML
+    if (value === '') {
+      result[key] = null;
+    }
+    // If value is an object or array, recursively clean it
+    else if (typeof value === 'object' && value !== null) {
+      result[key] = cleanObjectEmptyStrings(value);
+    }
+    // Otherwise, keep the value as-is
+    else {
+      result[key] = value;
+    }
+  });
+  
+  return result;
+};
 import { CONSTANTS } from './constants.js';
 import { FileSystem } from './file-system.js';
 import simpleGit from 'simple-git';
@@ -150,8 +185,11 @@ const createIPCHandlers = (window) => {
         // Ensure directory exists before writing
         await FileSystem.ensureDirectoryExists(path.dirname(data.path));
 
+        // Clean object to handle empty strings
+        const cleanedObj = cleanObjectEmptyStrings(data.obj);
+
         // Write prettified JSON
-        return FileSystem.writeFile(data.path, JSON.stringify(data.obj, null, 2));
+        return FileSystem.writeFile(data.path, JSON.stringify(cleanedObj, null, 2));
       } catch (error) {
         console.error('Error in handleWriteFile:', error);
         throw error;
@@ -204,8 +242,11 @@ const createIPCHandlers = (window) => {
           throw new Error('File path is required');
         }
 
+        // Clean object to handle empty strings
+        const cleanedObj = cleanObjectEmptyStrings(obj);
+        
         // Convert to YAML with frontmatter markers
-        const yamlContent = `---\n${yaml.stringify(obj)}---\n`;
+        const yamlContent = `---\n${yaml.stringify(cleanedObj)}---\n`;
 
         // Ensure directory exists
         await FileSystem.ensureDirectoryExists(path.dirname(filePath));
@@ -351,10 +392,20 @@ const createIPCHandlers = (window) => {
      * })
      */
     handleWriteObjectToFile: async (event, { path: filePath, obj, content = '' }) => {
-      const yamlString = yaml.stringify(obj);
-      const fileContent = content.trim()
-        ? `---\n${yamlString}---\n\n${content}`
+      // Clean object to handle empty strings
+      const cleanedObj = cleanObjectEmptyStrings(obj);
+      
+      // Convert to YAML
+      const yamlString = yaml.stringify(cleanedObj);
+      
+      // Only include content if it's not empty after trimming
+      // If content is empty or just whitespace, write only the frontmatter
+      // This prevents "" from appearing in the content section
+      const contentTrimmed = content.trim();
+      const fileContent = contentTrimmed 
+        ? `---\n${yamlString}---\n\n${contentTrimmed}`
         : `---\n${yamlString}---\n`;
+      
       return FileSystem.writeFile(filePath, fileContent);
     },
 

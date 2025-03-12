@@ -75,11 +75,51 @@ export class FileLoaderService {
         throw new Error(`Failed to read JSON file: ${error}`);
       }
 
-      return {
-        type: 'json',
-        data: data,
-        path: filepath
-      };
+      // Handle empty file or already parsed data
+      if (!data) {
+        logger.debug('Loading empty JSON file', { path: filepath });
+        return {
+          type: 'json',
+          data: { frontmatter: {} },  // Empty object that mimics frontmatter structure
+          path: filepath
+        };
+      }
+      
+      // Check if data is a string and if it's empty
+      if (typeof data === 'string' && data.trim() === '') {
+        logger.debug('Loading empty JSON file (string)', { path: filepath });
+        return {
+          type: 'json',
+          data: { frontmatter: {} },  // Empty object that mimics frontmatter structure
+          path: filepath
+        };
+      }
+
+      // Try to parse JSON
+      try {
+        // If data is already an object (pre-parsed), use it directly
+        const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+        
+        return {
+          type: 'json',
+          data: { frontmatter: parsedData },  // Format to match frontmatter structure
+          path: filepath
+        };
+      } catch (parseError) {
+        logger.error('Invalid JSON format', { 
+          path: filepath, 
+          error: parseError.message,
+          dataPreview: typeof data === 'string' ? data.slice(0, 100) : String(data)
+        });
+        
+        // Return empty object with valid path instead of throwing
+        return {
+          type: 'json',
+          data: { frontmatter: {} },
+          path: filepath,
+          parseError: 'Invalid JSON format - file will be treated as empty'
+        };
+      }
     } catch (error) {
       logger.error('Error loading JSON file:', error);
       throw error;

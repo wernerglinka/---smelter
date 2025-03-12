@@ -514,15 +514,26 @@ export const EditProvider = ({ children }) => {
           '@lib/form-generation/processors/frontmatter-processor'
         );
 
-        // Determine if we should add contents field based on content existence
+        // Determine if we should add contents field based on content existence and file type
         const hasContent = fileContent.data.content && fileContent.data.content.trim().length > 0;
         const hasFrontmatter = Object.keys(fileContent.data.frontmatter).length > 0;
+        const isJsonFile = fileContent.type === 'json' || (fileContent.path && fileContent.path.toLowerCase().endsWith('.json'));
+        
+        logger.debug('Processing file content', { 
+          type: fileContent.type, 
+          path: fileContent.path,
+          isJsonFile,
+          hasContent,
+          hasFrontmatter
+        });
 
-        // Only add contents field if there is actual content or if frontmatter is present
+        // Only add contents field if:
+        // 1. It's not a JSON file, AND
+        // 2. There is actual content or frontmatter is present
         const processedData = await processFrontmatter(
           fileContent.data.frontmatter,
           fileContent.data.content || '', // Ensure we always pass at least an empty string for content
-          { addContentsField: hasContent || hasFrontmatter }
+          { addContentsField: !isJsonFile && (hasContent || hasFrontmatter) }
         );
 
         // Clear previous form fields first to prevent persistence between files
